@@ -1,50 +1,62 @@
-# Welcome to your Expo app 👋
+# :blue_book: Bluget – Budgeting Made Simple
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+**Bluget** is a minimalist, mobile-first budgeting app that helps users take control of their finances. Track expenses, monitor investments, set savings goals, and visualize your financial progress – all in one clean, blue-themed interface.
 
-## Get started
+Built with the **MERN** stack (MongoDB, Express, React Native, Node.js).
 
-1. Install dependencies
+---
 
-   ```bash
-   npm install
-   ```
+## :bricks: Tech Stack
 
-2. Start the app
+| Layer      | Tech                      |
+| ---------- | ------------------------- |
+| Frontend   | React Native (Expo)       |
+| Backend    | Node.js, Express          |
+| Database   | MongoDB (Atlas)           |
+| Auth       | JWT, bcrypt               |
+| State Mgmt | Context API / Redux (TBD) |
+| Hosting    | TBD                       |
 
-   ```bash
-   npx expo start
-   ```
+---
 
-In the output, you'll find options to open the app in a
+## :rocket: Features
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- :bar_chart: **Expense Tracking** – Log and categorize your daily spending
+- :moneybag: **Investment Overview** – Track long-term investments alongside expenses
+- :brain: **Smart Budgeting** – Visual breakdowns of spending habits
+- :dart: **Savings Goals** – Set and monitor personal financial goals
+- :calendar: **Calendar View** – See spending trends over time
+- :closed_lock_with_key: **Secure Authentication** – JWT-based login and registration
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+---
 
-## Get a fresh project
+## :mobile_phone: Screens (Planned)
 
-When you're ready, run:
+- Welcome / Onboarding
+- Login / Register
+- Dashboard (Summary view)
+- Add Transaction
+- View Transactions by Category or Date
+- Budget Goals / Progress Tracker
+- Settings
+
+---
+
+## :tools: Installation
+
+### :package: Prerequisites
+
+- Node.js v18+
+- MongoDB (or MongoDB Atlas)
+- Expo CLI (`npm install -g expo-cli`)
+- Yarn or npm
+
+---
+
+### :wrench: Backend Setup
 
 ```bash
-npm run reset-project
+cd backend
+npm install
+npm run dev
 ```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
