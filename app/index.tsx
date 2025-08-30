@@ -1,8 +1,8 @@
-import DashboardScreen from "./dashboard/page";
+import BudgetDashboard from "./dashboard/page";
 
 export default function Index() {
   return (
     
-   <DashboardScreen/>
+   <BudgetDashboard/>
   );
 }
