@@ -1,38 +1,56 @@
 import jwt from "jsonwebtoken";
 
-// Middleware: Authenticate userId
+// Middleware: Authenticate user via JWT
 function authMiddleware(req, res, next) {
-  const authHeader = req.headers.authorization;
-  if (!authHeader) return res.status(401).json({ error: "No token provided" });
-
-  const token = authHeader.split(" ")[1]; // Bearer <token>
-  if (!token) return res.status(401).json({ error: "Invalid token format" });
-
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = { id: decoded.id }; // store user id in req.user
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      const err = new Error("No token provided");
+      err.statusCode = 401;
+      throw err;
+    }
+
+    const tokenParts = authHeader.split(" ");
+    if (tokenParts[0] !== "Bearer" || !tokenParts[1]) {
+      const err = new Error("Invalid token format");
+      err.statusCode = 401;
+      throw err;
+    }
+
+    const decoded = jwt.verify(tokenParts[1], process.env.JWT_SECRET);
+
+    // Attach user info to req.user for downstream access
+    req.user = {
+      id: decoded.id,
+      email: decoded.email,
+      role: decoded.role || "user", // optional: include role in token
+    };
+
     next();
   } catch (err) {
-    res.status(401).json({ error: "Invalid token" });
+    err.statusCode = err.statusCode || 401;
+    next(err); // send to centralized error handler
   }
 }
 
-// Middleware: Simple admin check placeholder
+// Middleware: Admin only routes
 function isAdmin(req, res, next) {
-  // Replace with real auth and role check in production
-  if (req.query.admin === "true") {
-    next();
-  } else {
-    res.status(403).json({ error: "Admin access required" });
+  if (req.user.role === "admin") {
+    return next();
   }
+  const err = new Error("Admin access required");
+  err.statusCode = 403;
+  next(err);
 }
 
-// Middleware example to check if user owns the account or is admin
+// Middleware: User can access their own data or admins can
 function authorizeUserOrAdmin(req, res, next) {
   if (req.user.id === req.params.userId || req.user.role === "admin") {
     return next();
   }
-  return res.status(403).json({ error: "Forbidden" });
+  const err = new Error("Forbidden");
+  err.statusCode = 403;
+  next(err);
 }
 
 export { authMiddleware, authorizeUserOrAdmin, isAdmin };
