@@ -1,49 +1,33 @@
-import { Button, StyleSheet, Text, View } from "react-native";
+import React from "react";
+import { StyleSheet, Text, View } from "react-native";
 
-export default function DashboardScreen() {
-  return (
+type props = {
+  spent: number;
+  monthlyBudget: number;
+};
+
+export default function Dashboard({ spent, monthlyBudget }: props){
+
+  return(
     <View style={styles.container}>
-      <Text style={styles.title}>Welcome to your Dashboard 👋</Text>
-
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Stats</Text>
-        <Text>You have 5 new messages</Text>
-        <Text>3 tasks pending</Text>
-      </View>
-
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Quick Actions</Text>
-        <Button title="Go to Profile" onPress={() => {}} />
-      </View>
+      <Text style={styles.text}>Spent: ${spent}</Text>
+      <Text style={styles.text}>Monthly Budget: ${monthlyBudget}</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: "#f3f4f6", // light gray
-    padding: 24,
+    width: "90%",  
+    marginTop: 40,           
+    padding: 20,             
+    borderWidth: 1,           
+    borderColor: "#000",      
+    borderRadius: 12,        
+    backgroundColor: "#fff",           
   },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 16,
-  },
-  card: {
-    backgroundColor: "#fff",
-    padding: 16,
-    borderRadius: 16,
-    marginBottom: 16,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 6,
-    elevation: 3, // Android shadow
-  },
-  cardTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    marginBottom: 8,
+  text: {
+    fontSize: 20,
+    marginBottom: 6,
   },
 });
