@@ -2,6 +2,7 @@ import React from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import Dashboard from "./pages/dashboard";
 
+
 export default function Index() {
   const spent = 400;
   const monthlyBudget = 600;
