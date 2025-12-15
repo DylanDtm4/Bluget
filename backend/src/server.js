@@ -16,11 +16,17 @@ import authRoutes from "./routes/auth.js";
 import transactionRoutes from "./routes/transactions.js";
 import recurringRoutes from "./routes/recurring.js";
 import monthRoutes from "./routes/month.js";
+import budgetRoutes from "./routes/budgets.js";
+import categoryRoutes from "./routes/categories.js";
+import statsRoutes from "./routes/stats.js";
 
 app.use("/auth", authRoutes);
 app.use("/transactions", transactionRoutes);
 app.use("/recurring", recurringRoutes);
 app.use("/month", monthRoutes);
+app.use("/budgets", budgetRoutes);
+app.use("/categories", categoryRoutes);
+app.use("/stats", statsRoutes);
 
 // database connect
 mongoose
