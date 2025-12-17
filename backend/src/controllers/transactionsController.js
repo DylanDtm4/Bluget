@@ -7,8 +7,62 @@ export const createTransaction = async (req, res) => {
 };
 
 export const getTransactions = async (req, res) => {
-	const tx = await Transaction.find({ userId: req.user.id });
-	res.json(tx);
+	try {
+		const userId = req.user.id;
+		const {
+			search,
+			category,
+			type,
+			min,
+			max,
+			startDate,
+			endDate,
+			sort,
+			page = 1,
+			limit = 10,
+		} = req.query;
+
+		const query = { userId };
+
+		// search=coffee or search=cof
+		if (search) {
+			query.title = { $regex: search, $options: "i" };
+		}
+
+		// category=Food&type=expense
+		if (category) query.category = category;
+		if (type) query.type = type;
+
+		// min=10&max=100
+		if (min || max) {
+			query.amount = {};
+			if (min) query.amount.$gte = Number(min);
+			if (max) query.amount.$lte = Number(max);
+		}
+
+		// startDate=2025-01-01&endDate=2025-01-31
+		if (startDate || endDate) {
+			query.date = {};
+			if (startDate) query.date.$gte = new Date(startDate);
+			if (endDate) query.date.$lte = new Date(endDate);
+		}
+
+		// sort=-date or sort=date
+		const sortObj = {};
+		if (sort) {
+			const field = sort.startsWith("-") ? sort.slice(1) : sort;
+			sortObj[field] = sort.startsWith("-") ? -1 : 1;
+		}
+
+		const transactions = await Transaction.find(query)
+			.sort(sortObj)
+			.skip((page - 1) * limit)
+			.limit(Number(limit));
+
+		res.json(transactions);
+	} catch (err) {
+		res.status(500).json({ error: "Server error" });
+	}
 };
 
 export const getTransaction = async (req, res) => {

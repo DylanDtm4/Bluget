@@ -1,11 +1,36 @@
-import Categories from "../models/Categories.js";
+import Categories from "../models/Category.js";
 
 export const getCategories = async (req, res) => {
-	let doc = await Categories.findOne({ userId: req.user.id });
-	if (!doc) {
-		doc = await Categories.create({ userId: req.user.id, categories: [] });
+	try {
+		const userId = req.user.id;
+		// page=2&limit=10
+		const { search, custom, sort, page = 1, limit = 10 } = req.query;
+
+		const query = { userId };
+
+		// search=food or search=foo
+		if (search) {
+			query.title = { $regex: search, $options: "i" };
+		}
+
+		// custom=true or custom=false
+		if (custom) query.custom = custom;
+
+		// sort=desc or sort=asc
+		const sortObj = {};
+		if (sort) {
+			sortObj[category] = sort.startsWith("desc") ? -1 : 1;
+		}
+
+		const transactions = await Transaction.find(query)
+			.sort(sortObj)
+			.skip((page - 1) * limit)
+			.limit(Number(limit));
+
+		res.json(transactions);
+	} catch (err) {
+		res.status(500).json({ error: "Server error" });
 	}
-	res.json(doc.categories);
 };
 
 export const addCategory = async (req, res) => {
