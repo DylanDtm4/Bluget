@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 
 const RecurringTransactionSchema = new mongoose.Schema({
 	userId: String,
@@ -10,7 +10,7 @@ const RecurringTransactionSchema = new mongoose.Schema({
 	nextRun: Date, // when the next transaction should be generated
 });
 
-export default mongoose.model(
+module.exports = mongoose.model(
 	"RecurringTransaction",
 	RecurringTransactionSchema
 );

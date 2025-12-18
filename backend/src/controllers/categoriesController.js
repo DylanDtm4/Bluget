@@ -1,10 +1,15 @@
-import Categories from "../models/Category.js";
+const Category = require("../models/Category");
 
-export const getCategories = async (req, res) => {
+const getCategories = async (req, res) => {
 	try {
 		const userId = req.user.id;
 		// page=2&limit=10
 		const { search, custom, sort, page = 1, limit = 10 } = req.query;
+		if (page < 1 || limit < 1) {
+			return res
+				.status(400)
+				.json({ error: "Page and limit must be positive integers" });
+		}
 
 		const query = { userId };
 
@@ -33,7 +38,7 @@ export const getCategories = async (req, res) => {
 	}
 };
 
-export const addCategory = async (req, res) => {
+const addCategory = async (req, res) => {
 	const { name } = req.body;
 	let doc = await Categories.findOne({ userId: req.user.id });
 	if (!doc)
@@ -46,7 +51,7 @@ export const addCategory = async (req, res) => {
 	res.json(doc.categories);
 };
 
-export const renameCategory = async (req, res) => {
+const renameCategory = async (req, res) => {
 	const oldName = req.params.name;
 	const { newName } = req.body;
 	const doc = await Categories.findOne({ userId: req.user.id });
@@ -59,11 +64,18 @@ export const renameCategory = async (req, res) => {
 	res.json(doc.categories);
 };
 
-export const deleteCategory = async (req, res) => {
+const deleteCategory = async (req, res) => {
 	const name = req.params.name;
 	const doc = await Categories.findOne({ userId: req.user.id });
 	if (!doc) return res.status(404).json({ error: "No categories found" });
 	doc.categories = doc.categories.filter((c) => c !== name);
 	await doc.save();
 	res.json(doc.categories);
+};
+
+module.exports = {
+	getCategories,
+	addCategory,
+	renameCategory,
+	deleteCategory,
 };

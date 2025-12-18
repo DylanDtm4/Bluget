@@ -1,12 +1,11 @@
-import express from "express";
-import { auth } from "../middleware/auth.js";
-import {
+const auth = require("../middleware/auth");
+const {
 	getCategories,
 	addCategory,
 	renameCategory,
 	deleteCategory,
-} from "../controllers/categoriesController.js";
-
+} = require("../controllers/categoriesController.js");
+const express = require("express");
 const router = express.Router();
 
 // GET /categories
@@ -18,4 +17,4 @@ router.put("/:name", auth, renameCategory);
 // DELETE /categories/:name
 router.delete("/:name", auth, deleteCategory);
 
-export default router;
+module.exports = router;

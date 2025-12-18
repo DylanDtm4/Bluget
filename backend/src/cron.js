@@ -1,6 +1,6 @@
-import cron from "node-cron";
-import RecurringTransaction from "./models/RecurringTransaction.js";
-import Transaction from "./models/Transaction.js";
+const cron = require("node-cron");
+const RecurringTransaction = require("./models/RecurringTransaction");
+const Transaction = require("./models/Transaction");
 
 cron.schedule("0 0 * * *", async () => {
 	console.log("Running recurring transaction job...");

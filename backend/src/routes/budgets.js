@@ -1,12 +1,11 @@
-import express from "express";
-import { auth } from "../middleware/auth.js";
-import {
+const auth = require("../middleware/auth");
+const {
 	getBudgets,
 	addBudget,
 	updateBudget,
 	deleteBudget,
-} from "../controllers/budgetsController.js";
-
+} = require("../controllers/budgetsController");
+const express = require("express");
 const router = express.Router();
 
 // GET /budgets
@@ -18,4 +17,4 @@ router.put("/:id", auth, updateBudget);
 // DELETE /budgets/:id
 router.delete("/:id", auth, deleteBudget);
 
-export default router;
+module.exports = router;

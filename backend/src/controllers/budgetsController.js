@@ -1,6 +1,6 @@
-import Budgets from "../models/Budgets.js";
+const Budgets = require("../models/Budgets.js");
 
-export const getBudgets = async (req, res) => {
+const getBudgets = async (req, res) => {
 	let doc = await Budgets.findOne({ userId: req.user.id });
 	if (!doc) {
 		doc = await Budgets.create({ userId: req.user.id, budgets: [] });
@@ -8,7 +8,7 @@ export const getBudgets = async (req, res) => {
 	res.json(doc.budgets);
 };
 
-export const addBudget = async (req, res) => {
+const addBudget = async (req, res) => {
 	const { name } = req.body;
 	let doc = await Budgets.findOne({ userId: req.user.id });
 	if (!doc) doc = await Budgets.create({ userId: req.user.id, budgets: [] });
@@ -20,7 +20,7 @@ export const addBudget = async (req, res) => {
 	res.json(doc.budgets);
 };
 
-export const updateBudget = async (req, res) => {
+const updateBudget = async (req, res) => {
 	const updatedTx = await Budgets.findOneAndUpdate(
 		{ _id: req.params.id, userId: req.user.id },
 		{ ...req.body },
@@ -30,11 +30,18 @@ export const updateBudget = async (req, res) => {
 	res.json(updatedTx);
 };
 
-export const deleteBudget = async (req, res) => {
+const deleteBudget = async (req, res) => {
 	const name = req.params.name;
 	const doc = await Budgets.findOne({ userId: req.user.id });
 	if (!doc) return res.status(404).json({ error: "No budgets found" });
 	doc.budgets = doc.budgets.filter((c) => c !== name);
 	await doc.save();
 	res.json(doc.budgets);
+};
+
+module.exports = {
+	getBudgets,
+	addBudget,
+	updateBudget,
+	deleteBudget,
 };

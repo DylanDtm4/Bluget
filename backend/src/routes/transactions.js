@@ -1,12 +1,12 @@
-import express from "express";
-import { auth } from "../middleware/auth.js";
-import {
+const auth = require("../middleware/auth");
+const {
 	createTransaction,
 	deleteTransaction,
 	getTransaction,
 	getTransactions,
 	updateTransaction,
-} from "../controllers/transactionsController.js";
+} = require("../controllers/transactionsController");
+const express = require("express");
 const router = express.Router();
 
 // POST /transactions
@@ -20,4 +20,4 @@ router.put("/:id", auth, updateTransaction);
 // DELETE /transactions/:id
 router.delete("/:id", auth, deleteTransaction);
 
-export default router;
+module.exports = router;

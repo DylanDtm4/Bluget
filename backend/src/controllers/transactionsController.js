@@ -1,12 +1,12 @@
 // Basic CRUD operations for transactions
-import Transaction from "../models/Transaction.js";
+const Transaction = require("../models/Transaction");
 
-export const createTransaction = async (req, res) => {
+const createTransaction = async (req, res) => {
 	const tx = await Transaction.create({ ...req.body, userId: req.user.id });
 	res.json(tx);
 };
 
-export const getTransactions = async (req, res) => {
+const getTransactions = async (req, res) => {
 	try {
 		const userId = req.user.id;
 		const {
@@ -21,6 +21,12 @@ export const getTransactions = async (req, res) => {
 			page = 1,
 			limit = 10,
 		} = req.query;
+
+		if (page < 1 || limit < 1) {
+			return res
+				.status(400)
+				.json({ error: "Page and limit must be positive integers" });
+		}
 
 		const query = { userId };
 
@@ -65,7 +71,7 @@ export const getTransactions = async (req, res) => {
 	}
 };
 
-export const getTransaction = async (req, res) => {
+const getTransaction = async (req, res) => {
 	const tx = await Transaction.findOne({
 		_id: req.params.id,
 		userId: req.user.id,
@@ -74,7 +80,7 @@ export const getTransaction = async (req, res) => {
 	res.json(tx);
 };
 
-export const updateTransaction = async (req, res) => {
+const updateTransaction = async (req, res) => {
 	const updatedTx = await Transaction.findOneAndUpdate(
 		{ _id: req.params.id, userId: req.user.id },
 		{ ...req.body },
@@ -84,11 +90,19 @@ export const updateTransaction = async (req, res) => {
 	res.json(updatedTx);
 };
 
-export const deleteTransaction = async (req, res) => {
+const deleteTransaction = async (req, res) => {
 	const deleted = await Transaction.findOneAndDelete({
 		_id: req.params.id,
 		userId: req.user.id,
 	});
 	if (!deleted) return res.status(404).send("Transaction not found");
 	res.json({ message: "Transaction deleted" });
+};
+
+module.exports = {
+	createTransaction,
+	getTransactions,
+	getTransaction,
+	updateTransaction,
+	deleteTransaction,
 };

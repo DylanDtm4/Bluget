@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 
 const MonthSchema = new mongoose.Schema({
 	userId: String,
@@ -6,4 +6,4 @@ const MonthSchema = new mongoose.Schema({
 	year: Number,
 });
 
-export default mongoose.model("Month", MonthSchema);
+module.exports = mongoose.model("Month", MonthSchema);

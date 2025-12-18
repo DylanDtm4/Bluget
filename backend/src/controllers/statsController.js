@@ -1,7 +1,7 @@
 // GET /stats?year=2025
-import Transaction from "../models/Transaction.js";
+const Transaction = require("../models/Transaction");
 
-export const getYearlyStats = async (req, res) => {
+const getYearlyStats = async (req, res) => {
 	try {
 		const userId = req.user.id; // from JWT middleware
 		const { year } = req.query; // "2025"
@@ -91,7 +91,7 @@ export const getYearlyStats = async (req, res) => {
 	}
 };
 
-export const getMonthlyTrends = async (req, res) => {
+const getMonthlyTrends = async (req, res) => {
 	try {
 		const userId = req.user.id; // from JWT middleware
 		const { year } = req.query; // "2025"
@@ -192,4 +192,9 @@ export const getMonthlyTrends = async (req, res) => {
 		console.error(err);
 		res.status(500).json({ error: "Failed to generate spending trends" });
 	}
+};
+
+module.exports = {
+	getYearlyStats,
+	getMonthlyTrends,
 };

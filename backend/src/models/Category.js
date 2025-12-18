@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 
 const CategorySchema = new mongoose.Schema({
 	userId: String,
@@ -6,4 +6,4 @@ const CategorySchema = new mongoose.Schema({
 	custom: { type: Boolean, default: false },
 });
 
-export default mongoose.model("Category", CategorySchema);
+module.exports = mongoose.model("Category", CategorySchema);

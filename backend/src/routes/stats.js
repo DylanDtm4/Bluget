@@ -1,9 +1,12 @@
-import express from "express";
-import { getYearlySummary } from "../controllers/statsController.js";
-import { auth } from "../middleware/auth.js";
+const auth = require("../middleware/auth");
+const {
+	getYearlyStats,
+	getMonthlyTrends,
+} = require("../controllers/statsController.js");
+const express = require("express");
 const router = express.Router();
 
 // GET /years/summary?year=2025
-router.get("/summary", auth, getYearlySummary);
+router.get("/summary", auth, getYearlyStats);
 
-export default router;
+module.exports = router;

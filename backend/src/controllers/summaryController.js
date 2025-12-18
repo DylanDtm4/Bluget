@@ -1,7 +1,7 @@
 // GET /summary?month=2025-01
-import Transaction from "../models/Transaction.js";
+const Transaction = require("../models/Transaction");
 
-export const getMonthlySummary = async (req, res) => {
+const getMonthlySummary = async (req, res) => {
 	try {
 		const userId = req.user.id; // from JWT middleware
 		const { month } = req.query; // "2025-01"
@@ -89,3 +89,5 @@ export const getMonthlySummary = async (req, res) => {
 		res.status(500).json({ error: "Failed to generate summary" });
 	}
 };
+
+module.exports = getMonthlySummary;

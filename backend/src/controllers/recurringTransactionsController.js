@@ -1,6 +1,5 @@
-import RecurringTransaction from "../models/RecurringTransaction.js";
-
-export const createRecurringTransaction = async (req, res) => {
+const RecurringTransaction = require("../models/RecurringTransaction");
+const createRecurringTransaction = async (req, res) => {
 	const tx = await RecurringTransaction.create({
 		...req.body,
 		userId: req.user.id,
@@ -8,11 +7,16 @@ export const createRecurringTransaction = async (req, res) => {
 	res.json(tx);
 };
 
-export const getRecurringTransactions = async (req, res) => {
+const getRecurringTransactions = async (req, res) => {
 	try {
 		const userId = req.user.id;
 		// page=2&limit=10
 		const { search, sort, page = 1, limit = 10 } = req.query;
+		if (page < 1 || limit < 1) {
+			return res
+				.status(400)
+				.json({ error: "Page and limit must be positive integers" });
+		}
 
 		const query = { userId };
 
@@ -39,7 +43,7 @@ export const getRecurringTransactions = async (req, res) => {
 	}
 };
 
-export const updateRecurringTransaction = async (req, res) => {
+const updateRecurringTransaction = async (req, res) => {
 	const updatedTx = await RecurringTransaction.findOneAndUpdate(
 		{ _id: req.params.id, userId: req.user.id },
 		{ ...req.body },
@@ -48,4 +52,20 @@ export const updateRecurringTransaction = async (req, res) => {
 	if (!updatedTx)
 		return res.status(404).send("Recurring Transaction not found");
 	res.json(updatedTx);
+};
+
+const deleteRecurringTransaction = async (req, res) => {
+	const deleted = await RecurringTransaction.findOneAndDelete({
+		_id: req.params.id,
+		userId: req.user.id,
+	});
+	if (!deleted) return res.status(404).send("Recurring Transaction not found");
+	res.json({ message: "Recurring Transaction deleted" });
+};
+
+module.exports = {
+	createRecurringTransaction,
+	getRecurringTransactions,
+	updateRecurringTransaction,
+	deleteRecurringTransaction,
 };
