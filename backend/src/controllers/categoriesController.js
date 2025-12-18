@@ -27,12 +27,20 @@ const getCategories = async (req, res) => {
 			sortObj[category] = sort.startsWith("desc") ? -1 : 1;
 		}
 
-		const transactions = await Transaction.find(query)
+		const categories = await Category.find(query)
 			.sort(sortObj)
 			.skip((page - 1) * limit)
 			.limit(Number(limit));
 
-		res.json(transactions);
+		const totalCount = await Category.countDocuments(query);
+		const totalPages = Math.ceil(totalCount / limit);
+
+		res.json({
+			categories,
+			page,
+			totalCount,
+			totalPages,
+		});
 	} catch (err) {
 		res.status(500).json({ error: "Server error" });
 	}

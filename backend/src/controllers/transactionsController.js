@@ -65,7 +65,15 @@ const getTransactions = async (req, res) => {
 			.skip((page - 1) * limit)
 			.limit(Number(limit));
 
-		res.json(transactions);
+		const totalCount = await Transaction.countDocuments(query);
+		const totalPages = Math.ceil(totalCount / limit);
+
+		res.json({
+			transactions,
+			page,
+			totalCount,
+			totalPages,
+		});
 	} catch (err) {
 		res.status(500).json({ error: "Server error" });
 	}

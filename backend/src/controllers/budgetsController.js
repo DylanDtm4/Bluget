@@ -1,11 +1,50 @@
 const Budgets = require("../models/Budgets.js");
 
 const getBudgets = async (req, res) => {
-	let doc = await Budgets.findOne({ userId: req.user.id });
-	if (!doc) {
-		doc = await Budgets.create({ userId: req.user.id, budgets: [] });
+	try {
+		const userId = req.user.id;
+		// page=2&limit=10
+		const { search, custom, sort, page = 1, limit = 10 } = req.query;
+		if (page < 1 || limit < 1) {
+			return res
+				.status(400)
+				.json({ error: "Page and limit must be positive integers" });
+		}
+
+		const query = { userId };
+
+		// search=food or search=foo
+		if (search) {
+			query.title = { $regex: search, $options: "i" };
+		}
+
+		// custom=true or custom=false
+		if (custom) query.custom = custom;
+
+		// sort=amount or sort=-amount
+		const sortObj = {};
+		if (sort) {
+			const field = sort.startsWith("-") ? sort.slice(1) : sort;
+			sortObj[field] = sort.startsWith("-") ? -1 : 1;
+		}
+
+		const budgets = await Budget.find(query)
+			.sort(sortObj)
+			.skip((page - 1) * limit)
+			.limit(Number(limit));
+
+		const totalCount = await Budget.countDocuments(query);
+		const totalPages = Math.ceil(totalCount / limit);
+
+		res.json({
+			budgets,
+			page,
+			totalCount,
+			totalPages,
+		});
+	} catch (err) {
+		res.status(500).json({ error: "Server error" });
 	}
-	res.json(doc.budgets);
 };
 
 const addBudget = async (req, res) => {
