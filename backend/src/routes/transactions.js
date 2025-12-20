@@ -1,6 +1,7 @@
 const auth = require("../middleware/auth");
 const {
 	createTransaction,
+	createTransactions,
 	deleteTransaction,
 	getTransaction,
 	getTransactions,
@@ -11,6 +12,8 @@ const router = express.Router();
 
 // POST /transactions
 router.post("/", auth, createTransaction);
+// POST /transactions/bulk
+router.post("/bulk", auth, createTransactions);
 // GET /transactions
 router.get("/", auth, getTransactions);
 // GET /transactions/:id

@@ -59,6 +59,25 @@ const addCategory = async (req, res) => {
 	res.json(doc.categories);
 };
 
+const addCategories = async (req, res) => {
+	const { names } = req.body;
+	if (!Array.isArray(names) || names.length === 0) {
+		return res
+			.status(400)
+			.json({ error: "Provide an array of category names" });
+	}
+	let doc = await Categories.findOne({ userId: req.user.id });
+	if (!doc)
+		doc = await Categories.create({ userId: req.user.id, categories: [] });
+	const newCategories = names.filter((name) => !doc.categories.includes(name));
+	if (newCategories.length === 0) {
+		return res.status(400).json({ error: "All categories already exist" });
+	}
+	doc.categories.push(...newCategories);
+	await doc.save();
+	res.json({ added: newCategories, allCategories: doc.categories });
+};
+
 const renameCategory = async (req, res) => {
 	const oldName = req.params.name;
 	const { newName } = req.body;
@@ -84,6 +103,7 @@ const deleteCategory = async (req, res) => {
 module.exports = {
 	getCategories,
 	addCategory,
+	addCategories,
 	renameCategory,
 	deleteCategory,
 };

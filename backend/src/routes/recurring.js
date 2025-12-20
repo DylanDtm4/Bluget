@@ -1,6 +1,7 @@
 const auth = require("../middleware/auth");
 const {
 	createRecurringTransaction,
+	createRecurringTransactions,
 	getRecurringTransactions,
 	updateRecurringTransaction,
 	deleteRecurringTransaction,
@@ -10,6 +11,8 @@ const router = express.Router();
 
 // POST /recurring
 router.post("/", auth, createRecurringTransaction);
+// POST /recurring/bulk
+router.post("/bulk", auth, createRecurringTransactions);
 // GET /recurring
 router.get("/", auth, getRecurringTransactions);
 // PUT /recurring/:id

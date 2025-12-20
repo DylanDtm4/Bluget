@@ -6,6 +6,17 @@ const createTransaction = async (req, res) => {
 	res.json(tx);
 };
 
+// for testing purposes
+const createTransactions = async (req, res) => {
+	const transactionsWithUser = req.body.map((tx) => ({
+		...tx,
+		userId: req.user.id,
+	}));
+
+	const saved = await Transaction.insertMany(transactionsWithUser);
+	res.json(saved);
+};
+
 const getTransactions = async (req, res) => {
 	try {
 		const userId = req.user.id;
@@ -13,10 +24,10 @@ const getTransactions = async (req, res) => {
 			search,
 			category,
 			type,
-			min,
+			min = 0,
 			max,
 			startDate,
-			endDate,
+			endDate = new Date(),
 			sort,
 			page = 1,
 			limit = 10,
@@ -28,16 +39,29 @@ const getTransactions = async (req, res) => {
 				.json({ error: "Page and limit must be positive integers" });
 		}
 
+		if (min < 0 || max < min) {
+			return res.status(400).json({
+				error:
+					"Min must be a positive number and max must be greater than or equal to min",
+			});
+		}
+
+		if (startDate && new Date(startDate) > endDate) {
+			return res
+				.status(400)
+				.json({ error: "Start date must be before or equal to end date" });
+		}
+
 		const query = { userId };
 
 		// search=coffee or search=cof
 		if (search) {
-			query.title = { $regex: search, $options: "i" };
+			query.note = { $regex: search, $options: "i" };
 		}
 
 		// category=Food&type=expense
-		if (category) query.category = category;
-		if (type) query.type = type;
+		if (category) query.category = { $regex: category, $options: "i" };
+		if (type) query.type = { $regex: type, $options: "i" };
 
 		// min=10&max=100
 		if (min || max) {
@@ -47,7 +71,7 @@ const getTransactions = async (req, res) => {
 		}
 
 		// startDate=2025-01-01&endDate=2025-01-31
-		if (startDate || endDate) {
+		if (startDate && endDate) {
 			query.date = {};
 			if (startDate) query.date.$gte = new Date(startDate);
 			if (endDate) query.date.$lte = new Date(endDate);
@@ -109,6 +133,7 @@ const deleteTransaction = async (req, res) => {
 
 module.exports = {
 	createTransaction,
+	createTransactions,
 	getTransactions,
 	getTransaction,
 	updateTransaction,

@@ -6,7 +6,9 @@ const {
 const express = require("express");
 const router = express.Router();
 
-// GET /years/summary?year=2025
+// GET /stats/summary?year=2025
 router.get("/summary", auth, getYearlyStats);
+// GET /stats/trends?year=2025
+router.get("/trends", auth, getMonthlyTrends);
 
 module.exports = router;

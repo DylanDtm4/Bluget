@@ -28,7 +28,7 @@ const statsRoutes = require("./routes/stats");
 app.use("/auth", authRoutes);
 app.use("/transactions", transactionRoutes);
 app.use("/recurring", recurringRoutes);
-app.use("/month", monthRoutes);
+app.use("/months", monthRoutes);
 app.use("/budgets", budgetRoutes);
 app.use("/categories", categoryRoutes);
 app.use("/stats", statsRoutes);

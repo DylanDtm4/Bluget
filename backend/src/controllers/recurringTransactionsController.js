@@ -7,11 +7,24 @@ const createRecurringTransaction = async (req, res) => {
 	res.json(tx);
 };
 
+// for testing purposes
+const createRecurringTransactions = async (req, res) => {
+	const recurringTransactionsWithUser = req.body.map((tx) => ({
+		...tx,
+		userId: req.user.id,
+	}));
+
+	const saved = await RecurringTransaction.insertMany(
+		recurringTransactionsWithUser
+	);
+	res.json(saved);
+};
+
 const getRecurringTransactions = async (req, res) => {
 	try {
 		const userId = req.user.id;
 		// page=2&limit=10
-		const { search, sort, page = 1, limit = 10 } = req.query;
+		const { search, sort, type, frequency, page = 1, limit = 10 } = req.query;
 		if (page < 1 || limit < 1) {
 			return res
 				.status(400)
@@ -19,10 +32,19 @@ const getRecurringTransactions = async (req, res) => {
 		}
 
 		const query = { userId };
+		// type=income or type=expense
+		if (type) {
+			query.type = type;
+		}
+
+		// frequency=daily or frequency=weekly
+		if (frequency) {
+			query.frequency = frequency;
+		}
 
 		// search=rent or search=ren
 		if (search) {
-			query.title = { $regex: search, $options: "i" };
+			query.note = { $regex: search, $options: "i" };
 		}
 
 		// sort=amount or sort=-amount
@@ -37,7 +59,15 @@ const getRecurringTransactions = async (req, res) => {
 			.skip((page - 1) * limit)
 			.limit(Number(limit));
 
-		res.json(recurringTransactions);
+		const totalCount = await RecurringTransaction.countDocuments(query);
+		const totalPages = Math.ceil(totalCount / limit);
+
+		res.json({
+			recurringTransactions,
+			page,
+			totalCount,
+			totalPages,
+		});
 	} catch (err) {
 		res.status(500).json({ error: "Server error" });
 	}
@@ -65,6 +95,7 @@ const deleteRecurringTransaction = async (req, res) => {
 
 module.exports = {
 	createRecurringTransaction,
+	createRecurringTransactions,
 	getRecurringTransactions,
 	updateRecurringTransaction,
 	deleteRecurringTransaction,

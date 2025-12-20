@@ -15,11 +15,13 @@ const getBudgets = async (req, res) => {
 
 		// search=food or search=foo
 		if (search) {
-			query.title = { $regex: search, $options: "i" };
+			query.note = { $regex: search, $options: "i" };
 		}
 
 		// custom=true or custom=false
-		if (custom) query.custom = custom;
+		if (custom === "true" || custom === "false") {
+			query.custom = custom === "true";
+		}
 
 		// sort=amount or sort=-amount
 		const sortObj = {};
@@ -59,6 +61,22 @@ const addBudget = async (req, res) => {
 	res.json(doc.budgets);
 };
 
+const addBudgets = async (req, res) => {
+	const { names } = req.body;
+	if (!Array.isArray(names) || names.length === 0) {
+		return res.status(400).json({ error: "Provide an array of budget names" });
+	}
+	let doc = await Budgets.findOne({ userId: req.user.id });
+	if (!doc) doc = await Budgets.create({ userId: req.user.id, budgets: [] });
+	const newBudgets = names.filter((name) => !doc.budgets.includes(name));
+	if (newBudgets.length === 0) {
+		return res.status(400).json({ error: "All budgets already exist" });
+	}
+	doc.budgets.push(...newBudgets);
+	await doc.save();
+	res.json({ added: newBudgets, allBudgets: doc.budgets });
+};
+
 const updateBudget = async (req, res) => {
 	const updatedTx = await Budgets.findOneAndUpdate(
 		{ _id: req.params.id, userId: req.user.id },
@@ -81,6 +99,7 @@ const deleteBudget = async (req, res) => {
 module.exports = {
 	getBudgets,
 	addBudget,
+	addBudgets,
 	updateBudget,
 	deleteBudget,
 };

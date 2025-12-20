@@ -2,6 +2,7 @@ const auth = require("../middleware/auth");
 const {
 	getBudgets,
 	addBudget,
+	addBudgets,
 	updateBudget,
 	deleteBudget,
 } = require("../controllers/budgetsController");
@@ -12,6 +13,8 @@ const router = express.Router();
 router.get("/", auth, getBudgets);
 // POST /budgets
 router.post("/", auth, addBudget);
+// POST /budgets/bulk
+router.post("/bulk", auth, addBudgets);
 // PUT /budgets/:id
 router.put("/:id", auth, updateBudget);
 // DELETE /budgets/:id

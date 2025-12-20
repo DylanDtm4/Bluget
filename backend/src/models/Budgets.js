@@ -6,6 +6,8 @@ const BudgetsSchema = new mongoose.Schema({
 	amount: Number,
 	month: Number,
 	year: Number,
+	custom: Boolean,
+	note: String,
 });
 
 module.exports = mongoose.model("Budgets", BudgetsSchema);
