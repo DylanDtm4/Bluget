@@ -1,21 +1,21 @@
 import "./styles/globals.css";
-import { AuthProvider } from "@/context/AuthProvider";
+import { AuthProvider } from "@/context/AuthContext";
 
 export const metadata = {
-	title: "Bluget",
-	description: "Budgeting app",
+  title: "Bluget",
+  description: "Budgeting app",
 };
 
 export default function RootLayout({
-	children,
+  children,
 }: {
-	children: React.ReactNode;
+  children: React.ReactNode;
 }) {
-	return (
-		<html lang="en">
-			<body>
-				<AuthProvider>{children}</AuthProvider>
-			</body>
-		</html>
-	);
+  return (
+    <html lang="en">
+      <body>
+        <AuthProvider>{children}</AuthProvider>
+      </body>
+    </html>
+  );
 }
