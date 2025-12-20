@@ -3,8 +3,9 @@ const {
 	getCategories,
 	addCategory,
 	addCategories,
-	renameCategory,
+	updateCategory,
 	deleteCategory,
+	clearCategories,
 } = require("../controllers/categoriesController.js");
 const express = require("express");
 const router = express.Router();
@@ -16,8 +17,10 @@ router.post("/", auth, addCategory);
 // POST /categories/bulk
 router.post("/bulk", auth, addCategories);
 // PUT /categories/:name
-router.put("/:name", auth, renameCategory);
+router.put("/:name", auth, updateCategory);
 // DELETE /categories/:name
 router.delete("/:name", auth, deleteCategory);
+// DELETE /categories
+router.delete("/", auth, clearCategories);
 
 module.exports = router;

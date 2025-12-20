@@ -47,63 +47,118 @@ const getCategories = async (req, res) => {
 };
 
 const addCategory = async (req, res) => {
-	const { name } = req.body;
-	let doc = await Categories.findOne({ userId: req.user.id });
-	if (!doc)
-		doc = await Categories.create({ userId: req.user.id, categories: [] });
-	if (doc.categories.includes(name)) {
-		return res.status(400).json({ error: "Category already exists" });
+	const { category } = req.body;
+
+	if (!category) {
+		return res.status(400).json({ error: "category is required" });
 	}
-	doc.categories.push(name);
-	await doc.save();
-	res.json(doc.categories);
+
+	// Check if a category already exists for this user
+	const existing = await Category.findOne({
+		userId: req.user.id,
+		category,
+	});
+
+	if (existing) {
+		return res
+			.status(400)
+			.json({ error: "Category already exists for this user" });
+	}
+
+	// Create new category
+	const newCategory = await Category.create({
+		userId: req.user.id,
+		...req.body,
+	});
+
+	res.json(newCategory);
 };
 
 const addCategories = async (req, res) => {
-	const { names } = req.body;
-	if (!Array.isArray(names) || names.length === 0) {
+	const categories = req.body;
+
+	if (!Array.isArray(categories) || categories.length === 0) {
 		return res
 			.status(400)
-			.json({ error: "Provide an array of category names" });
+			.json({ error: "Provide an json of category objects" });
 	}
-	let doc = await Categories.findOne({ userId: req.user.id });
-	if (!doc)
-		doc = await Categories.create({ userId: req.user.id, categories: [] });
-	const newCategories = names.filter((name) => !doc.categories.includes(name));
-	if (newCategories.length === 0) {
-		return res.status(400).json({ error: "All categories already exist" });
+
+	const added = [];
+	const skipped = [];
+
+	for (const c of categories) {
+		const { category } = c;
+		if (!category) {
+			skipped.push({ ...c, reason: "Missing category" });
+			continue;
+		}
+
+		// Check for duplicate
+		const exists = await Category.findOne({
+			userId: req.user.id,
+			category,
+		});
+
+		if (exists) {
+			skipped.push({ ...c, reason: "Duplicate category" });
+			continue;
+		}
+
+		// Create new category
+		const newCategory = await Category.create({ userId: req.user.id, ...c });
+		added.push(newCategory);
 	}
-	doc.categories.push(...newCategories);
-	await doc.save();
-	res.json({ added: newCategories, allCategories: doc.categories });
+	res.json({ added, skipped });
 };
 
-const renameCategory = async (req, res) => {
-	const oldName = req.params.name;
-	const { newName } = req.body;
-	const doc = await Categories.findOne({ userId: req.user.id });
-	if (!doc) return res.status(404).json({ error: "No categories found" });
-	const index = doc.categories.indexOf(oldName);
-	if (index === -1)
+const updateCategory = async (req, res) => {
+	const { category } = req.body;
+
+	// Check if the update would create a duplicate
+	const existing = await Category.findOne({
+		userId: req.user.id,
+		category,
+		_id: { $ne: req.params.id }, // <-- ignore the category we are updating
+	});
+
+	if (existing) {
+		return res
+			.status(400)
+			.json({ error: "A category with this name already exists" });
+	}
+
+	// Perform the update
+	const updatedCategory = await Category.findOneAndUpdate(
+		{ _id: req.params.id, userId: req.user.id },
+		{ ...req.body },
+		{ new: true }
+	);
+
+	if (!updatedCategory)
 		return res.status(404).json({ error: "Category not found" });
-	doc.categories[index] = newName;
-	await doc.save();
-	res.json(doc.categories);
+
+	res.json(updatedCategory);
 };
 
 const deleteCategory = async (req, res) => {
-	const name = req.params.name;
-	const doc = await Categories.findOne({ userId: req.user.id });
-	if (!doc) return res.status(404).json({ error: "No categories found" });
-	doc.categories = doc.categories.filter((c) => c !== name);
-	await doc.save();
-	res.json(doc.categories);
+	const deleted = await Category.findOneAndDelete({
+		_id: req.params.id,
+		userId: req.user.id,
+	});
+	if (!deleted) return res.status(404).send("Category not found");
+	res.json({ message: "Category deleted" });
+};
+
+const clearCategories = async (req, res) => {
+	await Category.deleteMany({ userId: req.user.id });
+	res.json({ message: "All your categories have been cleared" });
 };
 
 module.exports = {
 	getCategories,
 	addCategory,
 	addCategories,
-	renameCategory,
+	updateCategory,
 	deleteCategory,
+	clearCategories,
 };

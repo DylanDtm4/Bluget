@@ -131,6 +131,11 @@ const deleteTransaction = async (req, res) => {
 	res.json({ message: "Transaction deleted" });
 };
 
+const clearTransactions = async (req, res) => {
+	await Transaction.deleteMany({ userId: req.user.id });
+	res.json({ message: "All your transactions have been cleared" });
+};
+
 module.exports = {
 	createTransaction,
 	createTransactions,
@@ -138,4 +143,5 @@ module.exports = {
 	getTransaction,
 	updateTransaction,
 	deleteTransaction,
+	clearTransactions,
 };

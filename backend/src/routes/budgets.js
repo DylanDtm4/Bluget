@@ -5,6 +5,7 @@ const {
 	addBudgets,
 	updateBudget,
 	deleteBudget,
+	clearBudgets,
 } = require("../controllers/budgetsController");
 const express = require("express");
 const router = express.Router();
@@ -19,5 +20,6 @@ router.post("/bulk", auth, addBudgets);
 router.put("/:id", auth, updateBudget);
 // DELETE /budgets/:id
 router.delete("/:id", auth, deleteBudget);
-
+// DELETE /budgets
+router.delete("/", auth, clearBudgets);
 module.exports = router;

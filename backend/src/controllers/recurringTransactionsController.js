@@ -93,10 +93,16 @@ const deleteRecurringTransaction = async (req, res) => {
 	res.json({ message: "Recurring Transaction deleted" });
 };
 
+const clearRecurringTransactions = async (req, res) => {
+	await RecurringTransaction.deleteMany({ userId: req.user.id });
+	res.json({ message: "All your recurring transactions have been cleared" });
+};
+
 module.exports = {
 	createRecurringTransaction,
 	createRecurringTransactions,
 	getRecurringTransactions,
 	updateRecurringTransaction,
 	deleteRecurringTransaction,
+	clearRecurringTransactions,
 };

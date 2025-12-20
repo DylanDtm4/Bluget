@@ -1,10 +1,10 @@
-const Budgets = require("../models/Budgets.js");
+const Budgets = require("../models/Budget.js");
 
 const getBudgets = async (req, res) => {
 	try {
 		const userId = req.user.id;
 		// page=2&limit=10
-		const { search, custom, sort, page = 1, limit = 10 } = req.query;
+		const { search, sort, page = 1, limit = 10 } = req.query;
 		if (page < 1 || limit < 1) {
 			return res
 				.status(400)
@@ -16,11 +16,6 @@ const getBudgets = async (req, res) => {
 		// search=food or search=foo
 		if (search) {
 			query.note = { $regex: search, $options: "i" };
-		}
-
-		// custom=true or custom=false
-		if (custom === "true" || custom === "false") {
-			query.custom = custom === "true";
 		}
 
 		// sort=amount or sort=-amount
@@ -50,50 +45,117 @@ const getBudgets = async (req, res) => {
 };
 
 const addBudget = async (req, res) => {
-	const { name } = req.body;
-	let doc = await Budgets.findOne({ userId: req.user.id });
-	if (!doc) doc = await Budgets.create({ userId: req.user.id, budgets: [] });
-	if (doc.budgets.includes(name)) {
-		return res.status(400).json({ error: "Budget already exists" });
+	const { category, month, year } = req.body;
+
+	if (!category || !month || !year) {
+		return res
+			.status(400)
+			.json({ error: "category, month, and year are required" });
 	}
-	doc.budgets.push(name);
-	await doc.save();
-	res.json(doc.budgets);
+
+	// Check if a budget already exists for this user + category + month + year
+	const existing = await Budget.findOne({
+		userId: req.user.id,
+		category,
+		month,
+		year,
+	});
+
+	if (existing) {
+		return res
+			.status(400)
+			.json({ error: "Budget already exists for this category and month" });
+	}
+
+	// Create new budget
+	const budget = await Budget.create({
+		userId: req.user.id,
+		...req.body,
+	});
+
+	res.json(budget);
 };
 
 const addBudgets = async (req, res) => {
-	const { names } = req.body;
-	if (!Array.isArray(names) || names.length === 0) {
-		return res.status(400).json({ error: "Provide an array of budget names" });
+	const budgets = req.body;
+
+	if (!Array.isArray(budgets) || Budget.length === 0) {
+		return res.status(400).json({ error: "Provide an json of budget objects" });
 	}
-	let doc = await Budgets.findOne({ userId: req.user.id });
-	if (!doc) doc = await Budgets.create({ userId: req.user.id, budgets: [] });
-	const newBudgets = names.filter((name) => !doc.budgets.includes(name));
-	if (newBudgets.length === 0) {
-		return res.status(400).json({ error: "All budgets already exist" });
+
+	const added = [];
+	const skipped = [];
+
+	for (const b of budgets) {
+		const { category, month, year } = b;
+		if (!category || !month || !year) {
+			skipped.push({ ...b, reason: "Missing category, month, or year" });
+			continue;
+		}
+
+		// Check for duplicate
+		const exists = await Budget.findOne({
+			userId: req.user.id,
+			category,
+			month,
+			year,
+		});
+
+		if (exists) {
+			skipped.push({ ...b, reason: "Duplicate budget" });
+			continue;
+		}
+
+		// Create new budget
+		const newBudget = await Budget.create({ userId: req.user.id, ...b });
+		added.push(newBudget);
 	}
-	doc.budgets.push(...newBudgets);
-	await doc.save();
-	res.json({ added: newBudgets, allBudgets: doc.budgets });
+	res.json({ added, skipped });
 };
 
 const updateBudget = async (req, res) => {
-	const updatedTx = await Budgets.findOneAndUpdate(
+	const { category, month, year } = req.body;
+
+	// Check if the update would create a duplicate
+	const existing = await Budget.findOne({
+		userId: req.user.id,
+		category,
+		month,
+		year,
+		_id: { $ne: req.params.id }, // <-- ignore the budget we are updating
+	});
+
+	if (existing) {
+		return res
+			.status(400)
+			.json({ error: "A budget for this category and month already exists" });
+	}
+
+	// Perform the update
+	const updatedBudget = await Budget.findOneAndUpdate(
 		{ _id: req.params.id, userId: req.user.id },
 		{ ...req.body },
 		{ new: true }
 	);
-	if (!updatedTx) return res.status(404).send("Budget not found");
-	res.json(updatedTx);
+
+	if (!updatedBudget)
+		return res.status(404).json({ error: "Budget not found" });
+
+	res.json(updatedBudget);
 };
 
 const deleteBudget = async (req, res) => {
-	const name = req.params.name;
-	const doc = await Budgets.findOne({ userId: req.user.id });
-	if (!doc) return res.status(404).json({ error: "No budgets found" });
-	doc.budgets = doc.budgets.filter((c) => c !== name);
-	await doc.save();
-	res.json(doc.budgets);
+	const deleted = await Budget.findOneAndDelete({
+		_id: req.params.id,
+		userId: req.user.id,
+	});
+	if (!deleted) return res.status(404).send("Budget not found");
+	res.json({ message: "Budget deleted" });
+};
+
+const clearBudgets = async (req, res) => {
+	await Budget.deleteMany({ userId: req.user.id });
+	res.json({ message: "All your budgets have been cleared" });
 };
 
 module.exports = {
@@ -102,4 +164,5 @@ module.exports = {
 	addBudgets,
 	updateBudget,
 	deleteBudget,
+	clearBudgets,
 };

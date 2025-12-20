@@ -5,6 +5,7 @@ const {
 	getRecurringTransactions,
 	updateRecurringTransaction,
 	deleteRecurringTransaction,
+	clearRecurringTransactions,
 } = require("../controllers/recurringTransactionsController.js");
 const express = require("express");
 const router = express.Router();
@@ -19,5 +20,7 @@ router.get("/", auth, getRecurringTransactions);
 router.put("/:id", auth, updateRecurringTransaction);
 // DEL /recurring/:id
 router.delete("/:id", auth, deleteRecurringTransaction);
+// DEL /recurring
+router.delete("/", auth, clearRecurringTransactions);
 
 module.exports = router;
