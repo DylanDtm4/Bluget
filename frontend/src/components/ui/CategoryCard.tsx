@@ -3,29 +3,22 @@
 import { useState } from "react";
 import Link from "next/link";
 
-type TransactionCardProps = {
+type CategoryCardProps = {
 	id: string;
-	type: string;
 	category: string;
-	date: string;
-	amount: number;
-	note?: string;
+	custom: boolean;
 	onDelete?: (id: string) => void;
 	onEdit?: (id: string) => void;
 };
 
-export default function TransactionCard({
+export default function CategoryCard({
 	id,
-	type,
 	category,
-	date,
-	amount,
-	note,
+	custom,
 	onDelete,
 	onEdit,
-}: TransactionCardProps) {
+}: CategoryCardProps) {
 	const [expanded, setExpanded] = useState(false);
-	const color = type.toLowerCase() === "income" ? "green" : "red";
 
 	return (
 		<div
@@ -47,25 +40,16 @@ export default function TransactionCard({
 				}}
 			>
 				<div>
-					<p>
-						<span style={{ fontWeight: "bold" }}>{type}:</span>{" "}
-						<span>{category}</span>
+					<p style={{ fontWeight: "bold" }}>{category}:</p>
+					<p style={{ fontSize: "0.9rem", color: "#555" }}>
+						{custom ? "Custom" : "Default"}
 					</p>
-					<p style={{ fontSize: "0.9rem", color: "#555" }}>{date}</p>
 				</div>
-
-				<div style={{ fontWeight: "bold", color }}>${amount.toFixed(2)}</div>
 			</div>
 
 			{/* Expanded Section */}
 			{expanded && (
 				<div style={{ marginTop: "0.75rem" }}>
-					{note && (
-						<p style={{ fontSize: "0.9rem", marginBottom: "0.75rem" }}>
-							<strong>Note:</strong> {note}
-						</p>
-					)}
-
 					<div style={{ display: "flex", gap: "0.75rem" }}>
 						<button
 							onClick={(e) => {
@@ -85,14 +69,6 @@ export default function TransactionCard({
 						>
 							Delete
 						</button>
-
-						<Link
-							href={`/transactions/${id}`}
-							onClick={(e) => e.stopPropagation()}
-							style={{ textDecoration: "underline" }}
-						>
-							View Details
-						</Link>
 					</div>
 				</div>
 			)}
