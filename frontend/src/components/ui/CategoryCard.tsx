@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 
 type CategoryCardProps = {
 	id: string;
@@ -40,7 +39,7 @@ export default function CategoryCard({
 				}}
 			>
 				<div>
-					<p style={{ fontWeight: "bold" }}>{category}:</p>
+					<p style={{ fontWeight: "bold" }}>{category}</p>
 					<p style={{ fontSize: "0.9rem", color: "#555" }}>
 						{custom ? "Custom" : "Default"}
 					</p>

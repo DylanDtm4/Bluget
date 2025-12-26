@@ -3,8 +3,11 @@ const mongoose = require("mongoose");
 const TransactionSchema = new mongoose.Schema({
 	userId: String,
 	amount: Number,
-	type: { type: String, enum: ["expense", "income", "investment", "savings"] },
-	category: String,
+	mainCategory: {
+		type: String,
+		enum: ["expense", "income", "investment", "savings"],
+	},
+	secondaryCategory: String,
 	date: Date,
 	note: String,
 });

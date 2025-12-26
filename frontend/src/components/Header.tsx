@@ -9,6 +9,7 @@ export default function Header() {
 				<Link href="/budgets">Budgets</Link> |{" "}
 				<Link href="/categories">Categories</Link> |{" "}
 				<Link href="/transactions">Transactions</Link> |{" "}
+				<Link href="/recurring">Recurring Transactions</Link> |{" "}
 				<Link href="/login">Login</Link>
 			</nav>
 		</header>
