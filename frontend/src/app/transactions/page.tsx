@@ -41,6 +41,11 @@ export default function TransactionsPage() {
 	return (
 		<>
 			<div>
+				<Link href="/transactions/new" color="blue">
+					Add New Transaction
+				</Link>
+			</div>
+			<div>
 				<h1>Recent Transactions</h1>
 				{sampleTransactions.map((tx) => (
 					<Card
@@ -58,11 +63,6 @@ export default function TransactionsPage() {
 						onDelete={() => handleDelete(tx.id)}
 					/>
 				))}
-			</div>
-			<div>
-				<Link href="/transactions/new" color="blue">
-					Add New Transaction
-				</Link>
 			</div>
 		</>
 	);

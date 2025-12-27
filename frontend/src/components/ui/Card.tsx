@@ -5,13 +5,13 @@ import Link from "next/link";
 
 type BudgetData = {
 	amount: number;
-	spent: number;
-	remaining: number;
+	month: number;
+	year: number;
+	note?: string;
 };
 
 type CategoryData = {
-	name: string;
-	type: string;
+	custom: boolean;
 };
 
 type RecurringData = {
@@ -52,218 +52,161 @@ export default function Card({
 }: CardProps) {
 	const [expanded, setExpanded] = useState(false);
 
-	const renderContent = () => {
+	const getCardContent = () => {
 		switch (type) {
-			case "budget":
+			case "budget": {
 				const budgetData = data as BudgetData;
-				return (
-					<>
-						<p>Amount: ${budgetData.amount.toFixed(2)}</p>
-						<p>Spent: ${budgetData.spent.toFixed(2)}</p>
-						<p>Remaining: ${budgetData.remaining.toFixed(2)}</p>
-					</>
-				);
-			case "category":
+				return {
+					subtitle: `${budgetData.year}-${budgetData.month
+						.toString()
+						.padStart(2, "0")}`,
+					amount: budgetData.amount,
+					color: "red",
+					extraInfo: budgetData.note,
+				};
+			}
+			case "category": {
 				const categoryData = data as CategoryData;
-				return (
-					<>
-						<p>Name: {categoryData.name}</p>
-						<p>Type: {categoryData.type}</p>
-					</>
-				);
+				return {
+					subtitle: `Custom: ${
+						categoryData.custom.toString().charAt(0).toUpperCase() +
+						categoryData.custom.toString().slice(1)
+					}`,
+					amount: null,
+					color: null,
+					extraInfo: null,
+				};
+			}
 			case "recurring": {
 				const recurringData = data as RecurringData;
-				const color =
-					recurringData.mainCategory.toLowerCase() === "income"
-						? "green"
-						: "red";
-				return (
-					<div
-						onClick={() => setExpanded(!expanded)}
-						style={{
-							border: "1px solid #ccc",
-							borderRadius: "8px",
-							padding: "1rem",
-							marginBottom: "1rem",
-							cursor: "pointer",
-						}}
-					>
-						{/* Top Row */}
-						<div
-							style={{
-								display: "flex",
-								justifyContent: "space-between",
-								alignItems: "center",
-							}}
-						>
-							<div>
-								<p>
-									<span style={{ fontWeight: "bold" }}>{title}:</span>{" "}
-									<span>{recurringData.secondaryCategory}</span>
+				return {
+					subtitle: `${recurringData.frequency} - Next: ${recurringData.nextRun}`,
+					secondaryTitle: recurringData.secondaryCategory,
+					amount: recurringData.amount,
+					color:
+						recurringData.mainCategory.toLowerCase() === "income"
+							? "green"
+							: "red",
+					extraInfo: (
+						<>
+							{recurringData.startDate && (
+								<p style={{ fontSize: "0.9rem", marginBottom: "0.75rem" }}>
+									<strong>Start Date:</strong>{" "}
+									{new Date(recurringData.startDate).toLocaleDateString()}
 								</p>
-								<p style={{ fontSize: "0.9rem", color: "#555" }}>
-									{recurringData.frequency} - Next: {recurringData.nextRun}
+							)}
+							{recurringData.endDate && (
+								<p style={{ fontSize: "0.9rem", marginBottom: "0.75rem" }}>
+									<strong>End Date:</strong>{" "}
+									{new Date(recurringData.endDate).toLocaleDateString()}
 								</p>
-							</div>
-
-							<div style={{ fontWeight: "bold", color: color }}>
-								${recurringData.amount.toFixed(2)}
-							</div>
-						</div>
-
-						{/* Expanded Section */}
-						{expanded && (
-							<div style={{ marginTop: "0.75rem" }}>
-								{recurringData.startDate && (
-									<p style={{ fontSize: "0.9rem", marginBottom: "0.75rem" }}>
-										<strong>Start Date:</strong>{" "}
-										{new Date(recurringData.startDate).toLocaleDateString()}
-									</p>
-								)}
-								{recurringData.endDate && (
-									<p style={{ fontSize: "0.9rem", marginBottom: "0.75rem" }}>
-										<strong>End Date:</strong>{" "}
-										{new Date(recurringData.endDate).toLocaleDateString()}
-									</p>
-								)}
-								{recurringData.note && (
-									<p style={{ fontSize: "0.9rem", marginBottom: "0.75rem" }}>
-										<strong>Note:</strong> {recurringData.note}
-									</p>
-								)}
-
-								<div style={{ display: "flex", gap: "0.75rem" }}>
-									<button
-										onClick={(e) => {
-											e.stopPropagation();
-											onEdit?.();
-										}}
-									>
-										Edit
-									</button>
-
-									<button
-										onClick={(e) => {
-											e.stopPropagation();
-											onDelete?.();
-										}}
-										style={{ color: "red" }}
-									>
-										Delete
-									</button>
-
-									<Link
-										href={`/recurring/${id}`}
-										onClick={(e) => e.stopPropagation()}
-										style={{ textDecoration: "underline" }}
-									>
-										View Details
-									</Link>
-								</div>
-							</div>
-						)}
-					</div>
-				);
+							)}
+							{recurringData.note && (
+								<p style={{ fontSize: "0.9rem", marginBottom: "0.75rem" }}>
+									<strong>Note:</strong> {recurringData.note}
+								</p>
+							)}
+						</>
+					),
+				};
 			}
 			case "transaction": {
 				const transactionData = data as TransactionData;
-				const color =
-					transactionData.mainCategory.toLowerCase() === "income"
-						? "green"
-						: "red";
-				return (
-					<div
-						onClick={() => setExpanded(!expanded)}
-						style={{
-							border: "1px solid #ccc",
-							borderRadius: "8px",
-							padding: "1rem",
-							marginBottom: "1rem",
-							cursor: "pointer",
-						}}
-					>
-						{/* Top Row */}
-						<div
-							style={{
-								display: "flex",
-								justifyContent: "space-between",
-								alignItems: "center",
-							}}
-						>
-							<div>
-								<p>
-									<span style={{ fontWeight: "bold" }}>{title}:</span>{" "}
-									<span>{transactionData.secondaryCategory}</span>
-								</p>
-								<p style={{ fontSize: "0.9rem", color: "#555" }}>
-									{transactionData.date}
-								</p>
-							</div>
-
-							<div style={{ fontWeight: "bold", color: color }}>
-								${transactionData.amount.toFixed(2)}
-							</div>
-						</div>
-
-						{/* Expanded Section */}
-						{expanded && (
-							<div style={{ marginTop: "0.75rem" }}>
-								{transactionData.note && (
-									<p style={{ fontSize: "0.9rem", marginBottom: "0.75rem" }}>
-										<strong>Note:</strong> {transactionData.note}
-									</p>
-								)}
-
-								<div style={{ display: "flex", gap: "0.75rem" }}>
-									<button
-										onClick={(e) => {
-											e.stopPropagation();
-											onEdit?.();
-										}}
-									>
-										Edit
-									</button>
-
-									<button
-										onClick={(e) => {
-											e.stopPropagation();
-											onDelete?.();
-										}}
-										style={{ color: "red" }}
-									>
-										Delete
-									</button>
-
-									<Link
-										href={`/transactions/${id}`}
-										onClick={(e) => e.stopPropagation()}
-										style={{ textDecoration: "underline" }}
-									>
-										View Details
-									</Link>
-								</div>
-							</div>
-						)}
-					</div>
-				);
+				return {
+					subtitle: transactionData.date,
+					secondaryTitle: transactionData.secondaryCategory,
+					amount: transactionData.amount,
+					color:
+						transactionData.mainCategory.toLowerCase() === "income"
+							? "green"
+							: "red",
+					extraInfo: transactionData.note,
+				};
 			}
 		}
 	};
 
-	// For non-transaction types, use simpler card layout
-	/*
-	if (type !== "transaction") {
-		return (
-			<div className="card">
-				<h3>{title}</h3>
-				{renderContent()}
-				<div className="actions">
-					{onEdit && <button onClick={onEdit}>Edit</button>}
-					{onDelete && <button onClick={onDelete}>Delete</button>}
-				</div>
-			</div>
-		);
-	} */
+	const content = getCardContent();
+	const detailsPath = `/${
+		type === "budget" || type === "category" ? type + "s" : type
+	}/${id}`;
 
-	return <>{renderContent()}</>;
+	return (
+		<div
+			onClick={() => setExpanded(!expanded)}
+			style={{
+				border: "1px solid #ccc",
+				borderRadius: "8px",
+				padding: "1rem",
+				marginBottom: "1rem",
+				cursor: "pointer",
+			}}
+		>
+			{/* Top Row */}
+			<div
+				style={{
+					display: "flex",
+					justifyContent: "space-between",
+					alignItems: "center",
+				}}
+			>
+				<div>
+					<p>
+						<span style={{ fontWeight: "bold" }}>{title}:</span>{" "}
+						{content.secondaryTitle && <span>{content.secondaryTitle}</span>}
+					</p>
+					<p style={{ fontSize: "0.9rem", color: "#555" }}>
+						{content.subtitle}
+					</p>
+				</div>
+
+				{content.amount !== null && (
+					<div style={{ fontWeight: "bold", color: content.color || "black" }}>
+						${content.amount.toFixed(2)}
+					</div>
+				)}
+			</div>
+
+			{/* Expanded Section */}
+			{expanded && (
+				<div style={{ marginTop: "0.75rem" }}>
+					{typeof content.extraInfo === "string" && content.extraInfo && (
+						<p style={{ fontSize: "0.9rem", marginBottom: "0.75rem" }}>
+							<strong>Note:</strong> {content.extraInfo}
+						</p>
+					)}
+					{typeof content.extraInfo !== "string" && content.extraInfo}
+
+					<div style={{ display: "flex", gap: "0.75rem" }}>
+						<button
+							onClick={(e) => {
+								e.stopPropagation();
+								onEdit?.();
+							}}
+						>
+							Edit
+						</button>
+
+						<button
+							onClick={(e) => {
+								e.stopPropagation();
+								onDelete?.();
+							}}
+							style={{ color: "red" }}
+						>
+							Delete
+						</button>
+
+						<Link
+							href={detailsPath}
+							onClick={(e) => e.stopPropagation()}
+							style={{ textDecoration: "underline" }}
+						>
+							View Details
+						</Link>
+					</div>
+				</div>
+			)}
+		</div>
+	);
 }

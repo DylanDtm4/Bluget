@@ -2,8 +2,10 @@
 
 import Card from "@/components/ui/Card";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function RecurringPage() {
+	const router = useRouter();
 	const sampleRecurring = [
 		{
 			id: "1",
@@ -68,6 +70,7 @@ export default function RecurringPage() {
 	];
 
 	const handleEdit = (id: string) => {
+		router.push(`/recurring/${id}/edit`);
 		console.log("Edit", id);
 	};
 
@@ -77,6 +80,11 @@ export default function RecurringPage() {
 
 	return (
 		<>
+			<div>
+				<Link href="/recurring/new" color="blue">
+					Add New Recurring Transaction
+				</Link>
+			</div>
 			<div>
 				<h1>Current Recurring Transactions</h1>
 				{sampleRecurring.map((tx) => (
@@ -98,11 +106,6 @@ export default function RecurringPage() {
 						onDelete={() => handleDelete(tx.id)}
 					/>
 				))}
-			</div>
-			<div>
-				<Link href="/recurring/new" color="blue">
-					Add New Recurring Transaction
-				</Link>
 			</div>
 		</>
 	);
