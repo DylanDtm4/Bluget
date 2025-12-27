@@ -3,10 +3,13 @@
 import Form from "@/components/forms/Form";
 import { useRouter } from "next/navigation";
 
-export default function NewRecurringTransactionPage() {
+export default function EditTransactionPage({
+	params,
+}: {
+	params: { id: string };
+}) {
 	const router = useRouter();
 
-	// Define the fields for your transaction form
 	const transactionFields = [
 		{
 			name: "mainCategory",
@@ -30,21 +33,8 @@ export default function NewRecurringTransactionPage() {
 			placeholder: "0.00",
 		},
 		{
-			name: "frequency",
-			label: "Frequency",
-			type: "select" as const,
-			required: true,
-			options: ["Daily", "Weekly", "Biweekly", "Monthly"],
-		},
-		{
-			name: "startDate",
-			label: "Start Date",
-			type: "date" as const,
-			required: true,
-		},
-		{
-			name: "endDate",
-			label: "End Date",
+			name: "date",
+			label: "Date",
 			type: "date" as const,
 			required: true,
 		},
@@ -56,29 +46,29 @@ export default function NewRecurringTransactionPage() {
 		},
 	];
 
-	const handleSubmit = (data: Record<string, string | number>) => {
-		console.log("Form submitted:", data);
-
-		// Here you would send data to your API
-		// fetch('/recurring', {
-		//   method: 'POST',
-		//   body: JSON.stringify(data)
-		// })
-
-		// Then redirect back to recurring page
-		router.push("/recurring");
+	// Fetch existing data (for now using dummy data)
+	// In real app: useEffect to fetch from API
+	const existingTransaction = {
+		mainCategory: "Expense",
+		secondaryCategory: "Groceries",
+		amount: 50,
+		date: "2025-12-21",
+		note: "Weekly shopping",
 	};
 
-	const handleCancel = () => {
-		router.push("/recurring");
+	const handleSubmit = (data: Record<string, string | number>) => {
+		console.log("Updating transaction:", params.id, data);
+		// PUT request to API: /api/transactions/${params.id}
+		router.push("/transactions");
 	};
 
 	return (
 		<Form
-			title="Add New Recurring Transaction"
+			title="Edit Transaction"
 			fields={transactionFields}
 			onSubmit={handleSubmit}
-			onCancel={handleCancel}
+			onCancel={() => router.push("/transactions")}
+			initialData={existingTransaction}
 		/>
 	);
 }

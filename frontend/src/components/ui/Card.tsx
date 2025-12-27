@@ -17,7 +17,12 @@ type CategoryData = {
 type RecurringData = {
 	amount: number;
 	frequency: string;
-	nextDate: string;
+	nextRun: string;
+	secondaryCategory: string;
+	mainCategory: string;
+	note?: string;
+	startDate: Date;
+	endDate?: Date;
 };
 
 type TransactionData = {
@@ -66,16 +71,101 @@ export default function Card({
 						<p>Type: {categoryData.type}</p>
 					</>
 				);
-			case "recurring":
+			case "recurring": {
 				const recurringData = data as RecurringData;
+				const color =
+					recurringData.mainCategory.toLowerCase() === "income"
+						? "green"
+						: "red";
 				return (
-					<>
-						<p>Amount: ${recurringData.amount.toFixed(2)}</p>
-						<p>Frequency: {recurringData.frequency}</p>
-						<p>Next: {recurringData.nextDate}</p>
-					</>
+					<div
+						onClick={() => setExpanded(!expanded)}
+						style={{
+							border: "1px solid #ccc",
+							borderRadius: "8px",
+							padding: "1rem",
+							marginBottom: "1rem",
+							cursor: "pointer",
+						}}
+					>
+						{/* Top Row */}
+						<div
+							style={{
+								display: "flex",
+								justifyContent: "space-between",
+								alignItems: "center",
+							}}
+						>
+							<div>
+								<p>
+									<span style={{ fontWeight: "bold" }}>{title}:</span>{" "}
+									<span>{recurringData.secondaryCategory}</span>
+								</p>
+								<p style={{ fontSize: "0.9rem", color: "#555" }}>
+									{recurringData.frequency} - Next: {recurringData.nextRun}
+								</p>
+							</div>
+
+							<div style={{ fontWeight: "bold", color: color }}>
+								${recurringData.amount.toFixed(2)}
+							</div>
+						</div>
+
+						{/* Expanded Section */}
+						{expanded && (
+							<div style={{ marginTop: "0.75rem" }}>
+								{recurringData.startDate && (
+									<p style={{ fontSize: "0.9rem", marginBottom: "0.75rem" }}>
+										<strong>Start Date:</strong>{" "}
+										{new Date(recurringData.startDate).toLocaleDateString()}
+									</p>
+								)}
+								{recurringData.endDate && (
+									<p style={{ fontSize: "0.9rem", marginBottom: "0.75rem" }}>
+										<strong>End Date:</strong>{" "}
+										{new Date(recurringData.endDate).toLocaleDateString()}
+									</p>
+								)}
+								{recurringData.note && (
+									<p style={{ fontSize: "0.9rem", marginBottom: "0.75rem" }}>
+										<strong>Note:</strong> {recurringData.note}
+									</p>
+								)}
+
+								<div style={{ display: "flex", gap: "0.75rem" }}>
+									<button
+										onClick={(e) => {
+											e.stopPropagation();
+											onEdit?.();
+										}}
+									>
+										Edit
+									</button>
+
+									<button
+										onClick={(e) => {
+											e.stopPropagation();
+											onDelete?.();
+										}}
+										style={{ color: "red" }}
+									>
+										Delete
+									</button>
+
+									<Link
+										href={`/recurring/${id}`}
+										onClick={(e) => e.stopPropagation()}
+										style={{ textDecoration: "underline" }}
+									>
+										View Details
+									</Link>
+								</div>
+							</div>
+						)}
+					</div>
 				);
-			case "transaction":
+			}
+			case "transaction": {
 				const transactionData = data as TransactionData;
 				const color =
 					transactionData.mainCategory.toLowerCase() === "income"
@@ -110,7 +200,7 @@ export default function Card({
 								</p>
 							</div>
 
-							<div style={{ fontWeight: "bold", color }}>
+							<div style={{ fontWeight: "bold", color: color }}>
 								${transactionData.amount.toFixed(2)}
 							</div>
 						</div>
@@ -156,10 +246,12 @@ export default function Card({
 						)}
 					</div>
 				);
+			}
 		}
 	};
 
 	// For non-transaction types, use simpler card layout
+	/*
 	if (type !== "transaction") {
 		return (
 			<div className="card">
@@ -171,7 +263,7 @@ export default function Card({
 				</div>
 			</div>
 		);
-	}
+	} */
 
 	return <>{renderContent()}</>;
 }

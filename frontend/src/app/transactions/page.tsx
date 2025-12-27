@@ -2,8 +2,9 @@
 
 import Card from "@/components/ui/Card";
 import Link from "next/link";
-
+import { useRouter } from "next/navigation";
 export default function TransactionsPage() {
+	const router = useRouter();
 	const sampleTransactions = [
 		{
 			id: "1",
@@ -29,6 +30,7 @@ export default function TransactionsPage() {
 	];
 
 	const handleEdit = (id: string) => {
+		router.push(`/transactions/${id}/edit`);
 		console.log("Edit", id);
 	};
 

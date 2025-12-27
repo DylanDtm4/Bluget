@@ -1,7 +1,7 @@
 "use client";
 
 import { useAuth } from "@/context/AuthContext";
-import { redirect } from "next/navigation";
+import Link from "next/link";
 
 export default function DashboardPage() {
 	const { user, loading } = useAuth();
@@ -16,10 +16,11 @@ export default function DashboardPage() {
 				<h2>Balance</h2>
 				<p style={{ fontSize: 24 }}>$2,450</p>
 			</div>
+			<div>
+				<Link href="/transactions/new">Add Transaction</Link>
+			</div>
+			<Link href="/transactions">Recent Transactions</Link>
 
-			<button>Add Transaction</button>
-
-			<h3>Recent Transactions</h3>
 			<ul>
 				<li>Grocery - $45</li>
 				<li>Gas - $30</li>
