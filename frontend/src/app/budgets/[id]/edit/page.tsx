@@ -1,0 +1,83 @@
+"use client";
+
+import Form from "@/components/forms/Form";
+import { useRouter } from "next/navigation";
+
+export default function EditBudgetPage({ params }: { params: { id: string } }) {
+	const router = useRouter();
+
+	const budgetFields = [
+		{
+			name: "category",
+			label: "Category",
+			type: "text" as const,
+			required: true,
+			placeholder: "e.g., Groceries, Paycheck",
+		},
+		{
+			name: "amount",
+			label: "Amount",
+			type: "number" as const,
+			required: true,
+			placeholder: "0.00",
+		},
+		{
+			name: "month",
+			label: "Month",
+			type: "select" as const,
+			required: true,
+			options: [
+				"January",
+				"February",
+				"March",
+				"April",
+				"May",
+				"June",
+				"July",
+				"August",
+				"September",
+				"October",
+				"November",
+				"December",
+			],
+		},
+		{
+			name: "year",
+			label: "Year",
+			type: "number" as const,
+			required: true,
+		},
+		{
+			name: "note",
+			label: "Note",
+			type: "textarea" as const,
+			placeholder: "Optional note...",
+		},
+	];
+
+	// Fetch existing data (for now using dummy data)
+	// In real app: useEffect to fetch from API
+	const existingBudget = {
+		category: "Groceries",
+		amount: 200,
+		month: "December",
+		year: 2025,
+		note: "Monthly grocery budget",
+	};
+
+	const handleSubmit = (data: Record<string, string | number>) => {
+		console.log("Updating budget:", params.id, data);
+		// PUT request to API: /api/budgets/${params.id}
+		router.push("/budgets");
+	};
+
+	return (
+		<Form
+			title="Edit Budget"
+			fields={budgetFields}
+			onSubmit={handleSubmit}
+			onCancel={() => router.push("/budgets")}
+			initialData={existingBudget}
+		/>
+	);
+}

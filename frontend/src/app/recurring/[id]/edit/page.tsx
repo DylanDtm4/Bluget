@@ -72,9 +72,9 @@ export default function EditRecurringPage({
 	};
 
 	const handleSubmit = (data: Record<string, string | number>) => {
-		console.log("Updating transaction:", params.id, data);
-		// PUT request to API: /api/transactions/${params.id}
-		router.push("/transactions");
+		console.log("Updating recurringtransaction:", params.id, data);
+		// PUT request to API: /api/recurring/${params.id}
+		router.push("/recurring");
 	};
 
 	return (
