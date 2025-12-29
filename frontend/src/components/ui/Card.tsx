@@ -127,9 +127,13 @@ export default function Card({
 	};
 
 	const content = getCardContent();
-	const detailsPath = `/${
-		type === "budget" || type === "category" ? type + "s" : type
-	}/${id}`;
+	const pathMap: Record<typeof type, string> = {
+		budget: "budgets",
+		transaction: "transactions",
+		category: "categories",
+		recurring: "recurring",
+	};
+	const detailsPath = `/${pathMap[type]}/${id}`;
 
 	return (
 		<div

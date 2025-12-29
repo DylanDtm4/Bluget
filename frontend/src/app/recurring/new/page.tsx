@@ -7,7 +7,7 @@ export default function NewRecurringTransactionPage() {
 	const router = useRouter();
 
 	// Define the fields for your transaction form
-	const transactionFields = [
+	const recurringFields = [
 		{
 			name: "mainCategory",
 			label: "Type",
@@ -76,7 +76,7 @@ export default function NewRecurringTransactionPage() {
 	return (
 		<Form
 			title="Add New Recurring Transaction"
-			fields={transactionFields}
+			fields={recurringFields}
 			onSubmit={handleSubmit}
 			onCancel={handleCancel}
 		/>
