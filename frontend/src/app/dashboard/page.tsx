@@ -1,447 +1,166 @@
 "use client";
+import React, { useState } from "react";
+import {
+	ArrowUpCircle,
+	ArrowDownCircle,
+	PiggyBank,
+	CreditCard,
+	Home,
+	ShoppingCart,
+	Car,
+	Utensils,
+} from "lucide-react";
 
-import { useState } from "react";
-import Link from "next/link";
-
-export default function Dashboard() {
-	const [selectedMonth, setSelectedMonth] = useState("2025-12");
-
-	// Sample data - replace with real API data
-	const summary = {
-		totalIncome: 4200,
-		totalExpenses: 2850.5,
-		totalSavings: 500,
-		totalInvestments: 250,
-		netCashFlow: 599.5,
-	};
-
-	const budgets = [
-		{ id: "1", category: "Groceries", spent: 180, limit: 200, percentage: 90 },
-		{ id: "2", category: "Rent", spent: 1200, limit: 1200, percentage: 100 },
-		{ id: "3", category: "Utilities", spent: 85, limit: 130, percentage: 65 },
-		{
-			id: "4",
-			category: "Entertainment",
-			spent: 120,
-			limit: 150,
-			percentage: 80,
-		},
-	];
-
-	const recentTransactions = [
-		{
-			id: "1",
-			type: "Expense",
-			category: "Groceries",
-			amount: 45.2,
-			date: "2025-12-28",
-		},
-		{
-			id: "2",
-			type: "Income",
-			category: "Paycheck",
-			amount: 2000,
-			date: "2025-12-27",
-		},
-		{
-			id: "3",
-			type: "Expense",
-			category: "Gas",
-			amount: 55,
-			date: "2025-12-26",
-		},
-		{
-			id: "4",
-			type: "Expense",
-			category: "Restaurant",
-			amount: 35.8,
-			date: "2025-12-25",
-		},
-	];
-
-	const upcomingRecurring = [
-		{
-			id: "1",
-			category: "Rent",
-			amount: 1200,
-			dueDate: "2026-01-01",
-			type: "Expense",
-		},
-		{
-			id: "2",
-			category: "Paycheck",
-			amount: 2000,
-			dueDate: "2026-01-03",
-			type: "Income",
-		},
-		{
-			id: "3",
-			category: "Netflix",
-			amount: 15.99,
-			dueDate: "2026-01-05",
-			type: "Expense",
-		},
-	];
-
-	const getBudgetColor = (percentage: number) => {
-		if (percentage >= 100) return "#ef4444"; // red
-		if (percentage >= 80) return "#f59e0b"; // orange
-		return "#10b981"; // green
-	};
+export default function BudgetDashboard() {
+	const [budget] = useState({
+		income: 5420,
+		expenses: 3245,
+		balance: 2175,
+		categories: [
+			{ name: "Housing", spent: 1200, budget: 1500, icon: Home },
+			{ name: "Groceries", spent: 650, budget: 800, icon: ShoppingCart },
+			{ name: "Transport", spent: 320, budget: 400, icon: Car },
+			{ name: "Dining", spent: 480, budget: 600, icon: Utensils },
+		],
+	});
 
 	return (
-		<div style={{ padding: "2rem", maxWidth: "1400px", margin: "0 auto" }}>
-			{/* Header */}
-			<div style={{ marginBottom: "2rem" }}>
-				<h1
-					style={{
-						fontSize: "2rem",
-						fontWeight: "bold",
-						marginBottom: "0.5rem",
-					}}
-				>
-					Dashboard
-				</h1>
-				<div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-					<label>Month:</label>
-					<input
-						type="month"
-						value={selectedMonth}
-						onChange={(e) => setSelectedMonth(e.target.value)}
-						style={{
-							padding: "0.5rem",
-							border: "1px solid #ccc",
-							borderRadius: "4px",
-						}}
-					/>
+		<div className="min-h-screen bg-gradient-to-br from-sky-50 via-blue-50 to-indigo-100 p-8">
+			<div className="max-w-7xl mx-auto">
+				<div className="text-center mb-10">
+					<h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-2">
+						My Budget
+					</h1>
+					<p className="text-blue-600">Track your financial goals</p>
 				</div>
-			</div>
 
-			{/* Summary Cards */}
-			<div
-				style={{
-					display: "grid",
-					gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-					gap: "1rem",
-					marginBottom: "2rem",
-				}}
-			>
-				<SummaryCard
-					title="Total Income"
-					amount={summary.totalIncome}
-					color="#10b981"
-					icon="↑"
-				/>
-				<SummaryCard
-					title="Total Expenses"
-					amount={summary.totalExpenses}
-					color="#ef4444"
-					icon="↓"
-				/>
-				<SummaryCard
-					title="Savings"
-					amount={summary.totalSavings}
-					color="#3b82f6"
-					icon="💰"
-				/>
-				<SummaryCard
-					title="Investments"
-					amount={summary.totalInvestments}
-					color="#8b5cf6"
-					icon="📈"
-				/>
-				<SummaryCard
-					title="Net Cash Flow"
-					amount={summary.netCashFlow}
-					color={summary.netCashFlow >= 0 ? "#10b981" : "#ef4444"}
-					icon={summary.netCashFlow >= 0 ? "✓" : "✗"}
-				/>
-			</div>
-
-			{/* Main Content Grid */}
-			<div
-				style={{
-					display: "grid",
-					gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))",
-					gap: "1.5rem",
-				}}
-			>
-				{/* Budget Progress */}
-				<Section
-					title="Budget Progress"
-					linkHref="/budgets"
-					linkText="View All"
-				>
-					{budgets.map((budget) => (
-						<div
-							key={budget.id}
-							style={{
-								marginBottom: "1.5rem",
-								padding: "1rem",
-								backgroundColor: "#f9fafb",
-								borderRadius: "8px",
-							}}
-						>
-							<div
-								style={{
-									display: "flex",
-									justifyContent: "space-between",
-									marginBottom: "0.5rem",
-								}}
-							>
-								<span style={{ fontWeight: "600" }}>{budget.category}</span>
-								<span style={{ color: getBudgetColor(budget.percentage) }}>
-									${budget.spent.toFixed(2)} / ${budget.limit.toFixed(2)}
-								</span>
+				<div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+					<div className="bg-white/70 backdrop-blur-xl rounded-3xl p-8 shadow-lg border border-blue-200">
+						<div className="flex items-center gap-4 mb-4">
+							<div className="bg-gradient-to-br from-green-400 to-green-500 p-4 rounded-2xl shadow-lg">
+								<ArrowUpCircle className="text-white" size={28} />
 							</div>
-							<div
-								style={{
-									height: "8px",
-									backgroundColor: "#e5e7eb",
-									borderRadius: "4px",
-									overflow: "hidden",
-								}}
-							>
-								<div
-									style={{
-										height: "100%",
-										width: `${Math.min(budget.percentage, 100)}%`,
-										backgroundColor: getBudgetColor(budget.percentage),
-										transition: "width 0.3s ease",
-									}}
-								/>
-							</div>
-							<div
-								style={{
-									fontSize: "0.875rem",
-									color: "#6b7280",
-									marginTop: "0.25rem",
-								}}
-							>
-								{budget.percentage}% used
-							</div>
-						</div>
-					))}
-				</Section>
-
-				{/* Recent Transactions */}
-				<Section
-					title="Recent Transactions"
-					linkHref="/transactions"
-					linkText="View All"
-				>
-					{recentTransactions.map((tx) => (
-						<div
-							key={tx.id}
-							style={{
-								display: "flex",
-								justifyContent: "space-between",
-								alignItems: "center",
-								padding: "0.75rem",
-								borderBottom: "1px solid #e5e7eb",
-							}}
-						>
 							<div>
-								<div style={{ fontWeight: "600" }}>{tx.category}</div>
-								<div style={{ fontSize: "0.875rem", color: "#6b7280" }}>
-									{tx.date}
-								</div>
-							</div>
-							<div
-								style={{
-									fontWeight: "bold",
-									color: tx.type === "Income" ? "#10b981" : "#ef4444",
-								}}
-							>
-								{tx.type === "Income" ? "+" : "-"}${tx.amount.toFixed(2)}
+								<p className="text-blue-600 text-sm font-medium">Income</p>
+								<p className="text-3xl font-bold text-blue-900">
+									${budget.income.toLocaleString()}
+								</p>
 							</div>
 						</div>
-					))}
-				</Section>
-
-				{/* Upcoming Recurring */}
-				<Section
-					title="Upcoming Recurring"
-					linkHref="/recurring"
-					linkText="View All"
-				>
-					{upcomingRecurring.map((item) => (
-						<div
-							key={item.id}
-							style={{
-								display: "flex",
-								justifyContent: "space-between",
-								alignItems: "center",
-								padding: "0.75rem",
-								borderBottom: "1px solid #e5e7eb",
-							}}
-						>
-							<div>
-								<div style={{ fontWeight: "600" }}>{item.category}</div>
-								<div style={{ fontSize: "0.875rem", color: "#6b7280" }}>
-									Due: {item.dueDate}
-								</div>
-							</div>
-							<div
-								style={{
-									fontWeight: "bold",
-									color: item.type === "Income" ? "#10b981" : "#ef4444",
-								}}
-							>
-								{item.type === "Income" ? "+" : "-"}${item.amount.toFixed(2)}
-							</div>
+						<div className="bg-green-50 rounded-xl p-3">
+							<p className="text-green-700 text-sm font-medium">
+								+12% from last month
+							</p>
 						</div>
-					))}
-				</Section>
-
-				{/* Spending by Category (Placeholder for Chart) */}
-				<Section title="Spending by Category">
-					<div
-						style={{
-							height: "250px",
-							display: "flex",
-							alignItems: "center",
-							justifyContent: "center",
-							backgroundColor: "#f9fafb",
-							borderRadius: "8px",
-							color: "#6b7280",
-						}}
-					>
-						Chart coming soon (use recharts or chart.js)
 					</div>
-				</Section>
-			</div>
 
-			{/* Quick Actions */}
-			<div style={{ marginTop: "2rem" }}>
-				<h2
-					style={{
-						fontSize: "1.5rem",
-						fontWeight: "bold",
-						marginBottom: "1rem",
-					}}
-				>
-					Quick Actions
-				</h2>
-				<div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
-					<QuickActionButton href="/transactions/new" label="Add Transaction" />
-					<QuickActionButton href="/budgets/new" label="Create Budget" />
-					<QuickActionButton href="/recurring/new" label="Add Recurring" />
-					<QuickActionButton href="/categories/new" label="New Category" />
+					<div className="bg-white/70 backdrop-blur-xl rounded-3xl p-8 shadow-lg border border-blue-200">
+						<div className="flex items-center gap-4 mb-4">
+							<div className="bg-gradient-to-br from-red-400 to-red-500 p-4 rounded-2xl shadow-lg">
+								<ArrowDownCircle className="text-white" size={28} />
+							</div>
+							<div>
+								<p className="text-blue-600 text-sm font-medium">Expenses</p>
+								<p className="text-3xl font-bold text-blue-900">
+									${budget.expenses.toLocaleString()}
+								</p>
+							</div>
+						</div>
+						<div className="bg-red-50 rounded-xl p-3">
+							<p className="text-red-700 text-sm font-medium">
+								60% of income spent
+							</p>
+						</div>
+					</div>
+
+					<div className="bg-white/70 backdrop-blur-xl rounded-3xl p-8 shadow-lg border border-blue-200">
+						<div className="flex items-center gap-4 mb-4">
+							<div className="bg-gradient-to-br from-blue-400 to-indigo-500 p-4 rounded-2xl shadow-lg">
+								<PiggyBank className="text-white" size={28} />
+							</div>
+							<div>
+								<p className="text-blue-600 text-sm font-medium">Balance</p>
+								<p className="text-3xl font-bold text-blue-900">
+									${budget.balance.toLocaleString()}
+								</p>
+							</div>
+						</div>
+						<div className="bg-blue-50 rounded-xl p-3">
+							<p className="text-blue-700 text-sm font-medium">
+								40% saved this month
+							</p>
+						</div>
+					</div>
+				</div>
+
+				<div className="bg-white/70 backdrop-blur-xl rounded-3xl p-8 shadow-lg border border-blue-200">
+					<div className="flex items-center justify-between mb-8">
+						<h2 className="text-2xl font-bold text-blue-900">
+							Spending by Category
+						</h2>
+						<span className="text-blue-600 text-sm font-medium">
+							December 2025
+						</span>
+					</div>
+
+					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+						{budget.categories.map((cat, idx) => {
+							const Icon = cat.icon;
+							const percentage = (cat.spent / cat.budget) * 100;
+							const remaining = cat.budget - cat.spent;
+
+							return (
+								<div
+									key={idx}
+									className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100"
+								>
+									<div className="flex items-center justify-between mb-4">
+										<div className="flex items-center gap-3">
+											<div className="bg-blue-500 p-3 rounded-xl shadow-md">
+												<Icon className="text-white" size={22} />
+											</div>
+											<div>
+												<p className="text-blue-900 font-bold text-lg">
+													{cat.name}
+												</p>
+												<p className="text-blue-600 text-sm">
+													${remaining} remaining
+												</p>
+											</div>
+										</div>
+										<div className="text-right">
+											<p className="text-2xl font-bold text-blue-900">
+												${cat.spent}
+											</p>
+											<p className="text-blue-600 text-sm">of ${cat.budget}</p>
+										</div>
+									</div>
+									<div className="h-3 bg-blue-100 rounded-full overflow-hidden">
+										<div
+											className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full transition-all duration-500"
+											style={{ width: `${percentage}%` }}
+										/>
+									</div>
+									<div className="mt-2 flex justify-between text-xs">
+										<span className="text-blue-600">
+											{percentage.toFixed(0)}% used
+										</span>
+										<span
+											className={
+												percentage > 90
+													? "text-red-600 font-semibold"
+													: "text-green-600"
+											}
+										>
+											{percentage > 90 ? "Over budget!" : "On track"}
+										</span>
+									</div>
+								</div>
+							);
+						})}
+					</div>
 				</div>
 			</div>
 		</div>
-	);
-}
-
-function SummaryCard({
-	title,
-	amount,
-	color,
-	icon,
-}: {
-	title: string;
-	amount: number;
-	color: string;
-	icon: string;
-}) {
-	return (
-		<div
-			style={{
-				padding: "1.5rem",
-				backgroundColor: "white",
-				border: "1px solid #e5e7eb",
-				borderRadius: "8px",
-				boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-			}}
-		>
-			<div
-				style={{
-					display: "flex",
-					justifyContent: "space-between",
-					marginBottom: "0.5rem",
-				}}
-			>
-				<span style={{ color: "#6b7280", fontSize: "0.875rem" }}>{title}</span>
-				<span style={{ fontSize: "1.5rem" }}>{icon}</span>
-			</div>
-			<div style={{ fontSize: "1.75rem", fontWeight: "bold", color }}>
-				${amount.toFixed(2)}
-			</div>
-		</div>
-	);
-}
-
-function Section({
-	title,
-	linkHref,
-	linkText,
-	children,
-}: {
-	title: string;
-	linkHref?: string;
-	linkText?: string;
-	children: React.ReactNode;
-}) {
-	return (
-		<div
-			style={{
-				backgroundColor: "white",
-				border: "1px solid #e5e7eb",
-				borderRadius: "8px",
-				padding: "1.5rem",
-				boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-			}}
-		>
-			<div
-				style={{
-					display: "flex",
-					justifyContent: "space-between",
-					alignItems: "center",
-					marginBottom: "1rem",
-				}}
-			>
-				<h3 style={{ fontSize: "1.25rem", fontWeight: "bold" }}>{title}</h3>
-				{linkHref && (
-					<Link
-						href={linkHref}
-						style={{
-							color: "#3b82f6",
-							fontSize: "0.875rem",
-							textDecoration: "none",
-						}}
-					>
-						{linkText} →
-					</Link>
-				)}
-			</div>
-			{children}
-		</div>
-	);
-}
-
-function QuickActionButton({ href, label }: { href: string; label: string }) {
-	return (
-		<Link
-			href={href}
-			style={{
-				padding: "0.75rem 1.5rem",
-				backgroundColor: "#3b82f6",
-				color: "white",
-				borderRadius: "6px",
-				textDecoration: "none",
-				fontWeight: "600",
-				display: "inline-block",
-				transition: "background-color 0.2s",
-			}}
-			onMouseEnter={(e) => {
-				e.currentTarget.style.backgroundColor = "#2563eb";
-			}}
-			onMouseLeave={(e) => {
-				e.currentTarget.style.backgroundColor = "#3b82f6";
-			}}
-		>
-			{label}
-		</Link>
 	);
 }
