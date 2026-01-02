@@ -3,13 +3,14 @@
 import { useState } from "react";
 
 type FieldType = "text" | "number" | "date" | "select" | "textarea";
+type SelectOption = { label: string; value: string };
 
 type FormField = {
 	name: string;
 	label: string;
 	type: FieldType;
 	required?: boolean;
-	options?: string[]; // For select fields
+	options?: SelectOption[]; // For select fields
 	placeholder?: string;
 };
 
@@ -52,8 +53,8 @@ export default function Form({
 					>
 						<option value="">Select...</option>
 						{field.options?.map((option) => (
-							<option key={option} value={option}>
-								{option}
+							<option key={option.value} value={option.value}>
+								{option.label}
 							</option>
 						))}
 					</select>

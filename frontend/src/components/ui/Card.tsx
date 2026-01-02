@@ -11,7 +11,7 @@ type BudgetData = {
 };
 
 type CategoryData = {
-	custom: boolean;
+	color: string;
 };
 
 type RecurringData = {
@@ -67,13 +67,11 @@ export default function Card({
 			}
 			case "category": {
 				const categoryData = data as CategoryData;
+				// console.log("CATEGORY COLOR:", categoryData.color);
 				return {
-					subtitle: `Custom: ${
-						categoryData.custom.toString().charAt(0).toUpperCase() +
-						categoryData.custom.toString().slice(1)
-					}`,
+					subtitle: null,
 					amount: null,
-					color: null,
+					color: categoryData.color,
 					extraInfo: null,
 				};
 			}
@@ -139,7 +137,10 @@ export default function Card({
 		<div
 			onClick={() => setExpanded(!expanded)}
 			style={{
-				border: "1px solid #ccc",
+				borderTop: "1px solid #ccc",
+				borderRight: "1px solid #ccc",
+				borderBottom: "1px solid #ccc",
+				borderLeft: `6px solid ${content.color ?? "#ccc"}`,
 				borderRadius: "8px",
 				padding: "1rem",
 				marginBottom: "1rem",
@@ -156,7 +157,10 @@ export default function Card({
 			>
 				<div>
 					<p>
-						<span style={{ fontWeight: "bold" }}>{title}:</span>{" "}
+						<span style={{ fontWeight: "bold" }}>
+							{title}
+							{type !== "category" && ":"}
+						</span>{" "}
 						{content.secondaryTitle && <span>{content.secondaryTitle}</span>}
 					</p>
 					<p style={{ fontSize: "0.9rem", color: "#555" }}>

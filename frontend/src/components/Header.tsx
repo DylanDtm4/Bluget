@@ -10,7 +10,8 @@ export default function Header() {
 				<Link href="/categories">Categories</Link> |{" "}
 				<Link href="/transactions">Transactions</Link> |{" "}
 				<Link href="/recurring">Recurring Transactions</Link> |{" "}
-				<Link href="/login">Login</Link>
+				<Link href="/login">Login</Link> |{" "}
+				<Link href="/settings">Settings</Link>
 			</nav>
 		</header>
 	);

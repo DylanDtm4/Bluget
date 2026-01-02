@@ -18,6 +18,13 @@ export default function EditCategoryPage({
 			required: true,
 			placeholder: "e.g., Groceries, Paycheck",
 		},
+		{
+			name: "color",
+			label: "Color",
+			type: "text" as const,
+			required: true,
+			placeholder: "e.g., #FF5733",
+		},
 	];
 	// Fetch existing data (for now using dummy data)
 	// In real app: useEffect to fetch from API

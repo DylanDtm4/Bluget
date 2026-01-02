@@ -15,6 +15,13 @@ export default function NewCategoryPage() {
 			required: true,
 			placeholder: "e.g., Groceries, Paycheck",
 		},
+		{
+			name: "color",
+			label: "Color",
+			type: "text" as const,
+			required: true,
+			placeholder: "e.g., #FF5733",
+		},
 	];
 
 	const handleSubmit = (data: Record<string, string | number>) => {

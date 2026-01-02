@@ -13,7 +13,12 @@ export default function NewRecurringTransactionPage() {
 			label: "Type",
 			type: "select" as const,
 			required: true,
-			options: ["Income", "Expense", "Investment", "Savings"],
+			options: [
+				{ label: "Income", value: "Income" },
+				{ label: "Expense", value: "Expense" },
+				{ label: "Investment", value: "Investment" },
+				{ label: "Savings", value: "Savings" },
+			],
 		},
 		{
 			name: "secondaryCategory",

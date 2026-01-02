@@ -10,22 +10,22 @@ export default function CategoriesPage() {
 		{
 			id: "1",
 			category: "Paycheck 1",
-			custom: false,
+			color: "#FF5733",
 		},
 		{
 			id: "2",
 			category: "Groceries",
-			custom: false,
+			color: "#FF5733",
 		},
 		{
 			id: "3",
 			category: "Rent",
-			custom: false,
+			color: "#FF5733",
 		},
 		{
 			id: "4",
 			category: "Tennis Lessons",
-			custom: true,
+			color: "#FF5733",
 		},
 	];
 
@@ -52,7 +52,7 @@ export default function CategoriesPage() {
 						id={category.id}
 						title={category.category}
 						data={{
-							custom: category.custom,
+							color: category.color,
 						}}
 						type="category"
 						onEdit={() => handleEdit(category.id)}
