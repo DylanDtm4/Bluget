@@ -1,5 +1,6 @@
 "use client";
 
+import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -42,7 +43,7 @@ export default function TransactionsPage() {
 		<>
 			<div>
 				<Link href="/transactions/new" color="blue">
-					Add New Transaction
+					<Button variant="primary">Add New Transaction</Button>
 				</Link>
 			</div>
 			<div>

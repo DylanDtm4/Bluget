@@ -39,7 +39,14 @@ export default function NewRecurringTransactionPage() {
 			label: "Frequency",
 			type: "select" as const,
 			required: true,
-			options: ["Daily", "Weekly", "Biweekly", "Monthly"],
+			options: [
+				{ label: "Daily", value: "Daily" },
+				{ label: "Weekly", value: "Weekly" },
+				{ label: "Biweekly", value: "Biweekly" },
+				{ label: "Monthly", value: "Monthly" },
+				{ label: "Quarterly", value: "Quarterly" },
+				{ label: "Yearly", value: "Yearly" },
+			],
 		},
 		{
 			name: "startDate",
