@@ -1,6 +1,7 @@
 "use client";
 
 import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -82,7 +83,7 @@ export default function RecurringPage() {
 		<>
 			<div>
 				<Link href="/recurring/new" color="blue">
-					Add New Recurring Transaction
+					<Button variant="primary">Add New Recurring Transaction</Button>
 				</Link>
 			</div>
 			<div>

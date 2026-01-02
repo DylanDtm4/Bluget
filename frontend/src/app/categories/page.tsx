@@ -1,6 +1,7 @@
 "use client";
 
 import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -41,7 +42,7 @@ export default function CategoriesPage() {
 		<>
 			<div>
 				<Link href="/categories/new" color="blue">
-					Add New Category
+					<Button variant="primary">Add New Category</Button>
 				</Link>
 			</div>
 			<div>

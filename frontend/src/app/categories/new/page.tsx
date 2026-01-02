@@ -18,9 +18,9 @@ export default function NewCategoryPage() {
 		{
 			name: "color",
 			label: "Color",
-			type: "text" as const,
+			type: "color" as const, // Changed from "text" to "color"
 			required: true,
-			placeholder: "e.g., #FF5733",
+			placeholder: "#FF5733", // Default color value
 		},
 	];
 

@@ -3,6 +3,7 @@
 import Card from "@/components/ui/Card";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Button from "@/components/ui/Button";
 
 export default function BudgetsPage() {
 	const router = useRouter();
@@ -49,7 +50,7 @@ export default function BudgetsPage() {
 		<>
 			<div>
 				<Link href="/budgets/new" color="blue">
-					Add New Budget
+					<Button variant="primary">Add New Budget</Button>
 				</Link>
 			</div>
 			<div>

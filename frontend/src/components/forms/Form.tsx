@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-type FieldType = "text" | "number" | "date" | "select" | "textarea";
+type FieldType = "text" | "number" | "date" | "select" | "textarea" | "color";
 type SelectOption = { label: string; value: string };
 
 type FormField = {
@@ -94,6 +94,26 @@ export default function Form({
 					/>
 				);
 
+			case "color":
+				return (
+					<div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+						<input
+							type="color"
+							value={formData[field.name] || "#FF5733"}
+							onChange={(e) => handleChange(field.name, e.target.value)}
+							required={field.required}
+							style={{ width: "60px", height: "40px", cursor: "pointer" }}
+						/>
+						<input
+							type="text"
+							value={formData[field.name] || "#FF5733"}
+							onChange={(e) => handleChange(field.name, e.target.value)}
+							placeholder={field.placeholder}
+							pattern="^#[0-9A-Fa-f]{6}$"
+							style={{ flex: 1 }}
+						/>
+					</div>
+				);
 			default: // text
 				return (
 					<input

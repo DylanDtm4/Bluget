@@ -1,164 +1,220 @@
 "use client";
-import React, { useState } from "react";
-import {
-	ArrowUpCircle,
-	ArrowDownCircle,
-	PiggyBank,
-	CreditCard,
-	Home,
-	ShoppingCart,
-	Car,
-	Utensils,
-} from "lucide-react";
 
-export default function BudgetDashboard() {
-	const [budget] = useState({
-		income: 5420,
-		expenses: 3245,
-		balance: 2175,
-		categories: [
-			{ name: "Housing", spent: 1200, budget: 1500, icon: Home },
-			{ name: "Groceries", spent: 650, budget: 800, icon: ShoppingCart },
-			{ name: "Transport", spent: 320, budget: 400, icon: Car },
-			{ name: "Dining", spent: 480, budget: 600, icon: Utensils },
-		],
-	});
+import Chart from "@/components/charts/Chart";
+import SummaryCard from "@/components/ui/SummaryCard";
+import Card from "@/components/ui/Card";
+
+export default function DashboardPage() {
+	// Summary metrics
+	const currentBalance = 3250.75;
+	const monthlyIncome = 5000.0;
+	const monthlyExpenses = 2800.0;
+	const netIncome = monthlyIncome - monthlyExpenses;
+	const savingsRate = ((netIncome / monthlyIncome) * 100).toFixed(1);
+
+	// Chart data
+	const spendingByCategory = [
+		{ name: "Groceries", value: 450 },
+		{ name: "Rent", value: 1200 },
+		{ name: "Entertainment", value: 200 },
+		{ name: "Transportation", value: 150 },
+		{ name: "Utilities", value: 300 },
+		{ name: "Other", value: 500 },
+	];
+
+	const monthlyTrend = [
+		{ name: "Jan", income: 4800, expenses: 2600 },
+		{ name: "Feb", income: 5000, expenses: 2400 },
+		{ name: "Mar", income: 5200, expenses: 2800 },
+		{ name: "Apr", income: 5000, expenses: 3100 },
+		{ name: "May", income: 5000, expenses: 2700 },
+		{ name: "Jun", income: 5000, expenses: 2800 },
+	];
+
+	const budgetProgress = [
+		{ name: "Groceries", value: 450, max: 600, color: "#82ca9d" },
+		{ name: "Rent", value: 1200, max: 1200, color: "#ff7c7c" },
+		{ name: "Entertainment", value: 200, max: 300, color: "#ffc658" },
+		{ name: "Transportation", value: 150, max: 200, color: "#8884d8" },
+	];
+
+	// Recent transactions
+	const recentTransactions = [
+		{
+			id: "1",
+			title: "Grocery Store",
+			data: {
+				amount: 45.32,
+				date: "2025-01-02",
+				mainCategory: "Expense",
+				secondaryCategory: "Groceries",
+			},
+		},
+		{
+			id: "2",
+			title: "Paycheck",
+			data: {
+				amount: 2500.0,
+				date: "2025-01-01",
+				mainCategory: "Income",
+				secondaryCategory: "Salary",
+			},
+		},
+		{
+			id: "3",
+			title: "Gas Station",
+			data: {
+				amount: 35.0,
+				date: "2024-12-31",
+				mainCategory: "Expense",
+				secondaryCategory: "Transportation",
+			},
+		},
+	];
+
+	// Upcoming bills
+	const upcomingBills = [
+		{
+			id: "1",
+			title: "Rent",
+			data: {
+				amount: 1200.0,
+				frequency: "Monthly",
+				nextRun: "2025-01-05",
+				mainCategory: "Expense",
+				secondaryCategory: "Housing",
+				startDate: new Date("2024-01-01"),
+			},
+		},
+		{
+			id: "2",
+			title: "Netflix",
+			data: {
+				amount: 15.99,
+				frequency: "Monthly",
+				nextRun: "2025-01-12",
+				mainCategory: "Expense",
+				secondaryCategory: "Entertainment",
+				startDate: new Date("2024-01-01"),
+			},
+		},
+	];
 
 	return (
-		<div className="min-h-screen bg-gradient-to-br from-sky-50 via-blue-50 to-indigo-100 p-8">
-			<div className="max-w-7xl mx-auto">
-				<div className="text-center mb-10">
-					<h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-2">
-						My Budget
-					</h1>
-					<p className="text-blue-600">Track your financial goals</p>
+		<div
+			style={{
+				padding: "2rem",
+				backgroundColor: "#f5f5f5",
+				minHeight: "100vh",
+			}}
+		>
+			<h1 style={{ marginBottom: "2rem" }}>Dashboard</h1>
+
+			{/* Summary Cards Row */}
+			<div
+				style={{
+					display: "grid",
+					gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+					gap: "1rem",
+					marginBottom: "2rem",
+				}}
+			>
+				<SummaryCard
+					title="Current Balance"
+					amount={currentBalance}
+					color="#8884d8"
+					subtitle="Available now"
+				/>
+				<SummaryCard
+					title="Monthly Income"
+					amount={monthlyIncome}
+					color="#82ca9d"
+					trend={{ value: 4.2, isPositive: true }}
+				/>
+				<SummaryCard
+					title="Monthly Expenses"
+					amount={monthlyExpenses}
+					color="#ff7c7c"
+					trend={{ value: 3.5, isPositive: false }}
+				/>
+				<SummaryCard
+					title="Net Income"
+					amount={netIncome}
+					color={netIncome >= 0 ? "#82ca9d" : "#ff7c7c"}
+					subtitle={`${savingsRate}% savings rate`}
+				/>
+			</div>
+
+			{/* Charts Row */}
+			<div
+				style={{
+					display: "grid",
+					gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))",
+					gap: "1.5rem",
+					marginBottom: "2rem",
+				}}
+			>
+				<Chart
+					title="Spending by Category"
+					type="pie"
+					data={spendingByCategory}
+					dataKey="value"
+					categoryKey="name"
+				/>
+
+				<Chart title="Budget Progress" type="progress" data={budgetProgress} />
+			</div>
+
+			{/* Bottom Row: Recent Transactions & Upcoming Bills */}
+			<div
+				style={{
+					display: "grid",
+					gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))",
+					gap: "1.5rem",
+				}}
+			>
+				{/* Recent Transactions */}
+				<div
+					style={{
+						backgroundColor: "white",
+						borderRadius: "8px",
+						padding: "1.5rem",
+						border: "1px solid #ccc",
+					}}
+				>
+					<h3 style={{ marginTop: 0, marginBottom: "1rem" }}>
+						Recent Transactions
+					</h3>
+					{recentTransactions.map((transaction) => (
+						<Card
+							key={transaction.id}
+							id={transaction.id}
+							title={transaction.title}
+							data={transaction.data}
+							type="transaction"
+						/>
+					))}
 				</div>
 
-				<div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-					<div className="bg-white/70 backdrop-blur-xl rounded-3xl p-8 shadow-lg border border-blue-200">
-						<div className="flex items-center gap-4 mb-4">
-							<div className="bg-gradient-to-br from-green-400 to-green-500 p-4 rounded-2xl shadow-lg">
-								<ArrowUpCircle className="text-white" size={28} />
-							</div>
-							<div>
-								<p className="text-blue-600 text-sm font-medium">Income</p>
-								<p className="text-3xl font-bold text-blue-900">
-									${budget.income.toLocaleString()}
-								</p>
-							</div>
-						</div>
-						<div className="bg-green-50 rounded-xl p-3">
-							<p className="text-green-700 text-sm font-medium">
-								+12% from last month
-							</p>
-						</div>
-					</div>
-
-					<div className="bg-white/70 backdrop-blur-xl rounded-3xl p-8 shadow-lg border border-blue-200">
-						<div className="flex items-center gap-4 mb-4">
-							<div className="bg-gradient-to-br from-red-400 to-red-500 p-4 rounded-2xl shadow-lg">
-								<ArrowDownCircle className="text-white" size={28} />
-							</div>
-							<div>
-								<p className="text-blue-600 text-sm font-medium">Expenses</p>
-								<p className="text-3xl font-bold text-blue-900">
-									${budget.expenses.toLocaleString()}
-								</p>
-							</div>
-						</div>
-						<div className="bg-red-50 rounded-xl p-3">
-							<p className="text-red-700 text-sm font-medium">
-								60% of income spent
-							</p>
-						</div>
-					</div>
-
-					<div className="bg-white/70 backdrop-blur-xl rounded-3xl p-8 shadow-lg border border-blue-200">
-						<div className="flex items-center gap-4 mb-4">
-							<div className="bg-gradient-to-br from-blue-400 to-indigo-500 p-4 rounded-2xl shadow-lg">
-								<PiggyBank className="text-white" size={28} />
-							</div>
-							<div>
-								<p className="text-blue-600 text-sm font-medium">Balance</p>
-								<p className="text-3xl font-bold text-blue-900">
-									${budget.balance.toLocaleString()}
-								</p>
-							</div>
-						</div>
-						<div className="bg-blue-50 rounded-xl p-3">
-							<p className="text-blue-700 text-sm font-medium">
-								40% saved this month
-							</p>
-						</div>
-					</div>
-				</div>
-
-				<div className="bg-white/70 backdrop-blur-xl rounded-3xl p-8 shadow-lg border border-blue-200">
-					<div className="flex items-center justify-between mb-8">
-						<h2 className="text-2xl font-bold text-blue-900">
-							Spending by Category
-						</h2>
-						<span className="text-blue-600 text-sm font-medium">
-							December 2025
-						</span>
-					</div>
-
-					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-						{budget.categories.map((cat, idx) => {
-							const Icon = cat.icon;
-							const percentage = (cat.spent / cat.budget) * 100;
-							const remaining = cat.budget - cat.spent;
-
-							return (
-								<div
-									key={idx}
-									className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100"
-								>
-									<div className="flex items-center justify-between mb-4">
-										<div className="flex items-center gap-3">
-											<div className="bg-blue-500 p-3 rounded-xl shadow-md">
-												<Icon className="text-white" size={22} />
-											</div>
-											<div>
-												<p className="text-blue-900 font-bold text-lg">
-													{cat.name}
-												</p>
-												<p className="text-blue-600 text-sm">
-													${remaining} remaining
-												</p>
-											</div>
-										</div>
-										<div className="text-right">
-											<p className="text-2xl font-bold text-blue-900">
-												${cat.spent}
-											</p>
-											<p className="text-blue-600 text-sm">of ${cat.budget}</p>
-										</div>
-									</div>
-									<div className="h-3 bg-blue-100 rounded-full overflow-hidden">
-										<div
-											className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full transition-all duration-500"
-											style={{ width: `${percentage}%` }}
-										/>
-									</div>
-									<div className="mt-2 flex justify-between text-xs">
-										<span className="text-blue-600">
-											{percentage.toFixed(0)}% used
-										</span>
-										<span
-											className={
-												percentage > 90
-													? "text-red-600 font-semibold"
-													: "text-green-600"
-											}
-										>
-											{percentage > 90 ? "Over budget!" : "On track"}
-										</span>
-									</div>
-								</div>
-							);
-						})}
-					</div>
+				{/* Upcoming Bills */}
+				<div
+					style={{
+						backgroundColor: "white",
+						borderRadius: "8px",
+						padding: "1.5rem",
+						border: "1px solid #ccc",
+					}}
+				>
+					<h3 style={{ marginTop: 0, marginBottom: "1rem" }}>Upcoming Bills</h3>
+					{upcomingBills.map((bill) => (
+						<Card
+							key={bill.id}
+							id={bill.id}
+							title={bill.title}
+							data={bill.data}
+							type="recurring"
+						/>
+					))}
 				</div>
 			</div>
 		</div>
