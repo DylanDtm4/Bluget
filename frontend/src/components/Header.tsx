@@ -39,10 +39,6 @@ export default function Header() {
 						Transactions
 					</Link>
 					<span>|</span>
-					<Link href="/recurring" className="hover:underline">
-						Recurring Transactions
-					</Link>
-					<span>|</span>
 					<button
 						onClick={() => setIsModalOpen(true)}
 						className="hover:underline cursor-pointer"

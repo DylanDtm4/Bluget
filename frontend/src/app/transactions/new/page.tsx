@@ -38,7 +38,35 @@ export default function NewTransactionPage() {
 			name: "date",
 			label: "Date",
 			type: "date" as const,
+			hideWhenRecurring: true,
 			required: true,
+		},
+		{
+			name: "frequency",
+			label: "Frequency",
+			type: "select" as const,
+			showOnlyWhenRecurring: true,
+			required: true,
+			options: [
+				{ label: "Daily", value: "daily" },
+				{ label: "Weekly", value: "weekly" },
+				{ label: "Monthly", value: "monthly" },
+				{ label: "Yearly", value: "yearly" },
+			],
+		},
+		{
+			name: "startDate",
+			label: "Start Date",
+			type: "date" as const,
+			required: true,
+			showOnlyWhenRecurring: true,
+		},
+		{
+			name: "endDate",
+			label: "End Date",
+			type: "date" as const,
+			required: true,
+			showOnlyWhenRecurring: true,
 		},
 		{
 			name: "note",
@@ -71,6 +99,7 @@ export default function NewTransactionPage() {
 			fields={transactionFields}
 			onSubmit={handleSubmit}
 			onCancel={handleCancel}
+			enableRecurring={true}
 		/>
 	);
 }

@@ -13,6 +13,8 @@ type FormField = {
 	required?: boolean;
 	options?: SelectOption[]; // For select fields
 	placeholder?: string;
+	showOnlyWhenRecurring?: boolean; // Show this field only when recurring is checked
+	hideWhenRecurring?: boolean; // Hide this field when recurring is checked
 };
 
 type FormData = Record<string, string | number>;
@@ -23,6 +25,8 @@ type FormProps = {
 	onSubmit: (data: FormData) => void;
 	onCancel?: () => void;
 	initialData?: FormData;
+	enableRecurring?: boolean; // Enable the recurring checkbox feature
+	recurringLocked?: boolean; // Lock recurring checkbox in checked state (for editing)
 };
 
 export default function Form({
@@ -31,8 +35,11 @@ export default function Form({
 	onSubmit,
 	onCancel,
 	initialData = {},
+	enableRecurring = false,
+	recurringLocked = false,
 }: FormProps) {
 	const [formData, setFormData] = useState<FormData>(initialData);
+	const [isRecurring, setIsRecurring] = useState(recurringLocked);
 
 	const handleChange = (name: string, value: string | number) => {
 		setFormData((prev) => ({ ...prev, [name]: value }));
@@ -143,15 +150,44 @@ export default function Form({
 				<h2 className="text-2xl font-bold mb-6 text-gray-800">{title}</h2>
 
 				<form onSubmit={handleSubmit} className="space-y-5">
-					{fields.map((field) => (
-						<div key={field.name}>
-							<label className="block mb-2 font-semibold text-gray-700">
-								{field.label}
-								{field.required && <span className="text-red-500 ml-1">*</span>}
+					{enableRecurring && (
+						<div className="flex items-center gap-2 pb-2 border-b border-gray-200">
+							<input
+								type="checkbox"
+								id="recurring-checkbox"
+								checked={isRecurring}
+								onChange={(e) => setIsRecurring(e.target.checked)}
+								disabled={recurringLocked}
+								className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+							/>
+							<label
+								htmlFor="recurring-checkbox"
+								className="font-semibold text-gray-700 cursor-pointer"
+							>
+								Recurring {recurringLocked && "(locked for editing)"}
 							</label>
-							{renderField(field)}
 						</div>
-					))}
+					)}
+
+					{fields
+						.filter((field) => {
+							// If field should only show when recurring, hide it when not recurring
+							if (field.showOnlyWhenRecurring && !isRecurring) return false;
+							// If field should hide when recurring, hide it when recurring
+							if (field.hideWhenRecurring && isRecurring) return false;
+							return true;
+						})
+						.map((field) => (
+							<div key={field.name}>
+								<label className="block mb-2 font-semibold text-gray-700">
+									{field.label}
+									{field.required && (
+										<span className="text-red-500 ml-1">*</span>
+									)}
+								</label>
+								{renderField(field)}
+							</div>
+						))}
 
 					<div className="flex gap-3 pt-4">
 						<Button type="submit" variant="primary" size="medium">

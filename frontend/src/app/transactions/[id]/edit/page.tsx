@@ -74,6 +74,7 @@ export default function EditTransactionPage({
 			onSubmit={handleSubmit}
 			onCancel={() => router.push("/transactions")}
 			initialData={existingTransaction}
+			enableRecurring={false}
 		/>
 	);
 }

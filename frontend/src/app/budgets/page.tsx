@@ -47,30 +47,54 @@ export default function BudgetsPage() {
 		console.log("Delete", id);
 	};
 	return (
-		<>
-			<div>
-				<Link href="/budgets/new" className="text-blue-600 hover:text-blue-800">
-					<Button variant="primary">Add New Budget</Button>
+		<div className="max-w-7xl mx-auto px-4 py-6 space-y-10">
+			{/* Page Header */}
+			<div className="flex justify-between items-center">
+				<div>
+					<h1 className="text-3xl font-bold text-gray-900">Budgets</h1>
+					<p className="text-gray-600 mt-1">Track your monthly budgets</p>
+				</div>
+				<Link href="/categories/new">
+					<Button variant="primary" size="large">
+						+ Add Budget
+					</Button>
 				</Link>
 			</div>
-			<div>
-				<h1>Budgets</h1>
-				{sampleBudgets.map((budget) => (
-					<Card
-						key={budget.id}
-						id={budget.id}
-						title={budget.category}
-						data={{
-							amount: budget.amount,
-							month: budget.month,
-							year: budget.year,
-						}}
-						type="budget"
-						onEdit={() => handleEdit(budget.id)}
-						onDelete={() => handleDelete(budget.id)}
-					/>
-				))}
-			</div>
-		</>
+
+			{/* Budgets Section */}
+			<section className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+				<div className="flex justify-between items-center mb-6">
+					<div>
+						<h2 className="text-2xl font-semibold text-gray-800">
+							All Budgets
+						</h2>
+						<p className="text-sm text-gray-500 mt-1">
+							Custom budgets for tracking expenses and income
+						</p>
+					</div>
+					<span className="text-sm font-medium text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
+						{sampleBudgets.length} total
+					</span>
+				</div>
+
+				<div className="space-y-3">
+					{sampleBudgets.map((budget) => (
+						<Card
+							key={budget.id}
+							id={budget.id}
+							title={budget.category}
+							data={{
+								amount: budget.amount,
+								month: budget.month,
+								year: budget.year,
+							}}
+							type="budget"
+							onEdit={() => handleEdit(budget.id)}
+							onDelete={() => handleDelete(budget.id)}
+						/>
+					))}
+				</div>
+			</section>
+		</div>
 	);
 }

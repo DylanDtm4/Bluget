@@ -86,7 +86,7 @@ export default function EditRecurringPage({
 	const handleSubmit = (data: Record<string, string | number>) => {
 		console.log("Updating recurringtransaction:", params.id, data);
 		// PUT request to API: /api/recurring/${params.id}
-		router.push("/recurring");
+		router.push("/transactions");
 	};
 
 	return (
@@ -96,6 +96,8 @@ export default function EditRecurringPage({
 			onSubmit={handleSubmit}
 			onCancel={() => router.push("/recurring")}
 			initialData={existingRecurring}
+			enableRecurring={true}
+			recurringLocked={true}
 		/>
 	);
 }
