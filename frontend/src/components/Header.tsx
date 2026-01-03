@@ -21,96 +21,66 @@ export default function Header() {
 
 	return (
 		<>
-			<header style={{ padding: "1rem", background: "#89ae3eff" }}>
-				<nav>
-					<Link href="/dashboard">Dashboard</Link> |{" "}
-					<Link href="/budgets">Budgets</Link> |{" "}
-					<Link href="/categories">Categories</Link> |{" "}
-					<Link href="/transactions">Transactions</Link> |{" "}
-					<Link href="/recurring">Recurring Transactions</Link> |{" "}
+			<header className="p-4 bg-[#89ae3eff]">
+				<nav className="flex items-center gap-2 flex-wrap">
+					<Link href="/dashboard" className="hover:underline">
+						Dashboard
+					</Link>
+					<span>|</span>
+					<Link href="/budgets" className="hover:underline">
+						Budgets
+					</Link>
+					<span>|</span>
+					<Link href="/categories" className="hover:underline">
+						Categories
+					</Link>
+					<span>|</span>
+					<Link href="/transactions" className="hover:underline">
+						Transactions
+					</Link>
+					<span>|</span>
+					<Link href="/recurring" className="hover:underline">
+						Recurring Transactions
+					</Link>
+					<span>|</span>
 					<button
 						onClick={() => setIsModalOpen(true)}
-						style={{
-							background: "none",
-							border: "none",
-							color: "inherit",
-							cursor: "pointer",
-							font: "inherit",
-							padding: 0,
-						}}
+						className="hover:underline cursor-pointer"
 					>
 						Create
-					</button>{" "}
-					| <Link href="/login">Login</Link> |{" "}
-					<Link href="/settings">Settings</Link>
+					</button>
+					<span>|</span>
+					<Link href="/login" className="hover:underline">
+						Login
+					</Link>
+					<span>|</span>
+					<Link href="/settings" className="hover:underline">
+						Settings
+					</Link>
 				</nav>
 			</header>
 
 			{/* Modal Overlay */}
 			{isModalOpen && (
 				<div
-					style={{
-						position: "fixed",
-						top: 0,
-						left: 0,
-						right: 0,
-						bottom: 0,
-						backgroundColor: "rgba(0, 0, 0, 0.5)",
-						display: "flex",
-						alignItems: "center",
-						justifyContent: "center",
-						zIndex: 1000,
-					}}
+					className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
 					onClick={() => setIsModalOpen(false)}
 				>
 					{/* Modal Content */}
 					<div
-						style={{
-							backgroundColor: "white",
-							borderRadius: "8px",
-							padding: "2rem",
-							maxWidth: "400px",
-							width: "90%",
-							boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-						}}
+						className="bg-white rounded-lg p-8 max-w-md w-11/12 shadow-lg"
 						onClick={(e) => e.stopPropagation()}
 					>
-						<h2 style={{ marginTop: 0, marginBottom: "1.5rem" }}>Create New</h2>
+						<h2 className="mt-0 mb-6 text-xl font-semibold">Create New</h2>
 
-						<div
-							style={{
-								display: "flex",
-								flexDirection: "column",
-								gap: "0.75rem",
-							}}
-						>
+						<div className="flex flex-col gap-3">
 							{createOptions.map((option) => (
 								<button
 									key={option.href}
 									onClick={() => handleOptionClick(option.href)}
-									style={{
-										padding: "1rem",
-										border: "1px solid #ddd",
-										borderRadius: "6px",
-										backgroundColor: "white",
-										cursor: "pointer",
-										textAlign: "left",
-										fontSize: "1rem",
-										display: "flex",
-										alignItems: "center",
-										gap: "0.75rem",
-										transition: "all 0.2s",
-									}}
-									onMouseEnter={(e) => {
-										e.currentTarget.style.backgroundColor = "#f5f5f5";
-										e.currentTarget.style.borderColor = "#89ae3eff";
-									}}
-									onMouseLeave={(e) => {
-										e.currentTarget.style.backgroundColor = "white";
-										e.currentTarget.style.borderColor = "#ddd";
-									}}
+									className="p-4 border border-gray-300 rounded-md bg-white cursor-pointer text-left text-base flex items-center gap-3 transition-all hover:bg-gray-50 hover:border-[#89ae3eff]"
 								>
-									<span style={{ fontSize: "1.5rem" }}>{option.icon}</span>
+									<span className="text-2xl">{option.icon}</span>
 									<span>{option.label}</span>
 								</button>
 							))}
@@ -118,15 +88,7 @@ export default function Header() {
 
 						<button
 							onClick={() => setIsModalOpen(false)}
-							style={{
-								marginTop: "1.5rem",
-								padding: "0.5rem 1rem",
-								border: "1px solid #ddd",
-								borderRadius: "6px",
-								backgroundColor: "white",
-								cursor: "pointer",
-								width: "100%",
-							}}
+							className="mt-6 p-2 px-4 border border-gray-300 rounded-md bg-white cursor-pointer w-full hover:bg-gray-50"
 						>
 							Cancel
 						</button>

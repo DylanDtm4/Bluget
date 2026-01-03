@@ -20,29 +20,13 @@ export default function SummaryCard({
 }: SummaryCardProps) {
 	return (
 		<div
-			style={{
-				borderTop: "1px solid #ccc",
-				borderRight: "1px solid #ccc",
-				borderBottom: "1px solid #ccc",
-				borderLeft: `6px solid ${color}`,
-				borderRadius: "8px",
-				padding: "1.5rem",
-				backgroundColor: "white",
-			}}
+			className="border border-gray-300 rounded-lg p-6 bg-white"
+			style={{ borderLeftWidth: "6px", borderLeftColor: color }}
 		>
-			<p style={{ fontSize: "0.9rem", color: "#555", marginBottom: "0.5rem" }}>
-				{title}
-			</p>
+			<p className="text-sm text-gray-600 mb-2">{title}</p>
 
-			<div style={{ display: "flex", alignItems: "baseline", gap: "0.5rem" }}>
-				<p
-					style={{
-						fontSize: "2rem",
-						fontWeight: "bold",
-						color: color,
-						margin: 0,
-					}}
-				>
+			<div className="flex items-baseline gap-2">
+				<p className="text-3xl font-bold m-0" style={{ color }}>
 					$
 					{amount.toLocaleString("en-US", {
 						minimumFractionDigits: 2,
@@ -52,21 +36,16 @@ export default function SummaryCard({
 
 				{trend && (
 					<span
-						style={{
-							fontSize: "0.85rem",
-							color: trend.isPositive ? "green" : "red",
-						}}
+						className={`text-sm ${
+							trend.isPositive ? "text-green-600" : "text-red-600"
+						}`}
 					>
 						{trend.isPositive ? "↑" : "↓"} {Math.abs(trend.value)}%
 					</span>
 				)}
 			</div>
 
-			{subtitle && (
-				<p style={{ fontSize: "0.85rem", color: "#777", marginTop: "0.5rem" }}>
-					{subtitle}
-				</p>
-			)}
+			{subtitle && <p className="text-sm text-gray-500 mt-2">{subtitle}</p>}
 		</div>
 	);
 }

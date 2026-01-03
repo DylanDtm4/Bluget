@@ -67,7 +67,6 @@ export default function Card({
 			}
 			case "category": {
 				const categoryData = data as CategoryData;
-				// console.log("CATEGORY COLOR:", categoryData.color);
 				return {
 					subtitle: null,
 					amount: null,
@@ -88,19 +87,19 @@ export default function Card({
 					extraInfo: (
 						<>
 							{recurringData.startDate && (
-								<p style={{ fontSize: "0.9rem", marginBottom: "0.75rem" }}>
+								<p className="text-sm mb-3">
 									<strong>Start Date:</strong>{" "}
 									{new Date(recurringData.startDate).toLocaleDateString()}
 								</p>
 							)}
 							{recurringData.endDate && (
-								<p style={{ fontSize: "0.9rem", marginBottom: "0.75rem" }}>
+								<p className="text-sm mb-3">
 									<strong>End Date:</strong>{" "}
 									{new Date(recurringData.endDate).toLocaleDateString()}
 								</p>
 							)}
 							{recurringData.note && (
-								<p style={{ fontSize: "0.9rem", marginBottom: "0.75rem" }}>
+								<p className="text-sm mb-3">
 									<strong>Note:</strong> {recurringData.note}
 								</p>
 							)}
@@ -136,40 +135,30 @@ export default function Card({
 	return (
 		<div
 			onClick={() => setExpanded(!expanded)}
+			className="border border-gray-300 rounded-lg p-4 mb-4 cursor-pointer hover:shadow-md transition-shadow"
 			style={{
-				borderTop: "1px solid #ccc",
-				borderRight: "1px solid #ccc",
-				borderBottom: "1px solid #ccc",
-				borderLeft: `6px solid ${content.color ?? "#ccc"}`,
-				borderRadius: "8px",
-				padding: "1rem",
-				marginBottom: "1rem",
-				cursor: "pointer",
+				borderLeftWidth: "6px",
+				borderLeftColor: content.color ?? "#ccc",
 			}}
 		>
 			{/* Top Row */}
-			<div
-				style={{
-					display: "flex",
-					justifyContent: "space-between",
-					alignItems: "center",
-				}}
-			>
+			<div className="flex justify-between items-center">
 				<div>
 					<p>
-						<span style={{ fontWeight: "bold" }}>
+						<span className="font-bold">
 							{title}
 							{type !== "category" && ":"}
 						</span>{" "}
 						{content.secondaryTitle && <span>{content.secondaryTitle}</span>}
 					</p>
-					<p style={{ fontSize: "0.9rem", color: "#555" }}>
-						{content.subtitle}
-					</p>
+					<p className="text-sm text-gray-600">{content.subtitle}</p>
 				</div>
 
 				{content.amount !== null && (
-					<div style={{ fontWeight: "bold", color: content.color || "black" }}>
+					<div
+						className="font-bold"
+						style={{ color: content.color || "black" }}
+					>
 						${content.amount.toFixed(2)}
 					</div>
 				)}
@@ -177,20 +166,21 @@ export default function Card({
 
 			{/* Expanded Section */}
 			{expanded && (
-				<div style={{ marginTop: "0.75rem" }}>
+				<div className="mt-3">
 					{typeof content.extraInfo === "string" && content.extraInfo && (
-						<p style={{ fontSize: "0.9rem", marginBottom: "0.75rem" }}>
+						<p className="text-sm mb-3">
 							<strong>Note:</strong> {content.extraInfo}
 						</p>
 					)}
 					{typeof content.extraInfo !== "string" && content.extraInfo}
 
-					<div style={{ display: "flex", gap: "0.75rem" }}>
+					<div className="flex gap-3">
 						<button
 							onClick={(e) => {
 								e.stopPropagation();
 								onEdit?.();
 							}}
+							className="px-3 py-1 border border-gray-300 rounded hover:bg-gray-50 transition-colors"
 						>
 							Edit
 						</button>
@@ -200,7 +190,7 @@ export default function Card({
 								e.stopPropagation();
 								onDelete?.();
 							}}
-							style={{ color: "red" }}
+							className="px-3 py-1 border border-red-300 text-red-600 rounded hover:bg-red-50 transition-colors"
 						>
 							Delete
 						</button>
@@ -208,7 +198,7 @@ export default function Card({
 						<Link
 							href={detailsPath}
 							onClick={(e) => e.stopPropagation()}
-							style={{ textDecoration: "underline" }}
+							className="px-3 py-1 text-blue-600 underline hover:text-blue-800"
 						>
 							View Details
 						</Link>

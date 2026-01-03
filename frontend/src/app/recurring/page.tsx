@@ -82,7 +82,10 @@ export default function RecurringPage() {
 	return (
 		<>
 			<div>
-				<Link href="/recurring/new" color="blue">
+				<Link
+					href="/recurring/new"
+					className="text-blue-600 hover:text-blue-800"
+				>
 					<Button variant="primary">Add New Recurring Transaction</Button>
 				</Link>
 			</div>

@@ -101,14 +101,8 @@ export default function DashboardPage() {
 	];
 
 	return (
-		<div
-			style={{
-				padding: "2rem",
-				backgroundColor: "#f5f5f5",
-				minHeight: "100vh",
-			}}
-		>
-			<h1 style={{ marginBottom: "2rem" }}>Dashboard</h1>
+		<div className="p-8 bg-gray-100 min-h-screen">
+			<h1 className="mb-8">Dashboard</h1>
 
 			{/* Summary Cards Row */}
 			<div
@@ -145,46 +139,47 @@ export default function DashboardPage() {
 				/>
 			</div>
 
-			{/* Charts Row */}
-			<div
-				style={{
-					display: "grid",
-					gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))",
-					gap: "1.5rem",
-					marginBottom: "2rem",
-				}}
-			>
+			{/* Monthly Trend Line Chart - Full Width */}
+			<div className="bg-white rounded-lg p-6 border border-gray-300 mb-8">
 				<Chart
-					title="Spending by Category"
-					type="pie"
-					data={spendingByCategory}
-					dataKey="value"
+					title="Income vs Expenses (6 Months)"
+					type="line"
+					data={monthlyTrend}
 					categoryKey="name"
+					lines={[
+						{ dataKey: "income", color: "#82ca9d", label: "Income" },
+						{ dataKey: "expenses", color: "#ff7c7c", label: "Expenses" },
+					]}
+					height={350}
 				/>
+			</div>
 
-				<Chart title="Budget Progress" type="progress" data={budgetProgress} />
+			{/* Charts Row */}
+			<div className="grid grid-cols-[repeat(auto-fit,minmax(400px,1fr))] gap-6 mb-8">
+				<div className="bg-white rounded-lg p-6 border border-gray-300">
+					<Chart
+						title="Spending by Category"
+						type="pie"
+						data={spendingByCategory}
+						dataKey="value"
+						categoryKey="name"
+					/>
+				</div>
+
+				<div className="bg-white rounded-lg p-6 border border-gray-300">
+					<Chart
+						title="Budget Progress"
+						type="progress"
+						data={budgetProgress}
+					/>
+				</div>
 			</div>
 
 			{/* Bottom Row: Recent Transactions & Upcoming Bills */}
-			<div
-				style={{
-					display: "grid",
-					gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))",
-					gap: "1.5rem",
-				}}
-			>
+			<div className="grid grid-cols-[repeat(auto-fit,minmax(400px,1fr))] gap-6">
 				{/* Recent Transactions */}
-				<div
-					style={{
-						backgroundColor: "white",
-						borderRadius: "8px",
-						padding: "1.5rem",
-						border: "1px solid #ccc",
-					}}
-				>
-					<h3 style={{ marginTop: 0, marginBottom: "1rem" }}>
-						Recent Transactions
-					</h3>
+				<div className="bg-white rounded-lg p-6 border border-gray-300">
+					<h3 className="mt-0 mb-4">Recent Transactions</h3>
 					{recentTransactions.map((transaction) => (
 						<Card
 							key={transaction.id}
@@ -197,15 +192,8 @@ export default function DashboardPage() {
 				</div>
 
 				{/* Upcoming Bills */}
-				<div
-					style={{
-						backgroundColor: "white",
-						borderRadius: "8px",
-						padding: "1.5rem",
-						border: "1px solid #ccc",
-					}}
-				>
-					<h3 style={{ marginTop: 0, marginBottom: "1rem" }}>Upcoming Bills</h3>
+				<div className="bg-white rounded-lg p-6 border border-gray-300">
+					<h3 className="mt-0 mb-4">Upcoming Bills</h3>
 					{upcomingBills.map((bill) => (
 						<Card
 							key={bill.id}

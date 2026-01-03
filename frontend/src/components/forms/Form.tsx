@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Button from "../ui/Button";
 
 type FieldType = "text" | "number" | "date" | "select" | "textarea" | "color";
 type SelectOption = { label: string; value: string };
@@ -42,6 +43,10 @@ export default function Form({
 		onSubmit(formData);
 	};
 
+	// Shared input classes
+	const inputClasses =
+		"w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all";
+
 	const renderField = (field: FormField) => {
 		switch (field.type) {
 			case "select":
@@ -50,6 +55,7 @@ export default function Form({
 						value={formData[field.name] || ""}
 						onChange={(e) => handleChange(field.name, e.target.value)}
 						required={field.required}
+						className={inputClasses}
 					>
 						<option value="">Select...</option>
 						{field.options?.map((option) => (
@@ -67,6 +73,7 @@ export default function Form({
 						onChange={(e) => handleChange(field.name, e.target.value)}
 						placeholder={field.placeholder}
 						required={field.required}
+						className={`${inputClasses} min-h-[100px] resize-y`}
 					/>
 				);
 
@@ -81,6 +88,7 @@ export default function Form({
 						placeholder={field.placeholder}
 						required={field.required}
 						step="0.01"
+						className={inputClasses}
 					/>
 				);
 
@@ -91,18 +99,19 @@ export default function Form({
 						value={formData[field.name] || ""}
 						onChange={(e) => handleChange(field.name, e.target.value)}
 						required={field.required}
+						className={inputClasses}
 					/>
 				);
 
 			case "color":
 				return (
-					<div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+					<div className="flex items-center gap-2">
 						<input
 							type="color"
 							value={formData[field.name] || "#FF5733"}
 							onChange={(e) => handleChange(field.name, e.target.value)}
 							required={field.required}
-							style={{ width: "60px", height: "40px", cursor: "pointer" }}
+							className="w-16 h-10 cursor-pointer rounded border border-gray-300"
 						/>
 						<input
 							type="text"
@@ -110,7 +119,7 @@ export default function Form({
 							onChange={(e) => handleChange(field.name, e.target.value)}
 							placeholder={field.placeholder}
 							pattern="^#[0-9A-Fa-f]{6}$"
-							style={{ flex: 1 }}
+							className={`${inputClasses} flex-1`}
 						/>
 					</div>
 				);
@@ -122,40 +131,45 @@ export default function Form({
 						onChange={(e) => handleChange(field.name, e.target.value)}
 						placeholder={field.placeholder}
 						required={field.required}
+						className={inputClasses}
 					/>
 				);
 		}
 	};
 
 	return (
-		<div style={{ maxWidth: "600px", margin: "0 auto", padding: "1rem" }}>
-			<h2>{title}</h2>
-			<form onSubmit={handleSubmit}>
-				{fields.map((field) => (
-					<div key={field.name} style={{ marginBottom: "1rem" }}>
-						<label
-							style={{
-								display: "block",
-								marginBottom: "0.25rem",
-								fontWeight: "bold",
-							}}
-						>
-							{field.label}
-							{field.required && <span style={{ color: "red" }}>*</span>}
-						</label>
-						{renderField(field)}
-					</div>
-				))}
+		<div className="max-w-2xl mx-auto p-6">
+			<div className="bg-white rounded-lg shadow-md p-8">
+				<h2 className="text-2xl font-bold mb-6 text-gray-800">{title}</h2>
 
-				<div style={{ display: "flex", gap: "0.75rem", marginTop: "1.5rem" }}>
-					<button type="submit">Submit</button>
-					{onCancel && (
-						<button type="button" onClick={onCancel}>
-							Cancel
-						</button>
-					)}
-				</div>
-			</form>
+				<form onSubmit={handleSubmit} className="space-y-5">
+					{fields.map((field) => (
+						<div key={field.name}>
+							<label className="block mb-2 font-semibold text-gray-700">
+								{field.label}
+								{field.required && <span className="text-red-500 ml-1">*</span>}
+							</label>
+							{renderField(field)}
+						</div>
+					))}
+
+					<div className="flex gap-3 pt-4">
+						<Button type="submit" variant="primary" size="medium">
+							Submit
+						</Button>
+						{onCancel && (
+							<Button
+								type="button"
+								onClick={onCancel}
+								variant="secondary"
+								size="medium"
+							>
+								Cancel
+							</Button>
+						)}
+					</div>
+				</form>
+			</div>
 		</div>
 	);
 }

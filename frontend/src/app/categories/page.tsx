@@ -41,7 +41,10 @@ export default function CategoriesPage() {
 	return (
 		<>
 			<div>
-				<Link href="/categories/new" color="blue">
+				<Link
+					href="/categories/new"
+					className="text-blue-600 hover:text-blue-800"
+				>
 					<Button variant="primary">Add New Category</Button>
 				</Link>
 			</div>

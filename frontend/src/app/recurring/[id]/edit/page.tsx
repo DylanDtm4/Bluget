@@ -16,7 +16,12 @@ export default function EditRecurringPage({
 			label: "Type",
 			type: "select" as const,
 			required: true,
-			options: ["Income", "Expense", "Investment", "Savings"],
+			options: [
+				{ label: "Income", value: "Income" },
+				{ label: "Expense", value: "Expense" },
+				{ label: "Investment", value: "Investment" },
+				{ label: "Savings", value: "Savings" },
+			],
 		},
 		{
 			name: "secondaryCategory",
@@ -37,7 +42,14 @@ export default function EditRecurringPage({
 			label: "Frequency",
 			type: "select" as const,
 			required: true,
-			options: ["Daily", "Weekly", "Biweekly", "Monthly"],
+			options: [
+				{ label: "Daily", value: "Daily" },
+				{ label: "Weekly", value: "Weekly" },
+				{ label: "Biweekly", value: "Biweekly" },
+				{ label: "Monthly", value: "Monthly" },
+				{ label: "Quarterly", value: "Quarterly" },
+				{ label: "Yearly", value: "Yearly" },
+			],
 		},
 		{
 			name: "startDate",

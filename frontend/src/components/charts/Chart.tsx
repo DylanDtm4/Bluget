@@ -25,17 +25,24 @@ type ChartDataPoint = {
 type ProgressDataPoint = {
 	name: string;
 	value: number;
-	max?: number; // Optional max value, defaults to 100
-	color?: string; // Optional custom color per bar
+	max?: number;
+	color?: string;
+};
+
+type LineConfig = {
+	dataKey: string;
+	color?: string;
+	label?: string;
 };
 
 type ChartProps = {
 	title?: string;
 	type: ChartType;
 	data: ChartDataPoint[] | ProgressDataPoint[];
-	dataKey?: string; // For line/bar charts (y-axis value)
-	categoryKey?: string; // For x-axis or pie chart names
-	colors?: string[]; // Custom colors for bars/pie slices
+	dataKey?: string; // For single line/bar charts
+	lines?: LineConfig[]; // For multiple lines in line charts
+	categoryKey?: string;
+	colors?: string[];
 	height?: number;
 	showLegend?: boolean;
 	showGrid?: boolean;
@@ -55,6 +62,7 @@ export default function Chart({
 	type,
 	data,
 	dataKey = "value",
+	lines,
 	categoryKey = "name",
 	colors = DEFAULT_COLORS,
 	height = 300,
@@ -72,12 +80,27 @@ export default function Chart({
 							<YAxis />
 							<Tooltip />
 							{showLegend && <Legend />}
-							<Line
-								type="monotone"
-								dataKey={dataKey}
-								stroke={colors[0]}
-								strokeWidth={2}
-							/>
+							{lines ? (
+								// Multiple lines
+								lines.map((line, index) => (
+									<Line
+										key={line.dataKey}
+										type="monotone"
+										dataKey={line.dataKey}
+										name={line.label || line.dataKey}
+										stroke={line.color || colors[index % colors.length]}
+										strokeWidth={2}
+									/>
+								))
+							) : (
+								// Single line
+								<Line
+									type="monotone"
+									dataKey={dataKey}
+									stroke={colors[0]}
+									strokeWidth={2}
+								/>
+							)}
 						</LineChart>
 					</ResponsiveContainer>
 				);
@@ -131,9 +154,7 @@ export default function Chart({
 
 			case "progress":
 				return (
-					<div
-						style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
-					>
+					<div className="flex flex-col gap-4">
 						{(data as ProgressDataPoint[]).map((item, index) => {
 							const maxValue = item.max || 100;
 							const percentage = Math.min((item.value / maxValue) * 100, 100);
@@ -141,36 +162,18 @@ export default function Chart({
 
 							return (
 								<div key={index}>
-									<div
-										style={{
-											display: "flex",
-											justifyContent: "space-between",
-											marginBottom: "0.25rem",
-											fontSize: "0.9rem",
-										}}
-									>
-										<span style={{ fontWeight: "500" }}>{item.name}</span>
-										<span style={{ color: "#666" }}>
-											{item.value} / {maxValue}
+									<div className="flex justify-between mb-1 text-sm">
+										<span className="font-medium">{item.name}</span>
+										<span className="text-gray-500">
+											${item.value.toFixed(2)} / ${maxValue.toFixed(2)}
 										</span>
 									</div>
-									<div
-										style={{
-											width: "100%",
-											height: "24px",
-											backgroundColor: "#e0e0e0",
-											borderRadius: "12px",
-											overflow: "hidden",
-											position: "relative",
-										}}
-									>
+									<div className="w-full h-6 bg-gray-200 rounded-xl overflow-hidden relative">
 										<div
+											className="h-full rounded-xl transition-[width] duration-300 ease-in-out"
 											style={{
 												width: `${percentage}%`,
-												height: "100%",
 												backgroundColor: barColor,
-												transition: "width 0.3s ease",
-												borderRadius: "12px",
 											}}
 										/>
 									</div>
@@ -186,8 +189,8 @@ export default function Chart({
 	};
 
 	return (
-		<div style={{ padding: "1rem", background: "white", borderRadius: "8px" }}>
-			{title && <h3 style={{ marginTop: 0 }}>{title}</h3>}
+		<div className="w-full">
+			{title && <h3 className="mt-0 mb-4 text-lg font-semibold">{title}</h3>}
 			{renderChart()}
 		</div>
 	);

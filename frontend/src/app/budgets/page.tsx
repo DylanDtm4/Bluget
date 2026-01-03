@@ -49,7 +49,7 @@ export default function BudgetsPage() {
 	return (
 		<>
 			<div>
-				<Link href="/budgets/new" color="blue">
+				<Link href="/budgets/new" className="text-blue-600 hover:text-blue-800">
 					<Button variant="primary">Add New Budget</Button>
 				</Link>
 			</div>

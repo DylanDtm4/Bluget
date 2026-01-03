@@ -42,7 +42,10 @@ export default function TransactionsPage() {
 	return (
 		<>
 			<div>
-				<Link href="/transactions/new" color="blue">
+				<Link
+					href="/transactions/new"
+					className="text-blue-600 hover:text-blue-800"
+				>
 					<Button variant="primary">Add New Transaction</Button>
 				</Link>
 			</div>
