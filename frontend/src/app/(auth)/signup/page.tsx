@@ -1,24 +1,59 @@
-import Link from "next/link";
+"use client";
+
+import AuthForm from "@/components/forms/AuthForm";
+import { useRouter } from "next/navigation";
 
 export default function SignupPage() {
-  return (
-    <div style={{ padding: "2rem" }}>
-      <h1>Signup Page</h1>
-      <form>
-        <div>
-          <label>Email:</label>
-          <input type="email" placeholder="Enter your email" />
-        </div>
-        <div>
-          <label>Password:</label>
-          <input type="password" placeholder="Enter your password" />
-        </div>
-        <button type="submit">Login</button>
-      </form>
+	const router = useRouter();
 
-      <p>
-        Already have an account? <Link href="/login">Log in</Link>
-      </p>
-    </div>
-  );
+	const signupFields = [
+		{
+			name: "name",
+			label: "Full Name",
+			type: "text" as const,
+			placeholder: "John Doe",
+			required: true,
+		},
+		{
+			name: "email",
+			label: "Email",
+			type: "email" as const,
+			placeholder: "you@example.com",
+			required: true,
+		},
+		{
+			name: "password",
+			label: "Password",
+			type: "password" as const,
+			placeholder: "••••••••",
+			required: true,
+		},
+		{
+			name: "confirmPassword",
+			label: "Confirm Password",
+			type: "password" as const,
+			placeholder: "••••••••",
+			required: true,
+		},
+	];
+
+	const handleSignup = (data: Record<string, string>) => {
+		console.log("Signup:", data);
+		// Add your signup logic here
+		// Then redirect to dashboard
+		router.push("/dashboard");
+	};
+
+	return (
+		<AuthForm
+			title="Create Account"
+			subtitle="Start managing your finances today"
+			fields={signupFields}
+			onSubmit={handleSignup}
+			submitButtonText="Sign Up"
+			footerText="Already have an account?"
+			footerLinkText="Sign in"
+			footerLinkHref="/login"
+		/>
+	);
 }

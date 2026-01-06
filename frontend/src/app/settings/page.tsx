@@ -9,14 +9,6 @@ export default function SettingsPage() {
 	const router = useRouter();
 
 	// Example initial user data (replace with API fetch later)
-	const initialData: FormData = {
-		name: "John Doe",
-		email: "john@example.com",
-		currency: "USD",
-		timezone: "GMT-6",
-		theme: "light",
-		defaultView: "month",
-	};
 
 	// Define all fields
 	const settingsFields = [
@@ -100,7 +92,6 @@ export default function SettingsPage() {
 		<Form
 			title="Settings"
 			fields={settingsFields}
-			initialData={initialData}
 			onSubmit={handleSubmit}
 			onCancel={handleCancel}
 		/>

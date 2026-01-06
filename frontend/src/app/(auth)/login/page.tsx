@@ -1,24 +1,45 @@
-import Link from "next/link";
+"use client";
+
+import AuthForm from "@/components/forms/AuthForm";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
-  return (
-    <div style={{ padding: "2rem" }}>
-      <h1>Login Page</h1>
-      <form>
-        <div>
-          <label>Email:</label>
-          <input type="email" placeholder="Enter your email" />
-        </div>
-        <div>
-          <label>Password:</label>
-          <input type="password" placeholder="Enter your password" />
-        </div>
-        <button type="submit">Login</button>
-      </form>
+	const router = useRouter();
 
-      <p>
-        Don't have an account? <Link href="/signup">Sign up</Link>
-      </p>
-    </div>
-  );
+	const loginFields = [
+		{
+			name: "email",
+			label: "Email",
+			type: "email" as const,
+			placeholder: "you@example.com",
+			required: true,
+		},
+		{
+			name: "password",
+			label: "Password",
+			type: "password" as const,
+			placeholder: "••••••••",
+			required: true,
+		},
+	];
+
+	const handleLogin = (data: Record<string, string>) => {
+		console.log("Login:", data);
+		// Add your login logic here
+		// Then redirect to dashboard
+		router.push("/dashboard");
+	};
+
+	return (
+		<AuthForm
+			title="Welcome Back"
+			subtitle="Sign in to your account"
+			fields={loginFields}
+			onSubmit={handleLogin}
+			submitButtonText="Sign In"
+			footerText="Don't have an account?"
+			footerLinkText="Sign up"
+			footerLinkHref="/signup"
+		/>
+	);
 }
