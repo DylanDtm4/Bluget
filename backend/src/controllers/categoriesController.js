@@ -4,7 +4,7 @@ const getCategories = async (req, res) => {
 	try {
 		const userId = req.user.id;
 		// page=2&limit=10
-		const { search, custom, sort, page = 1, limit = 10 } = req.query;
+		const { search, color, sort, page = 1, limit = 10 } = req.query;
 		if (page < 1 || limit < 1) {
 			return res
 				.status(400)
@@ -18,8 +18,10 @@ const getCategories = async (req, res) => {
 			query.title = { $regex: search, $options: "i" };
 		}
 
-		// custom=true or custom=false
-		if (custom) query.custom = custom;
+		// color=red or color=blue or color=#ff0000
+		if (color) {
+			query.color = color;
+		}
 
 		// sort=desc or sort=asc
 		const sortObj = {};
