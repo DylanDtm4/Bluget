@@ -18,100 +18,100 @@ type Budget = {
 	note?: string;
 };
 
+// Hardcoded sample data
+const sampleBudgets: Budget[] = [
+	{
+		id: "1",
+		category: "Subscriptions",
+		amount: 50,
+		month: 12,
+		year: 2025,
+		note: "Netflix, Spotify, etc.",
+	},
+	{
+		id: "2",
+		category: "Groceries",
+		amount: 200,
+		month: 12,
+		year: 2025,
+		note: "Weekly shopping",
+	},
+	{
+		id: "3",
+		category: "Rent",
+		amount: 1200,
+		month: 12,
+		year: 2025,
+	},
+	{
+		id: "4",
+		category: "Tennis Lessons",
+		amount: 100,
+		month: 12,
+		year: 2025,
+	},
+	{
+		id: "5",
+		category: "Utilities",
+		amount: 150,
+		month: 11,
+		year: 2025,
+		note: "Electric, water, gas",
+	},
+	{
+		id: "6",
+		category: "Groceries",
+		amount: 180,
+		month: 11,
+		year: 2025,
+	},
+	{
+		id: "7",
+		category: "Entertainment",
+		amount: 75,
+		month: 10,
+		year: 2025,
+		note: "Movies, concerts",
+	},
+	{
+		id: "8",
+		category: "Gas",
+		amount: 120,
+		month: 10,
+		year: 2025,
+	},
+	{
+		id: "9",
+		category: "Insurance",
+		amount: 250,
+		month: 9,
+		year: 2025,
+	},
+	{
+		id: "10",
+		category: "Gym Membership",
+		amount: 60,
+		month: 9,
+		year: 2025,
+	},
+	{
+		id: "11",
+		category: "Phone Bill",
+		amount: 85,
+		month: 8,
+		year: 2025,
+	},
+	{
+		id: "12",
+		category: "Subscriptions",
+		amount: 45,
+		month: 1,
+		year: 2024,
+	},
+];
+
 export default function BudgetsPage() {
 	const router = useRouter();
-
-	// Hardcoded sample data
-	const allBudgets: Budget[] = [
-		{
-			id: "1",
-			category: "Subscriptions",
-			amount: 50,
-			month: 12,
-			year: 2025,
-			note: "Netflix, Spotify, etc.",
-		},
-		{
-			id: "2",
-			category: "Groceries",
-			amount: 200,
-			month: 12,
-			year: 2025,
-			note: "Weekly shopping",
-		},
-		{
-			id: "3",
-			category: "Rent",
-			amount: 1200,
-			month: 12,
-			year: 2025,
-		},
-		{
-			id: "4",
-			category: "Tennis Lessons",
-			amount: 100,
-			month: 12,
-			year: 2025,
-		},
-		{
-			id: "5",
-			category: "Utilities",
-			amount: 150,
-			month: 11,
-			year: 2025,
-			note: "Electric, water, gas",
-		},
-		{
-			id: "6",
-			category: "Groceries",
-			amount: 180,
-			month: 11,
-			year: 2025,
-		},
-		{
-			id: "7",
-			category: "Entertainment",
-			amount: 75,
-			month: 10,
-			year: 2025,
-			note: "Movies, concerts",
-		},
-		{
-			id: "8",
-			category: "Gas",
-			amount: 120,
-			month: 10,
-			year: 2025,
-		},
-		{
-			id: "9",
-			category: "Insurance",
-			amount: 250,
-			month: 9,
-			year: 2025,
-		},
-		{
-			id: "10",
-			category: "Gym Membership",
-			amount: 60,
-			month: 9,
-			year: 2025,
-		},
-		{
-			id: "11",
-			category: "Phone Bill",
-			amount: 85,
-			month: 8,
-			year: 2025,
-		},
-		{
-			id: "12",
-			category: "Subscriptions",
-			amount: 45,
-			month: 1,
-			year: 2024,
-		},
-	];
 
 	// State
 	const [search, setSearch] = useState("");
@@ -136,9 +136,25 @@ export default function BudgetsPage() {
 		setCurrentPage(1);
 	};
 
+	const handlePageChange = (newPage: number) => {
+		setCurrentPage(newPage);
+		window.scrollTo({ top: 0, behavior: "smooth" });
+	};
+
+	const handleEdit = (id: string) => {
+		router.push(`/budgets/${id}/edit`);
+	};
+
+	const handleDelete = (id: string) => {
+		if (confirm("Are you sure you want to delete this budget?")) {
+			console.log("Delete", id);
+			// TODO: Add real delete functionality
+		}
+	};
+
 	// Filter and sort budgets
 	const filteredAndSortedBudgets = useMemo(() => {
-		let result = [...allBudgets];
+		let result = [...sampleBudgets];
 
 		// Apply search filter
 		if (search) {
@@ -179,22 +195,6 @@ export default function BudgetsPage() {
 			startIndex + itemsPerPage
 		);
 	}, [filteredAndSortedBudgets, currentPage]);
-
-	const handleEdit = (id: string) => {
-		router.push(`/budgets/${id}/edit`);
-	};
-
-	const handleDelete = (id: string) => {
-		if (confirm("Are you sure you want to delete this budget?")) {
-			console.log("Delete", id);
-			// TODO: Add real delete functionality
-		}
-	};
-
-	const handlePageChange = (newPage: number) => {
-		setCurrentPage(newPage);
-		window.scrollTo({ top: 0, behavior: "smooth" });
-	};
 
 	return (
 		<div className="max-w-7xl mx-auto px-4 py-6 space-y-10">
