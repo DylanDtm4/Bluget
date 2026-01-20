@@ -102,7 +102,7 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div className="p-8 bg-gray-100 min-h-screen">
+    <div className="sm:p-2 md:p-4 p-8 bg-gray-100 min-h-screen overflow-y-auto">
       <h1 className="mb-8">Dashboard</h1>
 
       {/* Summary Cards Row */}
