@@ -4,8 +4,10 @@ import Chart from "@/components/charts/Chart";
 import SummaryCard from "@/components/ui/SummaryCard";
 import Card from "@/components/ui/Card";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function DashboardPage() {
+  const router = useRouter();
   // Summary metrics
   const currentBalance = 3250.75;
   const monthlyIncome = 5000.0;
@@ -101,9 +103,21 @@ export default function DashboardPage() {
     },
   ];
 
+  const handleEditTransaction = (id: string) => {
+    router.push(`/transactions/${id}/edit`);
+  };
+
+  const handleEditRecurring = (id: string) => {
+    router.push(`/recurring/${id}/edit`);
+  };
+
+  const handleDelete = (id: string) => {
+    console.log("Delete", id);
+  };
+
   return (
     <div className="sm:p-2 md:p-4 p-8 bg-gray-100 min-h-screen overflow-y-auto">
-      <h1 className="mb-8">Dashboard</h1>
+      <h1 className="mb-8 text-gray-600">Dashboard</h1>
 
       {/* Summary Cards Row */}
       <div
@@ -181,7 +195,7 @@ export default function DashboardPage() {
         {/* Recent Transactions */}
         <div className="bg-white rounded-lg p-6 border border-gray-300">
           <Link href="/transactions">
-            <h3 className="mt-0 mb-4">Recent Transactions</h3>
+            <h3 className="mt-0 mb-4 text-gray-600">Recent Transactions</h3>
           </Link>
           {recentTransactions.map((transaction) => (
             <Card
@@ -190,14 +204,16 @@ export default function DashboardPage() {
               title={transaction.title}
               data={transaction.data}
               type="transaction"
+              onEdit={() => handleEditTransaction(transaction.id)}
+              onDelete={() => handleDelete(transaction.id)}
             />
           ))}
         </div>
 
         {/* Upcoming Bills */}
         <div className="bg-white rounded-lg p-6 border border-gray-300">
-          <Link href="/recurring">
-            <h3 className="mt-0 mb-4">Upcoming Bills</h3>
+          <Link href="/transactions/#recurring">
+            <h3 className="mt-0 mb-4 text-gray-600">Upcoming Bills</h3>
           </Link>
           {upcomingBills.map((bill) => (
             <Card
@@ -206,6 +222,8 @@ export default function DashboardPage() {
               title={bill.title}
               data={bill.data}
               type="recurring"
+              onEdit={() => handleEditRecurring(bill.id)}
+              onDelete={() => handleDelete(bill.id)}
             />
           ))}
         </div>

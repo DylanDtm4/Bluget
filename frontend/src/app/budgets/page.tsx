@@ -233,7 +233,7 @@ export default function BudgetsPage() {
           {/* Search and Sort Controls */}
           <div className="flex flex-col sm:flex-row gap-3">
             {/* Search Bar */}
-            <div className="flex-1">
+            <div className="flex-1 text-gray-600">
               <input
                 type="text"
                 placeholder="Search budgets by category or note..."

@@ -83,6 +83,12 @@ export default function Chart({
                   // Return negative number for items you want on top
                   return item.dataKey === "income" ? -1 : 1;
                 }}
+                contentStyle={{
+                  color: "#171717",
+                  backgroundColor: "#ffffff",
+                  border: "1px solid #ccc",
+                  borderRadius: "4px",
+                }}
               />
               {showLegend && <Legend />}
               {lines ? (
@@ -166,8 +172,10 @@ export default function Chart({
               return (
                 <div key={index}>
                   <div className="flex justify-between mb-1 text-sm">
-                    <span className="font-medium">{item.name}</span>
-                    <span className="text-gray-500">
+                    <span className="font-medium text-gray-600">
+                      {item.name}
+                    </span>
+                    <span className="text-gray-600">
                       ${item.value.toFixed(2)} / ${maxValue.toFixed(2)}
                     </span>
                   </div>
@@ -193,7 +201,11 @@ export default function Chart({
 
   return (
     <div className="w-full">
-      {title && <h3 className="mt-0 mb-4 text-lg font-semibold">{title}</h3>}
+      {title && (
+        <h3 className="mt-0 mb-4 text-lg font-semibold text-gray-600">
+          {title}
+        </h3>
+      )}
       {renderChart()}
     </div>
   );
