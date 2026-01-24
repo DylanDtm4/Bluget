@@ -2,7 +2,7 @@ import { ButtonHTMLAttributes, ReactNode } from "react";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 	children: ReactNode;
-	variant?: "primary" | "secondary" | "danger";
+	variant?: "primary" | "secondary" | "danger" | "white";
 	size?: "small" | "medium" | "large";
 }
 
@@ -22,7 +22,11 @@ export default function Button({
 				${size === "large" && "px-5 py-2.5 text-lg"}
 				${
 					variant === "primary" &&
-					"bg-transparent text-blue-600 border-blue-600 hover:bg-blue-50 hover:border-blue-700"
+					"bg-transparent text-blue-900 border-blue-900 hover:bg-blue-50 hover:border-blue-700"
+				}
+				${
+					variant === "white" &&
+					"bg-transparent text-white border-white hover:bg-white hover:border-white"
 				}
 				${
 					variant === "secondary" &&

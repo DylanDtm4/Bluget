@@ -59,7 +59,6 @@ export default function SettingsPage() {
 			options: [
 				{ label: "Light", value: "light" },
 				{ label: "Dark", value: "dark" },
-				{ label: "System Default", value: "system" },
 			],
 		},
 		{

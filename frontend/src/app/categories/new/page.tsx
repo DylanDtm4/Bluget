@@ -22,6 +22,13 @@ export default function NewCategoryPage() {
 			required: true,
 			placeholder: "#FF5733", // Default color value
 		},
+		{
+			name: "icon",
+			label: "Icon",
+			type: "icon" as const,
+			required: true,
+			placeholder: "Select an icon",
+		},
 	];
 
 	const handleSubmit = (data: Record<string, string | number>) => {

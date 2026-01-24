@@ -1,0 +1,29 @@
+import {
+	ShoppingCart,
+	Utensils,
+	Home,
+	Car,
+	CreditCard,
+	PiggyBank,
+	TrendingUp,
+	Lightbulb,
+	Plane,
+	Dumbbell,
+	Gift,
+	Puzzle,
+} from "lucide-react";
+
+export const CATEGORY_ICONS = [
+	{ id: "savings", label: "Savings", Icon: PiggyBank },
+	{ id: "shopping", label: "Shopping", Icon: ShoppingCart },
+	{ id: "food", label: "Food", Icon: Utensils },
+	{ id: "transport", label: "Transport", Icon: Car },
+	{ id: "home", label: "Home", Icon: Home },
+	{ id: "travel", label: "Travel", Icon: Plane },
+	{ id: "subscriptions", label: "Subscriptions", Icon: CreditCard },
+	{ id: "utilities", label: "Utilities", Icon: Lightbulb },
+	{ id: "investments", label: "Investments", Icon: TrendingUp },
+	{ id: "fitness", label: "Fitness", Icon: Dumbbell },
+	{ id: "gifts", label: "Gifts", Icon: Gift },
+	{ id: "other", label: "Other", Icon: Puzzle },
+] as const;

@@ -121,6 +121,7 @@ export default function AuthForm({
 				<div className="text-center mt-6">
 					<Link
 						href="/"
+						onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
 						className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
 					>
 						← Back to home
