@@ -11,6 +11,7 @@ import {
 	Dumbbell,
 	Gift,
 	Puzzle,
+	DollarSign,
 } from "lucide-react";
 
 export const CATEGORY_ICONS = [
@@ -26,4 +27,5 @@ export const CATEGORY_ICONS = [
 	{ id: "fitness", label: "Fitness", Icon: Dumbbell },
 	{ id: "gifts", label: "Gifts", Icon: Gift },
 	{ id: "other", label: "Other", Icon: Puzzle },
+	{ id: "income", label: "Income", Icon: DollarSign },
 ] as const;

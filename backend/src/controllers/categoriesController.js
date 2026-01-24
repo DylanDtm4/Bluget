@@ -1,5 +1,5 @@
 const Category = require("../models/Category");
-
+// This controller does not have ICON functionality yet
 const getCategories = async (req, res) => {
 	try {
 		const userId = req.user.id;
@@ -133,7 +133,7 @@ const updateCategory = async (req, res) => {
 	const updatedCategory = await Category.findOneAndUpdate(
 		{ _id: req.params.id, userId: req.user.id },
 		{ ...req.body },
-		{ new: true }
+		{ new: true },
 	);
 
 	if (!updatedCategory)
