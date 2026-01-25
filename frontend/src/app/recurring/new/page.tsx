@@ -78,19 +78,23 @@ export default function NewRecurringTransactionPage() {
 		// })
 
 		// Then redirect back to recurring page
-		router.push("/recurring");
+		router.push("/transactions");
 	};
 
 	const handleCancel = () => {
-		router.push("/recurring");
+		router.push("/transactions");
 	};
 
 	return (
-		<Form
-			title="Add New Recurring Transaction"
-			fields={recurringFields}
-			onSubmit={handleSubmit}
-			onCancel={handleCancel}
-		/>
+		<div className="bg-gradient-to-br from-blue-50 to-blue-100 p-3 sm:p-6 rounded-xl min-h-screen">
+			<div className="max-w-2xl mx-auto">
+				<Form
+					title="Add New Recurring Transaction"
+					fields={recurringFields}
+					onSubmit={handleSubmit}
+					onCancel={handleCancel}
+				/>
+			</div>
+		</div>
 	);
 }

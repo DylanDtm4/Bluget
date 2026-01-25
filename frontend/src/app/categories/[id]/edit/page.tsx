@@ -21,9 +21,16 @@ export default function EditCategoryPage({
 		{
 			name: "color",
 			label: "Color",
-			type: "text" as const,
+			type: "color" as const, // Changed from "text" to "color"
 			required: true,
-			placeholder: "e.g., #FF5733",
+			placeholder: "#FF5733", // Default color value
+		},
+		{
+			name: "icon",
+			label: "Icon",
+			type: "icon" as const,
+			required: true,
+			placeholder: "Select an icon",
 		},
 	];
 	// Fetch existing data (for now using dummy data)
@@ -39,12 +46,16 @@ export default function EditCategoryPage({
 	};
 
 	return (
-		<Form
-			title="Edit Category"
-			fields={categoryFields}
-			onSubmit={handleSubmit}
-			onCancel={() => router.push("/categories")}
-			initialData={existingCategory}
-		/>
+		<div className="bg-gradient-to-br from-blue-50 to-blue-100 p-3 sm:p-6 rounded-xl min-h-screen">
+			<div className="max-w-2xl mx-auto">
+				<Form
+					title="Edit Category"
+					fields={categoryFields}
+					onSubmit={handleSubmit}
+					onCancel={() => router.push("/categories")}
+					initialData={existingCategory}
+				/>
+			</div>
+		</div>
 	);
 }

@@ -1,16 +1,106 @@
 "use client";
-
+import React, { useState } from "react";
+import {
+	Utensils,
+	Briefcase,
+	Film,
+	Car,
+	Zap,
+	Wifi,
+	Smartphone,
+	Home,
+} from "lucide-react";
+import SummaryCards from "@/components/ui/SummaryCards";
 import Chart from "@/components/charts/Chart";
-import SummaryCard from "@/components/ui/SummaryCard";
-import Card from "@/components/ui/Card";
+import TransactionsList, {
+	Transaction,
+} from "@/components/ui/TransactionsList";
+import BudgetGoals from "@/components/ui/BudgetGoals";
 import MonthSelector from "@/components/ui/MonthSelector";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-
-export default function DashboardPage() {
-	const router = useRouter();
+export default function IntegratedBudgetDashboard() {
 	const [selectedDate, setSelectedDate] = useState(new Date());
+	const expenses = [
+		{ name: "Housing", value: 1200, color: "#1e40af" },
+		{ name: "Food", value: 450, color: "#3b82f6" },
+		{ name: "Transport", value: 300, color: "#60a5fa" },
+		{ name: "Entertainment", value: 200, color: "#93c5fd" },
+	];
+
+	const trendData = [
+		{ day: "Mon", amount: 150 },
+		{ day: "Tue", amount: 230 },
+		{ day: "Wed", amount: 180 },
+		{ day: "Thu", amount: 290 },
+		{ day: "Fri", amount: 250 },
+		{ day: "Sat", amount: 320 },
+		{ day: "Sun", amount: 200 },
+	];
+
+	const transactions: Transaction[] = [
+		{
+			name: "Grocery Store",
+			amount: -85.5,
+			category: "Food",
+			icon: Utensils,
+			color: "bg-blue-100 text-blue-600",
+		},
+		{
+			name: "Salary Deposit",
+			amount: 5200,
+			category: "Income",
+			icon: Briefcase,
+			color: "bg-green-100 text-green-600",
+		},
+		{
+			name: "Netflix",
+			amount: -15.99,
+			category: "Entertainment",
+			icon: Film,
+			color: "bg-purple-100 text-purple-600",
+		},
+		{
+			name: "Gas Station",
+			amount: -45.0,
+			category: "Transport",
+			icon: Car,
+			color: "bg-orange-100 text-orange-600",
+		},
+	];
+
+	const upcomingBills: Transaction[] = [
+		{
+			name: "Rent",
+			amount: -1200,
+			category: "Housing",
+			icon: Home,
+			color: "bg-red-100 text-red-600",
+			date: "Jan 1",
+		},
+		{
+			name: "Electricity",
+			amount: -85,
+			category: "Utilities",
+			icon: Zap,
+			color: "bg-yellow-100 text-yellow-600",
+			date: "Jan 15",
+		},
+		{
+			name: "Internet",
+			amount: -60,
+			category: "Utilities",
+			icon: Wifi,
+			color: "bg-blue-100 text-blue-600",
+			date: "Jan 20",
+		},
+		{
+			name: "Phone",
+			amount: -45,
+			category: "Utilities",
+			icon: Smartphone,
+			color: "bg-green-100 text-green-600",
+			date: "Jan 25",
+		},
+	];
 
 	// Handle month change
 	const handleMonthChange = (date: Date) => {
@@ -18,224 +108,45 @@ export default function DashboardPage() {
 		console.log("Selected month:", date);
 		// TODO: Fetch data for the selected month
 	};
-	// Summary metrics
-	const currentBalance = 3250.75;
-	const monthlyIncome = 5000.0;
-	const monthlyExpenses = 2800.0;
-	const netIncome = monthlyIncome - monthlyExpenses;
-
-	// Chart data
-	const spendingByCategory = [
-		{ name: "Groceries", value: 450 },
-		{ name: "Rent", value: 1200 },
-		{ name: "Entertainment", value: 200 },
-		{ name: "Transportation", value: 150 },
-		{ name: "Utilities", value: 300 },
-		{ name: "Other", value: 500 },
-	];
-
-	const monthlyTrend = [
-		{ name: "Jan", income: 4800, expenses: 2600 },
-		{ name: "Feb", income: 5000, expenses: 2400 },
-		{ name: "Mar", income: 5200, expenses: 2800 },
-		{ name: "Apr", income: 5000, expenses: 3100 },
-		{ name: "May", income: 5000, expenses: 2700 },
-		{ name: "Jun", income: 5000, expenses: 2800 },
-	];
-
-	const budgetProgress = [
-		{ name: "Groceries", value: 450, max: 600, color: "#82ca9d" },
-		{ name: "Rent", value: 1200, max: 1200, color: "#ff7c7c" },
-		{ name: "Entertainment", value: 200, max: 300, color: "#ffc658" },
-		{ name: "Transportation", value: 150, max: 200, color: "#8884d8" },
-	];
-
-	// Recent transactions
-	const recentTransactions = [
-		{
-			id: "1",
-			title: "Grocery Store",
-			data: {
-				amount: 45.32,
-				date: "2025-01-02",
-				mainCategory: "Expense",
-				secondaryCategory: "Groceries",
-			},
-		},
-		{
-			id: "2",
-			title: "Paycheck",
-			data: {
-				amount: 2500.0,
-				date: "2025-01-01",
-				mainCategory: "Income",
-				secondaryCategory: "Salary",
-			},
-		},
-		{
-			id: "3",
-			title: "Gas Station",
-			data: {
-				amount: 35.0,
-				date: "2024-12-31",
-				mainCategory: "Expense",
-				secondaryCategory: "Transportation",
-			},
-		},
-	];
-
-	// Upcoming bills
-	const upcomingBills = [
-		{
-			id: "1",
-			title: "Rent",
-			data: {
-				amount: 1200.0,
-				frequency: "Monthly",
-				nextRun: "2025-01-05",
-				mainCategory: "Expense",
-				secondaryCategory: "Housing",
-				startDate: new Date("2024-01-01"),
-			},
-		},
-		{
-			id: "2",
-			title: "Netflix",
-			data: {
-				amount: 15.99,
-				frequency: "Monthly",
-				nextRun: "2025-01-12",
-				mainCategory: "Expense",
-				secondaryCategory: "Entertainment",
-				startDate: new Date("2024-01-01"),
-			},
-		},
-	];
-
-	const handleEditTransaction = (id: string) => {
-		router.push(`/transactions/${id}/edit`);
-	};
-
-	const handleEditRecurring = (id: string) => {
-		router.push(`/recurring/${id}/edit`);
-	};
-
-	const handleDelete = (id: string) => {
-		console.log("Delete", id);
-	};
 
 	return (
-		<div className="sm:p-2 md:p-4 p-8 bg-gray-100 min-h-screen overflow-y-auto">
+		<div className="bg-gradient-to-br from-blue-50 to-blue-100 p-3 sm:p-6 rounded-xl min-h-screen">
 			{/* Month Selector */}
 			<MonthSelector onMonthChange={handleMonthChange} className="mb-6 pt-4" />
-			{/* Summary Cards Row */}
-			<div
-				style={{
-					display: "grid",
-					gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
-					gap: "1rem",
-					marginBottom: "2rem",
-				}}
-			>
-				<SummaryCard
-					title="Current Balance"
-					amount={currentBalance}
-					color="#8884d8"
-				/>
-				<SummaryCard
-					title="Monthly Income"
-					amount={monthlyIncome}
-					color="#82ca9d"
-					trend={{ value: 4.2, isPositive: true }}
-				/>
-				<SummaryCard
-					title="Monthly Expenses"
-					amount={monthlyExpenses}
-					color="#ff7c7c"
-					trend={{ value: 3.5, isPositive: false }}
-				/>
-				<SummaryCard
-					title="Net Income"
-					amount={netIncome}
-					color={netIncome >= 0 ? "#82ca9d" : "#ff7c7c"}
-				/>
+
+			{/* Summary Cards */}
+			<SummaryCards />
+
+			{/* Charts Section */}
+			<div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 mb-4 sm:mb-6">
+				<Chart type="pie" data={expenses} title="Spending Breakdown" />
+				<BudgetGoals />
 			</div>
 
-			{/* Monthly Trend Line Chart - Full Width */}
-			<div className="bg-white rounded-lg p-6 border border-gray-300 mb-8">
+			{/* Spending Trend */}
+			<div className="mb-4 sm:mb-6">
 				<Chart
-					title="Income vs Expenses (6 Months)"
 					type="line"
-					data={monthlyTrend}
-					categoryKey="name"
-					lines={[
-						{ dataKey: "income", color: "#82ca9d", label: "Income" },
-						{ dataKey: "expenses", color: "#ff7c7c", label: "Expenses" },
-					]}
-					height={350}
+					data={trendData}
+					dataKey="amount"
+					xAxisKey="day"
+					title="Spending This Week"
 				/>
 			</div>
 
-			{/* Charts Row */}
-			<div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-				<div className="bg-white rounded-lg p-6 border border-gray-300">
-					<Chart
-						title="Spending by Category"
-						type="pie"
-						data={spendingByCategory}
-						dataKey="value"
-						categoryKey="name"
-						height={400}
-					/>
-				</div>
-				<div className="bg-white rounded-lg p-6 border border-gray-300">
-					<Chart
-						title="Budget Progress"
-						type="progress"
-						data={budgetProgress}
-						dataKey="value"
-						categoryKey="name"
-					/>
-				</div>
-			</div>
-
-			{/* Bottom Row: Recent Transactions & Upcoming Bills */}
-			<div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pb-4">
-				{/* Recent Transactions */}
-				<div className="bg-white rounded-lg p-6 border border-gray-300">
-					<Link href="/transactions">
-						<h3 className="mt-0 mb-4 text-gray-600">Recent Transactions</h3>
-					</Link>
-					{recentTransactions.map((transaction) => (
-						<Card
-							key={transaction.id}
-							id={transaction.id}
-							title={transaction.title}
-							data={transaction.data}
-							type="transaction"
-							onEdit={() => handleEditTransaction(transaction.id)}
-							onDelete={() => handleDelete(transaction.id)}
-						/>
-					))}
-				</div>
-
-				{/* Upcoming Bills */}
-				<div className="bg-white rounded-lg p-6 border border-gray-300">
-					<Link href="/transactions/#recurring">
-						<h3 className="mt-0 mb-4 text-gray-600">Upcoming Bills</h3>
-					</Link>
-					{upcomingBills.map((bill) => (
-						<Card
-							key={bill.id}
-							id={bill.id}
-							title={bill.title}
-							data={bill.data}
-							type="recurring"
-							onEdit={() => handleEditRecurring(bill.id)}
-							onDelete={() => handleDelete(bill.id)}
-						/>
-					))}
-				</div>
+			{/* Transactions and Bills Section */}
+			<div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
+				<TransactionsList
+					title="Recent Transactions"
+					transactions={transactions}
+					viewAllLink="/transactions"
+				/>
+				<TransactionsList
+					title="Upcoming Bills"
+					transactions={upcomingBills}
+					viewAllLink="/transactions#recurring"
+					showDate={true}
+				/>
 			</div>
 		</div>
 	);

@@ -84,20 +84,24 @@ export default function EditRecurringPage({
 	};
 
 	const handleSubmit = (data: Record<string, string | number>) => {
-		console.log("Updating recurringtransaction:", params.id, data);
+		console.log("Updating recurring transaction:", params.id, data);
 		// PUT request to API: /api/recurring/${params.id}
 		router.push("/transactions");
 	};
 
 	return (
-		<Form
-			title="Edit Recurring Transaction"
-			fields={recurringFields}
-			onSubmit={handleSubmit}
-			onCancel={() => router.push("/recurring")}
-			initialData={existingRecurring}
-			enableRecurring={true}
-			recurringLocked={true}
-		/>
+		<div className="bg-gradient-to-br from-blue-50 to-blue-100 p-3 sm:p-6 rounded-xl min-h-screen">
+			<div className="max-w-2xl mx-auto">
+				<Form
+					title="Edit Recurring Transaction"
+					fields={recurringFields}
+					onSubmit={handleSubmit}
+					onCancel={() => router.push("/transactions")}
+					initialData={existingRecurring}
+					enableRecurring={true}
+					recurringLocked={true}
+				/>
+			</div>
+		</div>
 	);
 }

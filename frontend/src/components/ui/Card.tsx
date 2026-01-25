@@ -63,7 +63,7 @@ export default function Card({
 						.toString()
 						.padStart(2, "0")}`,
 					amount: budgetData.amount,
-					color: "red",
+					color: "#424242",
 					extraInfo: budgetData.note,
 					icon: null,
 				};
@@ -93,7 +93,7 @@ export default function Card({
 					color:
 						recurringData.mainCategory.toLowerCase() === "income"
 							? "green"
-							: "red",
+							: "#424242",
 					extraInfo: (
 						<>
 							{recurringData.startDate && (
@@ -127,7 +127,7 @@ export default function Card({
 					color:
 						transactionData.mainCategory.toLowerCase() === "income"
 							? "green"
-							: "red",
+							: "#424242",
 					extraInfo: transactionData.note,
 					icon: null,
 				};

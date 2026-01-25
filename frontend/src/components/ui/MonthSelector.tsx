@@ -70,7 +70,9 @@ export default function MonthSelector({
 			</button>
 
 			<div className="flex items-center gap-2">
-				<h2 className="text-xl font-semibold text-gray-700">{monthYear}</h2>
+				<h2 className="text-2xl sm:text-3xl font-semibold text-gray-700">
+					{monthYear}
+				</h2>
 			</div>
 
 			<button

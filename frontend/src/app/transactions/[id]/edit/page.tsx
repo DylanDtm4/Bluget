@@ -68,13 +68,17 @@ export default function EditTransactionPage({
 	};
 
 	return (
-		<Form
-			title="Edit Transaction"
-			fields={transactionFields}
-			onSubmit={handleSubmit}
-			onCancel={() => router.push("/transactions")}
-			initialData={existingTransaction}
-			enableRecurring={false}
-		/>
+		<div className="bg-gradient-to-br from-blue-50 to-blue-100 p-3 sm:p-6 rounded-xl min-h-screen">
+			<div className="max-w-2xl mx-auto">
+				<Form
+					title="Edit Transaction"
+					fields={transactionFields}
+					onSubmit={handleSubmit}
+					onCancel={() => router.push("/transactions")}
+					initialData={existingTransaction}
+					enableRecurring={false}
+				/>
+			</div>{" "}
+		</div>
 	);
 }

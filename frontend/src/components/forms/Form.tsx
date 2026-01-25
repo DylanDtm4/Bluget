@@ -8,6 +8,7 @@ type FieldType =
 	| "text"
 	| "number"
 	| "date"
+	| "year"
 	| "select"
 	| "textarea"
 	| "color"
@@ -64,6 +65,23 @@ export default function Form({
 
 	const renderField = (field: FormField) => {
 		switch (field.type) {
+			case "year":
+				return (
+					<input
+						type="number"
+						value={formData[field.name] || ""}
+						onChange={(e) =>
+							handleChange(field.name, parseInt(e.target.value, 10) || 0)
+						}
+						placeholder={field.placeholder || "YYYY"}
+						required={field.required}
+						min={1900}
+						max={2100}
+						step={1}
+						className={inputClasses}
+					/>
+				);
+
 			case "select":
 				return (
 					<select
