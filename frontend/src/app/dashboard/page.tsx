@@ -110,7 +110,7 @@ export default function IntegratedBudgetDashboard() {
 	};
 
 	return (
-		<div className="bg-gradient-to-br from-blue-50 to-blue-100 p-3 sm:p-6 rounded-xl min-h-screen">
+		<div className="bg-linear-to-br from-blue-50 to-blue-100 p-3 sm:p-6 rounded-xl min-h-screen">
 			{/* Month Selector */}
 			<MonthSelector onMonthChange={handleMonthChange} className="mb-6 pt-4" />
 

@@ -88,6 +88,7 @@ export default function Card({
 				const recurringData = data as RecurringData;
 				return {
 					subtitle: `${recurringData.frequency} - Next: ${recurringData.nextRun}`,
+					subtitleMobile: recurringData.nextRun, // Mobile shows only next date
 					secondaryTitle: recurringData.secondaryCategory,
 					amount: recurringData.amount,
 					color:
@@ -97,19 +98,19 @@ export default function Card({
 					extraInfo: (
 						<>
 							{recurringData.startDate && (
-								<p className="text-sm mb-3">
+								<p className="text-xs sm:text-sm mb-3">
 									<strong>Start Date:</strong>{" "}
 									{new Date(recurringData.startDate).toLocaleDateString()}
 								</p>
 							)}
 							{recurringData.endDate && (
-								<p className="text-sm mb-3">
+								<p className="text-xs sm:text-sm mb-3">
 									<strong>End Date:</strong>{" "}
 									{new Date(recurringData.endDate).toLocaleDateString()}
 								</p>
 							)}
 							{recurringData.note && (
-								<p className="text-sm mb-3">
+								<p className="text-xs sm:text-sm mb-3">
 									<strong>Note:</strong> {recurringData.note}
 								</p>
 							)}
@@ -147,47 +148,54 @@ export default function Card({
 	return (
 		<div
 			onClick={() => setExpanded(!expanded)}
-			className="border border-gray-300 rounded-lg p-4 mb-4 cursor-pointer hover:shadow-md transition-shadow"
+			className="border border-gray-300 rounded-lg p-3 sm:p-4 mb-4 cursor-pointer hover:shadow-md transition-shadow"
 		>
 			{/* Top Row */}
-			<div className="flex justify-between items-center">
-				<div className="flex items-center gap-3">
-					{/* Render icon if it exists */}
+			<div className="flex justify-between items-center gap-2">
+				<div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+					{/* Render icon if it exists - responsive sizing */}
 					{content.icon && (
 						<div
-							className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+							className="w-12 h-12 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center shrink-0"
 							style={{ backgroundColor: content.color + "20" }}
 						>
 							<content.icon
-								className="w-5 h-5"
+								className="w-7 h-7 sm:w-5 sm:h-5"
 								style={{ color: content.color }}
 							/>
 						</div>
 					)}
 
-					<div className="flex-1">
-						<div className="flex items-baseline gap-1">
-							<p className="font-bold text-gray-800 dark:text-gray-100">
+					<div className="flex-1 min-w-0">
+						<div className="flex items-baseline gap-1 flex-wrap">
+							<p className="font-bold text-sm sm:text-base text-gray-800 dark:text-gray-100 truncate">
 								{title}
 								{type !== "category" && type !== "budget" && ":"}
 							</p>
 							{content.secondaryTitle && (
-								<p className="text-med text-gray-600 dark:text-gray-400">
+								<p className="text-xs sm:text-base text-gray-600 dark:text-gray-400 truncate">
 									{content.secondaryTitle}
 								</p>
 							)}
 						</div>
 						{content.subtitle && (
-							<p className="text-sm text-gray-400 dark:text-gray-500">
-								{content.subtitle}
-							</p>
+							<>
+								{/* Show full subtitle on desktop */}
+								<p className="hidden sm:block text-sm text-gray-400 dark:text-gray-500">
+									{content.subtitle}
+								</p>
+								{/* Show mobile subtitle if available, otherwise show full */}
+								<p className="sm:hidden text-xs text-gray-400 dark:text-gray-500">
+									{content.subtitleMobile || content.subtitle}
+								</p>
+							</>
 						)}
 					</div>
 				</div>
 
 				{content.amount !== null && (
 					<div
-						className="font-bold"
+						className="font-bold text-sm sm:text-base flex-shrink-0"
 						style={{ color: content.color || "black" }}
 					>
 						${content.amount.toFixed(2)}
@@ -199,40 +207,40 @@ export default function Card({
 			{expanded && (
 				<div className="mt-3">
 					{typeof content.extraInfo === "string" && content.extraInfo && (
-						<p className="text-sm mb-3">
+						<p className="text-xs sm:text-sm mb-3">
 							<strong>Note:</strong> {content.extraInfo}
 						</p>
 					)}
 					{typeof content.extraInfo !== "string" && content.extraInfo}
 
-					<div className="flex gap-3">
+					<div className="flex flex-wrap gap-2 sm:gap-3">
 						<button
 							onClick={(e) => {
 								e.stopPropagation();
 								onEdit?.();
 							}}
-							className="px-3 py-1 border border-gray-300 rounded hover:bg-gray-50 transition-colors"
+							className="px-3 py-1 text-xs sm:text-sm border border-gray-300 rounded hover:bg-gray-50 transition-colors"
 						>
 							Edit
 						</button>
-
 						<button
 							onClick={(e) => {
 								e.stopPropagation();
 								onDelete?.();
 							}}
-							className="px-3 py-1 border border-red-300 text-red-600 rounded hover:bg-red-50 transition-colors"
+							className="px-3 py-1 text-xs sm:text-sm border border-red-300 text-red-600 rounded hover:bg-red-50 transition-colors"
 						>
 							Delete
 						</button>
-
-						<Link
-							href={detailsPath}
-							onClick={(e) => e.stopPropagation()}
-							className="px-3 py-1 text-blue-600 underline hover:text-blue-800"
-						>
-							View Details
-						</Link>
+						{type !== "category" && (
+							<Link
+								href={detailsPath}
+								onClick={(e) => e.stopPropagation()}
+								className="px-3 py-1 text-xs sm:text-sm text-blue-600 underline hover:text-blue-800"
+							>
+								View Details
+							</Link>
+						)}
 					</div>
 				</div>
 			)}

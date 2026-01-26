@@ -68,7 +68,7 @@ export default function BudgetDetailPage() {
 
 	if (!budget) {
 		return (
-			<div className="bg-gradient-to-br from-blue-50 to-blue-100 p-3 sm:p-6 rounded-xl min-h-screen">
+			<div className="bg-linear-to-br from-blue-50 to-blue-100 p-3 sm:p-6 rounded-xl min-h-screen">
 				<div className="max-w-4xl mx-auto">
 					<div className="bg-white rounded-lg shadow-md p-6 sm:p-12 text-center">
 						<div className="text-blue-200 mb-4">
@@ -93,7 +93,7 @@ export default function BudgetDetailPage() {
 							The budget you&apos;re looking for doesn&apos;t exist.
 						</p>
 						<Link href="/budgets">
-							<button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2.5 rounded-lg transition-colors shadow-md">
+							<button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2.5 rounded-lg transition-colors shadow-md mb-4">
 								Back to Budgets
 							</button>
 						</Link>
@@ -116,11 +116,11 @@ export default function BudgetDetailPage() {
 	};
 
 	return (
-		<div className="bg-gradient-to-br from-blue-50 to-blue-100 p-3 sm:p-6 rounded-xl min-h-screen">
+		<div className="bg-linear-to-br from-blue-50 to-blue-100 p-3 sm:p-6 rounded-xl min-h-screen">
 			<div className="max-w-4xl mx-auto space-y-4 sm:space-y-6">
 				{/* Back Button */}
 				<Link href="/budgets">
-					<button className="flex items-center text-blue-700 hover:text-blue-900 transition-colors font-medium text-sm sm:text-base">
+					<button className="flex items-center text-blue-700 hover:text-blue-900 transition-colors font-medium text-sm sm:text-base mb-4">
 						<ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
 						Back to Budgets
 					</button>
@@ -260,7 +260,7 @@ export default function BudgetDetailPage() {
 				</div>
 
 				{/* Spending Tracking Card - Placeholder for future feature */}
-				<div className="bg-gradient-to-br from-blue-100 to-blue-50 rounded-lg shadow-md border-2 border-blue-300 p-4 sm:p-6">
+				<div className="bg-linear-to-br from-blue-100 to-blue-50 rounded-lg shadow-md border-2 border-blue-300 p-4 sm:p-6">
 					<div className="flex items-center gap-2 mb-2">
 						<TrendingUp className="text-blue-600" size={20} />
 						<h2 className="text-lg sm:text-xl font-bold text-blue-900">

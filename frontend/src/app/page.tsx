@@ -7,7 +7,7 @@ export default function HomePage() {
 			{/* Hero Section */}
 			<div
 				id="hero"
-				className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50"
+				className="relative overflow-hidden bg-linear-to-br from-blue-50 via-indigo-50 to-purple-50"
 			>
 				{/* Decorative background elements */}
 				<div className="absolute top-0 right-0 w-96 h-96 bg-blue-300 rounded-full blur-3xl opacity-20 -translate-y-1/2 translate-x-1/2"></div>
@@ -81,7 +81,7 @@ export default function HomePage() {
 
 						{/* Right Image/Visual */}
 						<div className="relative lg:h-[600px] hidden lg:block">
-							<div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-indigo-600 rounded-3xl transform rotate-3 opacity-10"></div>
+							<div className="absolute inset-0 bg-linear-to-br from-blue-400 to-indigo-600 rounded-3xl transform rotate-3 opacity-10"></div>
 							<div className="absolute inset-0 flex items-center justify-center">
 								<div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md transform -rotate-2 hover:rotate-0 transition-transform duration-300">
 									<div className="space-y-6">
@@ -161,7 +161,7 @@ export default function HomePage() {
 
 				<div className="grid md:grid-cols-3 gap-8">
 					<div className="group">
-						<div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-8 h-full border border-blue-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+						<div className="bg-gradient-linear-br from-blue-50 to-indigo-50 rounded-2xl p-8 h-full border border-blue-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
 							<div className="w-14 h-14 bg-blue-500 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
 								<span className="text-3xl">💰</span>
 							</div>
@@ -176,7 +176,7 @@ export default function HomePage() {
 					</div>
 
 					<div className="group">
-						<div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl p-8 h-full border border-indigo-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+						<div className="bg-linear-to-br from-indigo-50 to-purple-50 rounded-2xl p-8 h-full border border-indigo-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
 							<div className="w-14 h-14 bg-indigo-500 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
 								<span className="text-3xl">🔄</span>
 							</div>
@@ -191,7 +191,7 @@ export default function HomePage() {
 					</div>
 
 					<div className="group">
-						<div className="bg-gradient-to-br from-cyan-50 to-blue-50 rounded-2xl p-8 h-full border border-cyan-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+						<div className="bg-linear-to-br from-cyan-50 to-blue-50 rounded-2xl p-8 h-full border border-cyan-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
 							<div className="w-14 h-14 bg-cyan-500 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
 								<span className="text-3xl">📊</span>
 							</div>
@@ -208,7 +208,7 @@ export default function HomePage() {
 			</div>
 
 			{/* Stats Section */}
-			<div className="bg-gradient-to-br from-blue-900 to-indigo-900 text-white py-20">
+			<div className="bg-linear-to-br from-blue-900 to-indigo-900 text-white py-20">
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 					<div className="grid md:grid-cols-3 gap-12 text-center">
 						<div>
@@ -229,14 +229,14 @@ export default function HomePage() {
 
 			{/* CTA Section */}
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-				<div className="border border-black/10 bg-gradient-to-br from-blue-300 to-indigo-600 rounded-3xl p-12 md:p-16 text-center text-white">
+				<div className="border border-black/10 bg-linear-to-br from-blue-300 to-indigo-600 rounded-3xl p-12 md:p-16 text-center text-white">
 					<h2 className="text-4xl md:text-5xl font-bold mb-6">
 						Start managing your
 						<br />
 						money better today
 					</h2>
 					<p className="text-xl opacity-90 mb-8 max-w-2xl mx-auto">
-						Join thousands of people who've already taken control of their
+						Join thousands of people who&apos;ve already taken control of their
 						finances with Bluget
 					</p>
 					<Link href="/signup">

@@ -59,9 +59,9 @@ export default function Form({
 		onSubmit(formData);
 	};
 
-	// Shared input classes
+	// Shared input classes - responsive
 	const inputClasses =
-		"text-gray-600 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all";
+		"text-gray-600 w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all";
 
 	const renderField = (field: FormField) => {
 		switch (field.type) {
@@ -138,13 +138,13 @@ export default function Form({
 
 			case "color":
 				return (
-					<div className="flex items-center gap-2">
+					<div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
 						<input
 							type="color"
 							value={formData[field.name] || "#FF5733"}
 							onChange={(e) => handleChange(field.name, e.target.value)}
 							required={field.required}
-							className="w-16 h-10 cursor-pointer rounded border border-gray-300"
+							className="w-full sm:w-16 h-10 cursor-pointer rounded border border-gray-300"
 						/>
 						<input
 							type="text"
@@ -181,11 +181,13 @@ export default function Form({
 	};
 
 	return (
-		<div className="max-w-2xl mx-auto p-6">
-			<div className="bg-white rounded-lg shadow-md p-8">
-				<h2 className="text-2xl font-bold mb-6 text-gray-800">{title}</h2>
+		<div className="max-w-2xl mx-auto p-3 sm:p-6">
+			<div className="bg-white rounded-lg shadow-md p-4 sm:p-8">
+				<h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-gray-800">
+					{title}
+				</h2>
 
-				<form onSubmit={handleSubmit} className="space-y-5">
+				<form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
 					{enableRecurring && (
 						<div className="flex items-center gap-2 pb-2 border-b border-gray-200">
 							<input
@@ -198,7 +200,7 @@ export default function Form({
 							/>
 							<label
 								htmlFor="recurring-checkbox"
-								className="font-semibold text-gray-700 cursor-pointer"
+								className="font-semibold text-sm sm:text-base text-gray-700 cursor-pointer"
 							>
 								Recurring {recurringLocked && "(locked for editing)"}
 							</label>
@@ -215,7 +217,7 @@ export default function Form({
 						})
 						.map((field) => (
 							<div key={field.name}>
-								<label className="block mb-2 font-semibold text-gray-700">
+								<label className="block mb-2 font-semibold text-sm sm:text-base text-gray-700">
 									{field.label}
 									{field.required && (
 										<span className="text-red-500 ml-1">*</span>
@@ -225,7 +227,7 @@ export default function Form({
 							</div>
 						))}
 
-					<div className="flex gap-3 pt-4">
+					<div className="flex flex-col sm:flex-row gap-3 pt-4">
 						<Button type="submit" variant="primary" size="medium">
 							Submit
 						</Button>

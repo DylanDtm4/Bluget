@@ -31,10 +31,11 @@ export default function IconPicker({
             `}
 					>
 						<Icon
+							className="w-6 h-6 sm:w-5 sm:h-5"
 							size={24}
 							strokeWidth={2}
 							color={color ?? "#000"}
-							className={selected ? "opacity-100" : "opacity-70"}
+							style={{ opacity: selected ? 1 : 0.7 }}
 						/>
 					</button>
 				);

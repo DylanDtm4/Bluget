@@ -3,7 +3,6 @@
 import Card from "@/components/ui/Card";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import Button from "@/components/ui/Button";
 import { useState, useMemo } from "react";
 import { Search, ArrowUpDown, ChevronUp, ChevronDown } from "lucide-react";
 
@@ -198,7 +197,7 @@ export default function BudgetsPage() {
 	}, [filteredAndSortedBudgets, currentPage]);
 
 	return (
-		<div className="bg-gradient-to-br from-blue-50 to-blue-100 p-3 sm:p-6 rounded-xl min-h-screen">
+		<div className="bg-linear-to-br from-blue-50 to-blue-100 p-3 sm:p-6 rounded-xl min-h-screen">
 			{/* Page Header */}
 			<div className="flex items-center justify-between gap-3 mb-4 sm:mb-6 px-2 sm:px-0">
 				<div className="sm:ml-4">

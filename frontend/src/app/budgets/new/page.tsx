@@ -74,7 +74,7 @@ export default function NewBudgetPage() {
 	};
 
 	return (
-		<div className="bg-gradient-to-br from-blue-50 to-blue-100 p-3 sm:p-6 rounded-xl min-h-screen">
+		<div className="bg-linear-to-br from-blue-50 to-blue-100 p-3 sm:p-6 rounded-xl min-h-screen">
 			<div className="max-w-2xl mx-auto">
 				<Form
 					title="Add New Budget"
