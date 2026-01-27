@@ -21,95 +21,123 @@ type RecurringSortField =
 	| "endDate";
 type SortDirection = "asc" | "desc";
 
+// Mock category data
+const mockCategories = {
+	Subscriptions: { icon: "subscriptions", color: "#8B5CF6" },
+	Groceries: { icon: "shopping", color: "#10B981" },
+	Rent: { icon: "home", color: "#3B82F6" },
+	"Tennis Lessons": { icon: "fitness", color: "#14B8A6" },
+	Utilities: { icon: "utilities", color: "#F59E0B" },
+	Entertainment: { icon: "other", color: "#EC4899" },
+	Gas: { icon: "transport", color: "#F97316" },
+	Insurance: { icon: "other", color: "#6366F1" },
+	"Gym Membership": { icon: "fitness", color: "#14B8A6" },
+	"Phone Bill": { icon: "subscriptions", color: "#A855F7" },
+	"Paycheck 1": { icon: "income", color: "#84CC16" },
+	Paycheck: { icon: "income", color: "#84CC16" },
+	"Emergency Fund": { icon: "savings", color: "#10B981" },
+	VOO: { icon: "investments", color: "#F59E0B" },
+};
+
+// Helper function
+const getCategoryDetails = (categoryName: string) => {
+	return (
+		mockCategories[categoryName as keyof typeof mockCategories] || {
+			icon: "other",
+			color: "#9CA3AF",
+		}
+	);
+};
+
+const sampleTransactions = [
+	{
+		id: "1",
+		mainCategory: "Income",
+		secondaryCategory: "Paycheck 1",
+		date: "2025-12-20",
+		amount: 200,
+	},
+	{
+		id: "2",
+		mainCategory: "Expense",
+		secondaryCategory: "Groceries",
+		date: "2025-12-21",
+		amount: 50,
+	},
+	{
+		id: "3",
+		mainCategory: "Expense",
+		secondaryCategory: "Utilities",
+		date: "2025-12-22",
+		amount: 30.5,
+	},
+];
+
+const sampleRecurring = [
+	{
+		id: "1",
+		mainCategory: "Income",
+		secondaryCategory: "Paycheck",
+		frequency: "Weekly",
+		startDate: "2025-01-05",
+		nextRun: "2025-01-12",
+		endDate: "2026-01-04",
+		amount: 200,
+	},
+	{
+		id: "2",
+		mainCategory: "Expense",
+		secondaryCategory: "Rent",
+		frequency: "Monthly",
+		startDate: "2025-01-01",
+		nextRun: "2025-02-01",
+		endDate: "2025-12-31",
+		amount: 1200,
+	},
+	{
+		id: "3",
+		mainCategory: "Expense",
+		secondaryCategory: "Groceries",
+		frequency: "Weekly",
+		startDate: "2025-06-01",
+		nextRun: "2025-06-08",
+		endDate: "2026-05-31",
+		amount: 75,
+	},
+	{
+		id: "4",
+		mainCategory: "Expense",
+		secondaryCategory: "Utilities",
+		frequency: "Monthly",
+		startDate: "2025-02-01",
+		nextRun: "2025-03-01",
+		endDate: "2026-01-31",
+		amount: 130.5,
+	},
+	{
+		id: "5",
+		mainCategory: "Savings",
+		secondaryCategory: "Emergency Fund",
+		frequency: "Weekly",
+		startDate: "2025-03-01",
+		nextRun: "2025-03-08",
+		endDate: "2026-03-01",
+		amount: 100,
+	},
+	{
+		id: "6",
+		mainCategory: "Investment",
+		secondaryCategory: "VOO",
+		frequency: "Monthly",
+		startDate: "2026-01-15",
+		nextRun: "2026-02-15",
+		endDate: "2026-12-15",
+		amount: 250,
+	},
+];
+
 export default function TransactionsPage() {
 	const router = useRouter();
-
-	const sampleTransactions = [
-		{
-			id: "1",
-			mainCategory: "Income",
-			secondaryCategory: "Paycheck 1",
-			date: "2025-12-20",
-			amount: 200,
-		},
-		{
-			id: "2",
-			mainCategory: "Expense",
-			secondaryCategory: "Groceries",
-			date: "2025-12-21",
-			amount: 50,
-		},
-		{
-			id: "3",
-			mainCategory: "Expense",
-			secondaryCategory: "Utilities",
-			date: "2025-12-22",
-			amount: 30.5,
-		},
-	];
-
-	const sampleRecurring = [
-		{
-			id: "1",
-			mainCategory: "Income",
-			secondaryCategory: "Paycheck",
-			frequency: "Weekly",
-			startDate: "2025-01-05",
-			nextRun: "2025-01-12",
-			endDate: "2026-01-04",
-			amount: 200,
-		},
-		{
-			id: "2",
-			mainCategory: "Expense",
-			secondaryCategory: "Rent",
-			frequency: "Monthly",
-			startDate: "2025-01-01",
-			nextRun: "2025-02-01",
-			endDate: "2025-12-31",
-			amount: 1200,
-		},
-		{
-			id: "3",
-			mainCategory: "Expense",
-			secondaryCategory: "Groceries",
-			frequency: "Weekly",
-			startDate: "2025-06-01",
-			nextRun: "2025-06-08",
-			endDate: "2026-05-31",
-			amount: 75,
-		},
-		{
-			id: "4",
-			mainCategory: "Expense",
-			secondaryCategory: "Utilities",
-			frequency: "Monthly",
-			startDate: "2025-02-01",
-			nextRun: "2025-03-01",
-			endDate: "2026-01-31",
-			amount: 130.5,
-		},
-		{
-			id: "5",
-			mainCategory: "Savings",
-			secondaryCategory: "Emergency Fund",
-			frequency: "Weekly",
-			startDate: "2025-03-01",
-			nextRun: "2025-03-08",
-			endDate: "2026-03-01",
-			amount: 100,
-		},
-		{
-			id: "6",
-			mainCategory: "Investment",
-			secondaryCategory: "VOO",
-			frequency: "Monthly",
-			startDate: "2026-01-15",
-			nextRun: "2026-02-15",
-			endDate: "2026-12-15",
-			amount: 250,
-		},
-	];
 
 	// Transaction state
 	const [transactionSearch, setTransactionSearch] = useState("");
@@ -396,22 +424,29 @@ export default function TransactionsPage() {
 				{paginatedTransactions.length > 0 && (
 					<>
 						<div className="space-y-3">
-							{paginatedTransactions.map((tx) => (
-								<Card
-									key={tx.id}
-									id={tx.id}
-									title={tx.mainCategory}
-									data={{
-										amount: tx.amount,
-										date: tx.date,
-										mainCategory: tx.mainCategory,
-										secondaryCategory: tx.secondaryCategory,
-									}}
-									type="transaction"
-									onEdit={() => handleEditTransaction(tx.id)}
-									onDelete={() => handleDeleteTransaction(tx.id)}
-								/>
-							))}
+							{paginatedTransactions.map((tx) => {
+								const categoryDetails = getCategoryDetails(
+									tx.secondaryCategory,
+								);
+								return (
+									<Card
+										key={tx.id}
+										id={tx.id}
+										title={tx.mainCategory}
+										data={{
+											amount: tx.amount,
+											date: tx.date,
+											mainCategory: tx.mainCategory,
+											secondaryCategory: tx.secondaryCategory,
+											color: categoryDetails.color,
+											icon: categoryDetails.icon,
+										}}
+										type="transaction"
+										onEdit={() => handleEditTransaction(tx.id)}
+										onDelete={() => handleDeleteTransaction(tx.id)}
+									/>
+								);
+							})}
 						</div>
 
 						{/* Pagination */}
@@ -649,25 +684,32 @@ export default function TransactionsPage() {
 				{paginatedRecurring.length > 0 && (
 					<>
 						<div className="space-y-3">
-							{paginatedRecurring.map((tx) => (
-								<Card
-									key={tx.id}
-									id={tx.id}
-									title={tx.mainCategory}
-									data={{
-										amount: tx.amount,
-										frequency: tx.frequency,
-										nextRun: tx.nextRun,
-										mainCategory: tx.mainCategory,
-										secondaryCategory: tx.secondaryCategory,
-										startDate: new Date(tx.startDate),
-										endDate: new Date(tx.endDate),
-									}}
-									type="recurring"
-									onEdit={() => handleEditRecurring(tx.id)}
-									onDelete={() => handleDeleteRecurring(tx.id)}
-								/>
-							))}
+							{paginatedRecurring.map((tx) => {
+								const categoryDetails = getCategoryDetails(
+									tx.secondaryCategory,
+								);
+								return (
+									<Card
+										key={tx.id}
+										id={tx.id}
+										title={tx.mainCategory}
+										data={{
+											amount: tx.amount,
+											frequency: tx.frequency,
+											nextRun: tx.nextRun,
+											mainCategory: tx.mainCategory,
+											secondaryCategory: tx.secondaryCategory,
+											startDate: new Date(tx.startDate),
+											endDate: new Date(tx.endDate),
+											color: categoryDetails.color,
+											icon: categoryDetails.icon,
+										}}
+										type="recurring"
+										onEdit={() => handleEditRecurring(tx.id)}
+										onDelete={() => handleDeleteRecurring(tx.id)}
+									/>
+								);
+							})}
 						</div>
 
 						{/* Pagination */}

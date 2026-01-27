@@ -9,6 +9,8 @@ type BudgetData = {
 	month: number;
 	year: number;
 	note?: string;
+	color: string;
+	icon: string;
 };
 
 type CategoryData = {
@@ -25,6 +27,8 @@ type RecurringData = {
 	note?: string;
 	startDate: Date;
 	endDate?: Date;
+	icon: string;
+	color: string;
 };
 
 type TransactionData = {
@@ -33,6 +37,8 @@ type TransactionData = {
 	secondaryCategory: string;
 	mainCategory: string;
 	note?: string;
+	icon: string;
+	color: string;
 };
 
 interface CardProps {
@@ -54,47 +60,61 @@ export default function Card({
 }: CardProps) {
 	const [expanded, setExpanded] = useState(false);
 
+	// Helper function to get amount color based on transaction type
+	const getAmountColor = (mainCategory: string): string => {
+		return mainCategory.toLowerCase() === "income" ? "#43A047" : "#424242";
+	};
+
+	// Helper function to get icon component
+	const getIconComponent = (iconId?: string) => {
+		if (!iconId) return null;
+		return CATEGORY_ICONS.find((c) => c.id === iconId)?.Icon || null;
+	};
+
 	const getCardContent = () => {
 		switch (type) {
 			case "budget": {
 				const budgetData = data as BudgetData;
+				const IconComponent = getIconComponent(budgetData.icon);
+
 				return {
 					subtitle: `${budgetData.year}-${budgetData.month
 						.toString()
 						.padStart(2, "0")}`,
 					amount: budgetData.amount,
-					color: "#424242",
+					amountColor: "#1F2937", // Dark gray for budgets
+					iconColor: budgetData.color,
+					iconBackgroundColor: budgetData.color,
 					extraInfo: budgetData.note,
-					icon: null,
+					icon: IconComponent,
 				};
 			}
 			case "category": {
 				const categoryData = data as CategoryData;
-
-				// Find the matching icon component
-				const IconComponent = CATEGORY_ICONS.find(
-					(c) => c.id === categoryData.icon,
-				)?.Icon;
+				const IconComponent = getIconComponent(categoryData.icon);
 
 				return {
 					subtitle: null,
 					amount: null,
-					color: categoryData.color,
+					amountColor: null,
+					iconColor: categoryData.color,
+					iconBackgroundColor: categoryData.color,
 					extraInfo: null,
-					icon: IconComponent || null,
+					icon: IconComponent,
 				};
 			}
 			case "recurring": {
 				const recurringData = data as RecurringData;
+				const IconComponent = getIconComponent(recurringData.icon);
+
 				return {
 					subtitle: `${recurringData.frequency} - Next: ${recurringData.nextRun}`,
-					subtitleMobile: recurringData.nextRun, // Mobile shows only next date
+					subtitleMobile: recurringData.nextRun,
 					secondaryTitle: recurringData.secondaryCategory,
 					amount: recurringData.amount,
-					color:
-						recurringData.mainCategory.toLowerCase() === "income"
-							? "green"
-							: "#424242",
+					amountColor: getAmountColor(recurringData.mainCategory),
+					iconColor: recurringData.color,
+					iconBackgroundColor: recurringData.color,
 					extraInfo: (
 						<>
 							{recurringData.startDate && (
@@ -116,21 +136,22 @@ export default function Card({
 							)}
 						</>
 					),
-					icon: null,
+					icon: IconComponent,
 				};
 			}
 			case "transaction": {
 				const transactionData = data as TransactionData;
+				const IconComponent = getIconComponent(transactionData.icon);
+
 				return {
 					subtitle: transactionData.date,
 					secondaryTitle: transactionData.secondaryCategory,
 					amount: transactionData.amount,
-					color:
-						transactionData.mainCategory.toLowerCase() === "income"
-							? "green"
-							: "#424242",
+					amountColor: getAmountColor(transactionData.mainCategory),
+					iconColor: transactionData.color,
+					iconBackgroundColor: transactionData.color,
 					extraInfo: transactionData.note,
-					icon: null,
+					icon: IconComponent,
 				};
 			}
 		}
@@ -153,15 +174,17 @@ export default function Card({
 			{/* Top Row */}
 			<div className="flex justify-between items-center gap-2">
 				<div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
-					{/* Render icon if it exists - responsive sizing */}
+					{/* Render icon if it exists */}
 					{content.icon && (
 						<div
 							className="w-12 h-12 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center shrink-0"
-							style={{ backgroundColor: content.color + "20" }}
+							style={{
+								backgroundColor: `${content.iconBackgroundColor}20`,
+							}}
 						>
 							<content.icon
 								className="w-7 h-7 sm:w-5 sm:h-5"
-								style={{ color: content.color }}
+								style={{ color: content.iconColor }}
 							/>
 						</div>
 					)}
@@ -186,7 +209,9 @@ export default function Card({
 								</p>
 								{/* Show mobile subtitle if available, otherwise show full */}
 								<p className="sm:hidden text-xs text-gray-400 dark:text-gray-500">
-									{content.subtitleMobile || content.subtitle}
+									{type === "recurring"
+										? `Next: ${content.subtitleMobile || content.subtitle}`
+										: content.subtitleMobile || content.subtitle}
 								</p>
 							</>
 						)}
@@ -196,7 +221,7 @@ export default function Card({
 				{content.amount !== null && (
 					<div
 						className="font-bold text-sm sm:text-base flex-shrink-0"
-						style={{ color: content.color || "black" }}
+						style={{ color: content.amountColor || "#1F2937" }}
 					>
 						${content.amount.toFixed(2)}
 					</div>

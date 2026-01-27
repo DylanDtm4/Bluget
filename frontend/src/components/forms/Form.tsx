@@ -47,8 +47,19 @@ export default function Form({
 	enableRecurring = false,
 	recurringLocked = false,
 }: FormProps) {
-	const [formData, setFormData] = useState<FormData>(initialData);
 	const [isRecurring, setIsRecurring] = useState(recurringLocked);
+	const generateRandomColor = () =>
+		`#${Math.floor(Math.random() * 0xffffff)
+			.toString(16)
+			.padStart(6, "0")}`;
+
+	const [formData, setFormData] = useState<FormData>(() => ({
+		...initialData,
+		color:
+			typeof initialData.color === "string"
+				? initialData.color
+				: generateRandomColor(),
+	}));
 
 	const handleChange = (name: string, value: string | number) => {
 		setFormData((prev) => ({ ...prev, [name]: value }));
@@ -58,7 +69,6 @@ export default function Form({
 		e.preventDefault();
 		onSubmit(formData);
 	};
-
 	// Shared input classes - responsive
 	const inputClasses =
 		"text-gray-600 w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all";
@@ -154,6 +164,13 @@ export default function Form({
 							pattern="^#[0-9A-Fa-f]{6}$"
 							className={`${inputClasses} flex-1`}
 						/>
+						<button
+							type="button"
+							onClick={() => handleChange(field.name, generateRandomColor())}
+							className="text-sm text-blue-600 hover:underline self-start"
+						>
+							Randomize color
+						</button>
 					</div>
 				);
 			case "icon":
@@ -181,7 +198,7 @@ export default function Form({
 	};
 
 	return (
-		<div className="max-w-2xl mx-auto p-3 sm:p-6">
+		<div className="w-full max-w-xl sm:max-w-2xl lg:max-w-3xl 2xl:max-w-6xl mx-auto p-4 sm:p-8">
 			<div className="bg-white rounded-lg shadow-md p-4 sm:p-8">
 				<h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-gray-800">
 					{title}

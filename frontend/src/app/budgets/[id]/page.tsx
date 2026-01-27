@@ -3,6 +3,7 @@
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Edit, Trash2, TrendingUp } from "lucide-react";
+import { CATEGORY_ICONS } from "@/lib/categoryIcons";
 
 type Budget = {
 	id: string;
@@ -11,7 +12,30 @@ type Budget = {
 	month: number;
 	year: number;
 	note?: string;
-	color?: string; // hex color for the category
+};
+
+// Mock category data
+const mockCategories = {
+	Subscriptions: { icon: "subscriptions", color: "#8B5CF6" },
+	Groceries: { icon: "shopping", color: "#10B981" },
+	Rent: { icon: "home", color: "#3B82F6" },
+	"Tennis Lessons": { icon: "fitness", color: "#14B8A6" },
+	Utilities: { icon: "utilities", color: "#F59E0B" },
+	Entertainment: { icon: "other", color: "#EC4899" },
+	Gas: { icon: "transport", color: "#F97316" },
+	Insurance: { icon: "other", color: "#6366F1" },
+	"Gym Membership": { icon: "fitness", color: "#14B8A6" },
+	"Phone Bill": { icon: "subscriptions", color: "#A855F7" },
+};
+
+// Helper function
+const getCategoryDetails = (categoryName: string) => {
+	return (
+		mockCategories[categoryName as keyof typeof mockCategories] || {
+			icon: "other",
+			color: "#9CA3AF",
+		}
+	);
 };
 
 // Sample data - replace with actual API call
@@ -23,7 +47,6 @@ const sampleBudgets: Record<string, Budget> = {
 		month: 12,
 		year: 2025,
 		note: "Netflix, Spotify, etc.",
-		color: "#8B5CF6", // Purple
 	},
 	"2": {
 		id: "2",
@@ -32,7 +55,6 @@ const sampleBudgets: Record<string, Budget> = {
 		month: 12,
 		year: 2025,
 		note: "Weekly shopping",
-		color: "#10B981", // Green
 	},
 	"3": {
 		id: "3",
@@ -40,7 +62,6 @@ const sampleBudgets: Record<string, Budget> = {
 		amount: 1200,
 		month: 12,
 		year: 2025,
-		color: "#3B82F6", // Blue
 	},
 };
 
@@ -103,6 +124,12 @@ export default function BudgetDetailPage() {
 		);
 	}
 
+	// Get category details (icon and color)
+	const categoryDetails = getCategoryDetails(budget.category);
+	const CategoryIcon = CATEGORY_ICONS.find(
+		(cat) => cat.id === categoryDetails.icon,
+	)?.Icon;
+
 	const handleEdit = () => {
 		router.push(`/budgets/${id}/edit`);
 	};
@@ -131,13 +158,15 @@ export default function BudgetDetailPage() {
 					<div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
 						<div className="flex-1">
 							<div className="flex items-center gap-3 mb-2">
-								{/* Color indicator dot */}
-								{budget.color && (
-									<div
-										className="w-4 h-4 sm:w-5 sm:h-5 rounded-full shadow-sm"
-										style={{ backgroundColor: budget.color }}
-									/>
-								)}
+								{/* Icon with color background */}
+								<div
+									className="w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center shadow-sm"
+									style={{ backgroundColor: categoryDetails.color }}
+								>
+									{CategoryIcon && (
+										<CategoryIcon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+									)}
+								</div>
 								<h1 className="text-2xl sm:text-3xl font-bold text-blue-900">
 									{budget.category}
 								</h1>
@@ -168,15 +197,13 @@ export default function BudgetDetailPage() {
 				{/* Budget Overview Card */}
 				<div
 					className="bg-white rounded-lg shadow-md border-2 p-4 sm:p-6 relative overflow-hidden"
-					style={{ borderColor: budget.color || "#E5E7EB" }}
+					style={{ borderColor: categoryDetails.color }}
 				>
 					{/* Colored accent bar */}
-					{budget.color && (
-						<div
-							className="absolute top-0 left-0 right-0 h-1"
-							style={{ backgroundColor: budget.color }}
-						/>
-					)}
+					<div
+						className="absolute top-0 left-0 right-0 h-1"
+						style={{ backgroundColor: categoryDetails.color }}
+					/>
 					<h2 className="text-lg sm:text-xl font-bold text-blue-900 mb-4 mt-1">
 						Budget Overview
 					</h2>
@@ -186,8 +213,8 @@ export default function BudgetDetailPage() {
 						<div
 							className="p-4 sm:p-5 rounded-lg border-2 relative overflow-hidden"
 							style={{
-								borderColor: budget.color || "#E5E7EB",
-								backgroundColor: budget.color ? `${budget.color}10` : "#F9FAFB",
+								borderColor: categoryDetails.color,
+								backgroundColor: `${categoryDetails.color}10`,
 							}}
 						>
 							<div className="text-xs sm:text-sm font-medium text-gray-500 mb-1">
@@ -223,12 +250,15 @@ export default function BudgetDetailPage() {
 								Category
 							</span>
 							<div className="flex items-center gap-2">
-								{budget.color && (
-									<div
-										className="w-3 h-3 rounded-full"
-										style={{ backgroundColor: budget.color }}
-									/>
-								)}
+								{/* Icon */}
+								<div
+									className="w-8 h-8 rounded-full flex items-center justify-center"
+									style={{ backgroundColor: categoryDetails.color }}
+								>
+									{CategoryIcon && (
+										<CategoryIcon className="w-4 h-4 text-white" />
+									)}
+								</div>
 								<span className="text-gray-900 font-semibold text-sm sm:text-base">
 									{budget.category}
 								</span>
@@ -242,6 +272,16 @@ export default function BudgetDetailPage() {
 							</span>
 							<span className="text-gray-900 font-semibold text-sm sm:text-base">
 								${budget.amount.toFixed(2)}
+							</span>
+						</div>
+
+						{/* Month & Year */}
+						<div className="flex justify-between items-center py-3 border-b border-gray-100">
+							<span className="text-gray-600 font-medium text-sm sm:text-base">
+								Period
+							</span>
+							<span className="text-gray-900 font-semibold text-sm sm:text-base">
+								{monthNames[budget.month - 1]} {budget.year}
 							</span>
 						</div>
 

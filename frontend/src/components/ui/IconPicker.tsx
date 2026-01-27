@@ -11,31 +11,41 @@ type IconPickerProps = {
 export default function IconPicker({
 	value,
 	onChange,
-	color,
+	color = "#FF5733",
 }: IconPickerProps) {
 	return (
-		<div className="grid grid-cols-5 gap-3">
-			{CATEGORY_ICONS.map(({ id, Icon, label }) => {
-				const selected = value === id;
+		<div className="grid grid-cols-3 sm:grid-cols-5 gap-2 sm:gap-3 ">
+			{CATEGORY_ICONS.map((iconOption) => {
+				const IconComponent = iconOption.Icon;
+				const isSelected = value === iconOption.id;
 
 				return (
 					<button
-						key={id}
+						key={iconOption.id}
 						type="button"
-						aria-label={label}
-						onClick={() => onChange(id)}
+						onClick={() => onChange(isSelected ? "" : iconOption.id)}
 						className={`
-              flex items-center justify-center rounded-lg border p-3 transition
-              hover:scale-105
-              ${selected ? "border-black ring-2 ring-black/30" : "border-gray-300"}
-            `}
+                            w-full aspect-square
+                            flex items-center justify-center
+                            rounded-lg border-2 transition-all
+                            hover:scale-105 active:scale-95
+                            ${
+															isSelected
+																? "border-gray-800 bg-gray-50 shadow-md"
+																: "border-gray-300 hover:border-gray-400"
+														}
+                        `}
+						title={iconOption.label}
 					>
-						<Icon
-							className="w-6 h-6 sm:w-5 sm:h-5"
-							size={24}
-							strokeWidth={2}
-							color={color ?? "#000"}
-							style={{ opacity: selected ? 1 : 0.7 }}
+						<IconComponent
+							className="
+    w-5 h-5
+    sm:w-6 sm:h-6
+    lg:w-7 lg:h-7
+    xl:w-8 xl:h-8
+    2xl:w-10 2xl:h-10
+  "
+							style={{ color: isSelected ? color : "#6B7280" }}
 						/>
 					</button>
 				);

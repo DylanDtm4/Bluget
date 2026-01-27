@@ -65,7 +65,7 @@ export default function TransactionsList({
 									tx.amount > 0 ? "text-green-600" : "text-gray-800"
 								}`}
 							>
-								{tx.amount > 0 ? "+" : ""}${Math.abs(tx.amount).toFixed(2)}
+								${Math.abs(tx.amount).toFixed(2)}
 							</p>
 						</div>
 					);

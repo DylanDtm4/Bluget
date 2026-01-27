@@ -3,6 +3,7 @@
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Edit, Trash2, Repeat, Calendar } from "lucide-react";
+import { CATEGORY_ICONS } from "@/lib/categoryIcons";
 
 type RecurringTransaction = {
 	id: string;
@@ -15,6 +16,30 @@ type RecurringTransaction = {
 	amount: number;
 	note?: string;
 	color?: string;
+};
+
+// Mock category data
+const mockCategories = {
+	Subscriptions: { icon: "subscriptions", color: "#8B5CF6" },
+	Groceries: { icon: "shopping", color: "#10B981" },
+	Rent: { icon: "home", color: "#3B82F6" },
+	"Tennis Lessons": { icon: "fitness", color: "#14B8A6" },
+	Utilities: { icon: "utilities", color: "#F59E0B" },
+	Entertainment: { icon: "other", color: "#EC4899" },
+	Gas: { icon: "transport", color: "#F97316" },
+	Insurance: { icon: "other", color: "#6366F1" },
+	"Gym Membership": { icon: "fitness", color: "#14B8A6" },
+	"Phone Bill": { icon: "subscriptions", color: "#A855F7" },
+};
+
+// Helper function
+const getCategoryDetails = (categoryName: string) => {
+	return (
+		mockCategories[categoryName as keyof typeof mockCategories] || {
+			icon: "other",
+			color: "#9CA3AF",
+		}
+	);
 };
 
 // Sample data - replace with actual API call
@@ -100,6 +125,11 @@ export default function RecurringDetailPage() {
 		);
 	}
 
+	// Get category details (icon and color)
+	const categoryDetails = getCategoryDetails(recurring.secondaryCategory);
+	const CategoryIcon = CATEGORY_ICONS.find(
+		(cat) => cat.id === categoryDetails.icon,
+	)?.Icon;
 	const handleEdit = () => {
 		router.push(`/recurring/${id}/edit`);
 	};
@@ -161,19 +191,22 @@ export default function RecurringDetailPage() {
 					<div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
 						<div className="flex-1">
 							<div className="flex items-center gap-3 mb-2">
-								<Repeat className="text-blue-600" size={20} />
-								{recurring.color && (
-									<div
-										className="w-4 h-4 sm:w-5 sm:h-5 rounded-full shadow-sm"
-										style={{ backgroundColor: recurring.color }}
-									/>
-								)}
+								{/* Icon with color background */}
+								<div
+									className="w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center shadow-sm"
+									style={{ backgroundColor: recurring.color }}
+								>
+									{CategoryIcon && (
+										<CategoryIcon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+									)}
+								</div>
 								<h1 className="text-2xl sm:text-3xl font-bold text-blue-900">
 									{recurring.secondaryCategory}
 								</h1>
+								<Repeat className="text-blue-600" size={20} />
 							</div>
 							<p className="text-gray-600 text-sm sm:text-base">
-								{recurring.mainCategory} • {recurring.frequency}
+								{recurring.mainCategory}
 							</p>
 						</div>
 						<div className="flex gap-2 sm:gap-3 w-full sm:w-auto">
@@ -264,12 +297,15 @@ export default function RecurringDetailPage() {
 								Type
 							</span>
 							<div className="flex items-center gap-2">
-								{recurring.color && (
-									<div
-										className="w-3 h-3 rounded-full"
-										style={{ backgroundColor: recurring.color }}
-									/>
-								)}
+								{/* Icon with color background */}
+								<div
+									className="w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center shadow-sm"
+									style={{ backgroundColor: recurring.color }}
+								>
+									{CategoryIcon && (
+										<CategoryIcon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+									)}
+								</div>
 								<span className="text-gray-900 font-semibold text-sm sm:text-base">
 									{recurring.mainCategory}
 								</span>

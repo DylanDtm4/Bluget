@@ -18,6 +18,30 @@ type Budget = {
 	note?: string;
 };
 
+// Mock category data
+const mockCategories = {
+	Subscriptions: { icon: "subscriptions", color: "#8B5CF6" },
+	Groceries: { icon: "shopping", color: "#10B981" },
+	Rent: { icon: "home", color: "#3B82F6" },
+	"Tennis Lessons": { icon: "fitness", color: "#14B8A6" },
+	Utilities: { icon: "utilities", color: "#F59E0B" },
+	Entertainment: { icon: "other", color: "#EC4899" },
+	Gas: { icon: "transport", color: "#F97316" },
+	Insurance: { icon: "other", color: "#6366F1" },
+	"Gym Membership": { icon: "fitness", color: "#14B8A6" },
+	"Phone Bill": { icon: "subscriptions", color: "#A855F7" },
+};
+
+// Helper function
+const getCategoryDetails = (categoryName: string) => {
+	return (
+		mockCategories[categoryName as keyof typeof mockCategories] || {
+			icon: "other",
+			color: "#9CA3AF",
+		}
+	);
+};
+
 // Hardcoded sample data
 const sampleBudgets: Budget[] = [
 	{
@@ -329,25 +353,30 @@ export default function BudgetsPage() {
 				{paginatedBudgets.length > 0 && (
 					<>
 						<div className="space-y-3">
-							{paginatedBudgets.map((budget) => (
-								<Card
-									key={budget.id}
-									id={budget.id}
-									title={budget.category}
-									data={{
-										amount: budget.amount,
-										month: budget.month,
-										year: budget.year,
-										note: budget.note,
-									}}
-									type="budget"
-									onEdit={() => handleEdit(budget.id)}
-									onDelete={() => handleDelete(budget.id)}
-								/>
-							))}
+							{paginatedBudgets.map((budget) => {
+								const categoryDetails = getCategoryDetails(budget.category);
+								return (
+									<Card
+										key={budget.id}
+										id={budget.id}
+										title={budget.category}
+										data={{
+											amount: budget.amount,
+											month: budget.month,
+											year: budget.year,
+											note: budget.note,
+											color: categoryDetails.color,
+											icon: categoryDetails.icon,
+										}}
+										type="budget"
+										onEdit={() => handleEdit(budget.id)}
+										onDelete={() => handleDelete(budget.id)}
+									/>
+								);
+							})}
 						</div>
 
-						{/* Pagination */}
+						{/* Pagination - keeping the same */}
 						{totalPages > 1 && (
 							<div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6 pt-6 border-t border-gray-200">
 								{/* Page Info */}
@@ -389,14 +418,12 @@ export default function BudgetsPage() {
 									<div className="flex gap-1">
 										{Array.from({ length: totalPages }, (_, i) => i + 1).map(
 											(pageNum) => {
-												// Show first page, last page, current page, and adjacent pages
 												const showPage =
 													pageNum === 1 ||
 													pageNum === totalPages ||
 													(pageNum >= currentPage - 1 &&
 														pageNum <= currentPage + 1);
 
-												// Show ellipsis
 												const showEllipsis =
 													(pageNum === 2 && currentPage > 3) ||
 													(pageNum === totalPages - 1 &&

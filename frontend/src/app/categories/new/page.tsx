@@ -20,7 +20,6 @@ export default function NewCategoryPage() {
 			label: "Color",
 			type: "color" as const, // Changed from "text" to "color"
 			required: true,
-			placeholder: "#FF5733", // Default color value
 		},
 		{
 			name: "icon",
@@ -50,7 +49,7 @@ export default function NewCategoryPage() {
 
 	return (
 		<div className="bg-linear-to-br from-blue-50 to-blue-100 p-3 sm:p-6 rounded-xl min-h-screen">
-			<div className="max-w-2xl mx-auto">
+			<div className="w-full flex justify-center">
 				<Form
 					title="Add New Category"
 					fields={categoryFields}

@@ -10,7 +10,6 @@ export default function Header() {
 
 	const createOptions = [
 		{ label: "Transaction", href: "/transactions/new", icon: "💰" },
-		{ label: "Recurring Transaction", href: "/recurring/new", icon: "🔄" },
 		{ label: "Budget", href: "/budgets/new", icon: "📊" },
 		{ label: "Category", href: "/categories/new", icon: "🏷️" },
 	];
