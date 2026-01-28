@@ -1,5 +1,6 @@
-// CardList.tsx
 import Card from "@/components/ui/Card";
+import { useState } from "react";
+
 type CardData = {
 	// Transaction data
 	amount?: number;
@@ -38,6 +39,12 @@ export default function CardList<T>({
 	onEdit,
 	onDelete,
 }: CardListProps<T>) {
+	const [expandedId, setExpandedId] = useState<string | null>(null);
+
+	const handleToggle = (id: string) => {
+		setExpandedId(expandedId === id ? null : id);
+	};
+
 	return (
 		<div className="space-y-3">
 			{items.map((item) => {
@@ -46,6 +53,8 @@ export default function CardList<T>({
 					<Card
 						key={cardProps.id}
 						{...cardProps}
+						expanded={expandedId === cardProps.id}
+						onToggle={() => handleToggle(cardProps.id)}
 						onEdit={() => onEdit(cardProps.id)}
 						onDelete={() => onDelete(cardProps.id)}
 					/>

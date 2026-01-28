@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { CATEGORY_ICONS } from "@/lib/categoryIcons";
 
@@ -46,6 +45,8 @@ interface CardProps {
 	title: string;
 	data: BudgetData | CategoryData | RecurringData | TransactionData;
 	type: "budget" | "category" | "recurring" | "transaction";
+	expanded?: boolean;
+	onToggle?: () => void;
 	onEdit?: () => void;
 	onDelete?: () => void;
 }
@@ -55,11 +56,11 @@ export default function Card({
 	title,
 	data,
 	type,
+	expanded = false,
+	onToggle,
 	onEdit,
 	onDelete,
 }: CardProps) {
-	const [expanded, setExpanded] = useState(false);
-
 	// Helper function to get amount color based on transaction type
 	const getAmountColor = (mainCategory: string): string => {
 		return mainCategory.toLowerCase() === "income" ? "#43A047" : "#424242";
@@ -82,7 +83,7 @@ export default function Card({
 						.toString()
 						.padStart(2, "0")}`,
 					amount: budgetData.amount,
-					amountColor: "#1F2937", // Dark gray for budgets
+					amountColor: "#1F2937",
 					iconColor: budgetData.color,
 					iconBackgroundColor: budgetData.color,
 					extraInfo: budgetData.note,
@@ -107,34 +108,58 @@ export default function Card({
 				const recurringData = data as RecurringData;
 				const IconComponent = getIconComponent(recurringData.icon);
 
+				// Format next run date
+				const nextRunDate = new Date(recurringData.nextRun);
+				const formattedNextRun = nextRunDate.toLocaleDateString("en-US", {
+					month: "short",
+					day: "numeric",
+				});
+
 				return {
-					subtitle: `${recurringData.frequency} - Next: ${recurringData.nextRun}`,
-					subtitleMobile: recurringData.nextRun,
+					subtitle: `${recurringData.frequency} · Next: ${formattedNextRun}`,
+					subtitleMobile: `${recurringData.frequency} · ${formattedNextRun}`,
 					secondaryTitle: recurringData.secondaryCategory,
 					amount: recurringData.amount,
 					amountColor: getAmountColor(recurringData.mainCategory),
 					iconColor: recurringData.color,
 					iconBackgroundColor: recurringData.color,
 					extraInfo: (
-						<>
-							{recurringData.startDate && (
-								<p className="text-xs sm:text-sm mb-3">
-									<strong>Start Date:</strong>{" "}
-									{new Date(recurringData.startDate).toLocaleDateString()}
-								</p>
-							)}
-							{recurringData.endDate && (
-								<p className="text-xs sm:text-sm mb-3">
-									<strong>End Date:</strong>{" "}
-									{new Date(recurringData.endDate).toLocaleDateString()}
-								</p>
-							)}
+						<div className="space-y-2">
+							<div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+								{recurringData.startDate && (
+									<p className="text-xs sm:text-sm text-gray-600">
+										<span className="font-semibold text-gray-700">Start:</span>{" "}
+										{new Date(recurringData.startDate).toLocaleDateString(
+											"en-US",
+											{
+												month: "short",
+												day: "numeric",
+												year: "numeric",
+											},
+										)}
+									</p>
+								)}
+								{recurringData.endDate && (
+									<p className="text-xs sm:text-sm text-gray-600">
+										<span className="font-semibold text-gray-700">End:</span>{" "}
+										{new Date(recurringData.endDate).toLocaleDateString(
+											"en-US",
+											{
+												month: "short",
+												day: "numeric",
+												year: "numeric",
+											},
+										)}
+									</p>
+								)}
+							</div>
 							{recurringData.note && (
-								<p className="text-xs sm:text-sm mb-3">
-									<strong>Note:</strong> {recurringData.note}
+								<p className="text-xs sm:text-sm text-gray-600">
+									<span className="font-semibold text-gray-700">Note:</span>{" "}
+									{recurringData.note}
 								</p>
 							)}
-						</>
+						</div>
 					),
 					icon: IconComponent,
 				};
@@ -143,8 +168,15 @@ export default function Card({
 				const transactionData = data as TransactionData;
 				const IconComponent = getIconComponent(transactionData.icon);
 
+				// Format date for mobile
+				const formattedDate = transactionData.date.toLocaleDateString("en-US", {
+					month: "short",
+					day: "numeric",
+					year: "numeric",
+				});
+
 				return {
-					subtitle: transactionData.date.toISOString().split("T")[0],
+					subtitle: formattedDate,
 					secondaryTitle: transactionData.secondaryCategory,
 					amount: transactionData.amount,
 					amountColor: getAmountColor(transactionData.mainCategory),
@@ -168,59 +200,55 @@ export default function Card({
 
 	return (
 		<div
-			onClick={() => setExpanded(!expanded)}
-			className="border border-gray-300 rounded-lg p-3 sm:p-4 mb-4 cursor-pointer hover:shadow-md transition-shadow"
+			onClick={onToggle}
+			className="border border-gray-300 rounded-lg p-3 sm:p-4 mb-3 cursor-pointer hover:shadow-md transition-shadow bg-white"
 		>
 			{/* Top Row */}
-			<div className="flex justify-between items-center gap-2">
+			<div className="flex justify-between items-center gap-2 sm:gap-3">
 				<div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
-					{/* Render icon if it exists */}
+					{/* Icon */}
 					{content.icon && (
 						<div
-							className="w-12 h-12 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center shrink-0"
+							className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center shrink-0"
 							style={{
 								backgroundColor: `${content.iconBackgroundColor}20`,
 							}}
 						>
 							<content.icon
-								className="w-7 h-7 sm:w-5 sm:h-5"
+								className="w-5 h-5 sm:w-6 sm:h-6"
 								style={{ color: content.iconColor }}
 							/>
 						</div>
 					)}
 
+					{/* Content */}
 					<div className="flex-1 min-w-0">
-						<div className="flex items-baseline gap-1 flex-wrap">
-							<p className="font-bold text-sm sm:text-base text-gray-800 dark:text-gray-100 truncate">
+						{/* Title Row */}
+						<div className="flex items-baseline gap-1 sm:gap-1.5 flex-wrap">
+							<p className="font-bold text-sm sm:text-base text-gray-800 truncate">
 								{title}
 								{type !== "category" && type !== "budget" && ":"}
 							</p>
 							{content.secondaryTitle && (
-								<p className="text-xs sm:text-base text-gray-600 dark:text-gray-400 truncate">
+								<p className="text-xs sm:text-base text-gray-600 truncate">
 									{content.secondaryTitle}
 								</p>
 							)}
 						</div>
+
+						{/* Subtitle */}
 						{content.subtitle && (
-							<>
-								{/* Show full subtitle on desktop */}
-								<p className="hidden sm:block text-sm text-gray-400 dark:text-gray-500">
-									{content.subtitle}
-								</p>
-								{/* Show mobile subtitle if available, otherwise show full */}
-								<p className="sm:hidden text-xs text-gray-400 dark:text-gray-500">
-									{type === "recurring"
-										? `Next: ${content.subtitleMobile || content.subtitle}`
-										: content.subtitleMobile || content.subtitle}
-								</p>
-							</>
+							<p className="text-xs sm:text-sm text-gray-500 mt-0.5">
+								{content.subtitleMobile || content.subtitle}
+							</p>
 						)}
 					</div>
 				</div>
 
+				{/* Amount */}
 				{content.amount !== null && (
 					<div
-						className="font-bold text-sm sm:text-base shrink-0"
+						className="font-bold text-base sm:text-lg shrink-0 ml-2"
 						style={{ color: content.amountColor || "#1F2937" }}
 					>
 						${content.amount.toFixed(2)}
@@ -230,21 +258,26 @@ export default function Card({
 
 			{/* Expanded Section */}
 			{expanded && (
-				<div className="mt-3">
+				<div className="mt-4 pt-3 border-t border-gray-200">
+					{/* Extra Info */}
 					{typeof content.extraInfo === "string" && content.extraInfo && (
-						<p className="text-xs sm:text-sm mb-3">
-							<strong>Note:</strong> {content.extraInfo}
+						<p className="text-xs sm:text-sm text-gray-600 mb-3">
+							<span className="font-semibold text-gray-700">Note:</span>{" "}
+							{content.extraInfo}
 						</p>
 					)}
-					{typeof content.extraInfo !== "string" && content.extraInfo}
+					{typeof content.extraInfo !== "string" && content.extraInfo && (
+						<div className="mb-3">{content.extraInfo}</div>
+					)}
 
+					{/* Action Buttons */}
 					<div className="flex flex-wrap gap-2 sm:gap-3">
 						<button
 							onClick={(e) => {
 								e.stopPropagation();
 								onEdit?.();
 							}}
-							className="px-3 py-1 text-xs sm:text-sm border border-gray-300 rounded hover:bg-gray-50 transition-colors"
+							className="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm border border-blue-300 text-blue-700 rounded-lg hover:bg-blue-50 transition-colors font-medium"
 						>
 							Edit
 						</button>
@@ -253,7 +286,7 @@ export default function Card({
 								e.stopPropagation();
 								onDelete?.();
 							}}
-							className="px-3 py-1 text-xs sm:text-sm border border-red-300 text-red-600 rounded hover:bg-red-50 transition-colors"
+							className="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm border border-red-300 text-red-600 rounded-lg hover:bg-red-50 transition-colors font-medium"
 						>
 							Delete
 						</button>
@@ -261,7 +294,7 @@ export default function Card({
 							<Link
 								href={detailsPath}
 								onClick={(e) => e.stopPropagation()}
-								className="px-3 py-1 text-xs sm:text-sm text-blue-600 underline hover:text-blue-800"
+								className="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
 							>
 								View Details
 							</Link>
