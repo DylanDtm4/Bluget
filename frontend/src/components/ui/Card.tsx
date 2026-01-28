@@ -33,7 +33,7 @@ type RecurringData = {
 
 type TransactionData = {
 	amount: number;
-	date: string;
+	date: Date;
 	secondaryCategory: string;
 	mainCategory: string;
 	note?: string;
@@ -144,7 +144,7 @@ export default function Card({
 				const IconComponent = getIconComponent(transactionData.icon);
 
 				return {
-					subtitle: transactionData.date,
+					subtitle: transactionData.date.toISOString().split("T")[0],
 					secondaryTitle: transactionData.secondaryCategory,
 					amount: transactionData.amount,
 					amountColor: getAmountColor(transactionData.mainCategory),
@@ -220,7 +220,7 @@ export default function Card({
 
 				{content.amount !== null && (
 					<div
-						className="font-bold text-sm sm:text-base flex-shrink-0"
+						className="font-bold text-sm sm:text-base shrink-0"
 						style={{ color: content.amountColor || "#1F2937" }}
 					>
 						${content.amount.toFixed(2)}

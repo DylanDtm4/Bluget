@@ -1,6 +1,7 @@
 "use client";
 
 import Card from "@/components/ui/Card";
+import CardList from "@/components/ui/CardList";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useMemo } from "react";
@@ -54,21 +55,21 @@ const sampleTransactions = [
 		id: "1",
 		mainCategory: "Income",
 		secondaryCategory: "Paycheck 1",
-		date: "2025-12-20",
+		date: new Date("2025-12-20"),
 		amount: 200,
 	},
 	{
 		id: "2",
 		mainCategory: "Expense",
 		secondaryCategory: "Groceries",
-		date: "2025-12-21",
+		date: new Date("2025-12-21"),
 		amount: 50,
 	},
 	{
 		id: "3",
 		mainCategory: "Expense",
 		secondaryCategory: "Utilities",
-		date: "2025-12-22",
+		date: new Date("2025-12-22"),
 		amount: 30.5,
 	},
 ];
@@ -196,8 +197,10 @@ export default function TransactionsPage() {
 		}
 
 		result.sort((a, b) => {
-			let aValue: string | number = a[transactionSortField as keyof typeof a];
-			let bValue: string | number = b[transactionSortField as keyof typeof b];
+			let aValue: Date | string | number =
+				a[transactionSortField as keyof typeof a];
+			let bValue: Date | string | number =
+				b[transactionSortField as keyof typeof b];
 
 			if (typeof aValue === "string" && typeof bValue === "string") {
 				aValue = aValue.toLowerCase();
@@ -423,31 +426,29 @@ export default function TransactionsPage() {
 				{/* Transactions List */}
 				{paginatedTransactions.length > 0 && (
 					<>
-						<div className="space-y-3">
-							{paginatedTransactions.map((tx) => {
+						<CardList
+							items={paginatedTransactions}
+							getCardProps={(tx) => {
 								const categoryDetails = getCategoryDetails(
 									tx.secondaryCategory,
 								);
-								return (
-									<Card
-										key={tx.id}
-										id={tx.id}
-										title={tx.mainCategory}
-										data={{
-											amount: tx.amount,
-											date: tx.date,
-											mainCategory: tx.mainCategory,
-											secondaryCategory: tx.secondaryCategory,
-											color: categoryDetails.color,
-											icon: categoryDetails.icon,
-										}}
-										type="transaction"
-										onEdit={() => handleEditTransaction(tx.id)}
-										onDelete={() => handleDeleteTransaction(tx.id)}
-									/>
-								);
-							})}
-						</div>
+								return {
+									id: tx.id,
+									title: tx.mainCategory,
+									data: {
+										amount: tx.amount,
+										date: tx.date,
+										mainCategory: tx.mainCategory,
+										secondaryCategory: tx.secondaryCategory,
+										color: categoryDetails.color,
+										icon: categoryDetails.icon,
+									},
+									type: "transaction",
+								};
+							}}
+							onEdit={handleEditTransaction}
+							onDelete={handleDeleteTransaction}
+						/>
 
 						{/* Pagination */}
 						{transactionTotalPages > 1 && (

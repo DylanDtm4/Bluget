@@ -198,7 +198,7 @@ export default function TransactionDetailPage() {
 					{transaction.color && (
 						<div
 							className="absolute top-0 left-0 right-0 h-1"
-							style={{ backgroundColor: categoryDetails.color }}
+							style={{ backgroundColor: transaction.color }}
 						/>
 					)}
 					<h2 className="text-lg sm:text-xl font-bold text-blue-900 mb-4 mt-1">

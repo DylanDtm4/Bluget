@@ -68,14 +68,9 @@ export default function SummaryCards({
 								</p>
 								<div className="flex items-center gap-2 mt-1">
 									<span
-										className={`text-xs ${card.isPositive ? "text-green-600" : "text-red-600"}`}
-									>
-										{card.changeAmount}
-									</span>
-									<span
 										className={`text-xs font-semibold ${card.isPositive ? "text-green-600" : "text-red-600"}`}
 									>
-										({card.change})
+										{card.changeAmount} ({card.change})
 									</span>
 								</div>
 							</div>

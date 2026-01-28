@@ -11,10 +11,16 @@ interface BudgetGoalsProps {
 }
 
 const defaultGoals: Goal[] = [
-	{ name: "Emergency Fund", current: 7500, target: 10000 },
-	{ name: "Vacation Savings", current: 2250, target: 5000 },
+	{ name: "Emergency Fund", current: 9000, target: 10000 },
+	{ name: "Vacation Savings", current: 3330, target: 5000 },
 	{ name: "New Car", current: 3000, target: 10000 },
 ];
+
+const getProgressColor = (percentage: number) => {
+	if (percentage < 50) return "text-green-600";
+	if (percentage < 75) return "text-blue-900";
+	return "text-red-600";
+};
 
 export default function BudgetGoals({
 	goals = defaultGoals,
@@ -33,7 +39,9 @@ export default function BudgetGoals({
 								<span className="text-xs sm:text-sm text-gray-600">
 									{goal.name}
 								</span>
-								<span className="text-xs sm:text-sm font-semibold text-blue-900">
+								<span
+									className={`text-xs sm:text-sm font-semibold ${getProgressColor(percentage)}`}
+								>
 									${goal.current.toLocaleString()} / $
 									{goal.target.toLocaleString()} ({percentage}%)
 								</span>
@@ -41,7 +49,7 @@ export default function BudgetGoals({
 							<div className="w-full bg-blue-100 rounded-full h-2">
 								<div
 									className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-									style={{ width: `${percentage}%` }}
+									style={{ width: `${percentage > 100 ? 100 : percentage}%` }}
 								></div>
 							</div>
 						</div>
