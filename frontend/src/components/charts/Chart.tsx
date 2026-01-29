@@ -18,7 +18,7 @@ interface ChartData {
 interface PieChartProps {
 	type: "pie";
 	data: Array<{ name: string; value: number; color: string }>;
-	title: string;
+	title?: string;
 }
 
 interface LineChartProps {
