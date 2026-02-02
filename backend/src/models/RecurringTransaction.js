@@ -3,11 +3,11 @@ const mongoose = require("mongoose");
 const RecurringTransactionSchema = new mongoose.Schema({
 	userId: String,
 	amount: Number,
-	mainCategory: {
+	transactionType: {
 		type: String,
 		enum: ["expense", "income", "investment", "savings"],
 	},
-	secondaryCategory: String,
+	category: { type: mongoose.Schema.Types.ObjectId, ref: "Category" },
 	note: String,
 	frequency: { type: String, enum: ["daily", "weekly", "monthly"] },
 	nextRun: Date, // when the next transaction should be generated
@@ -17,5 +17,5 @@ const RecurringTransactionSchema = new mongoose.Schema({
 
 module.exports = mongoose.model(
 	"RecurringTransaction",
-	RecurringTransactionSchema
+	RecurringTransactionSchema,
 );

@@ -61,17 +61,6 @@ export default function SettingsPage() {
 				{ label: "Dark", value: "dark" },
 			],
 		},
-		{
-			name: "defaultView",
-			label: "Dashboard Default View",
-			type: "select" as const,
-			required: true,
-			options: [
-				{ label: "Month", value: "month" },
-				{ label: "Week", value: "week" },
-				{ label: "Year", value: "year" },
-			],
-		},
 	];
 
 	const handleSubmit = (data: FormData) => {

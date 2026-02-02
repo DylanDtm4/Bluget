@@ -10,17 +10,18 @@ const {
 const express = require("express");
 const router = express.Router();
 
-// GET /categories
-router.get("/", auth, getCategories);
-// POST /categories
-router.post("/", auth, addCategory);
 // POST /categories/bulk
 router.post("/bulk", auth, addCategories);
+// GET /categories
+router.get("/", auth, getCategories);
+// DELETE /categories
+router.delete("/", auth, clearCategories);
+
+// POST /categories
+router.post("/", auth, addCategory);
 // PUT /categories/:name
 router.put("/:name", auth, updateCategory);
 // DELETE /categories/:name
 router.delete("/:name", auth, deleteCategory);
-// DELETE /categories
-router.delete("/", auth, clearCategories);
 
 module.exports = router;
