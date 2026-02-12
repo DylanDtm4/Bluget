@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import Button from "@/components/ui/Button";
+import BudgetGoals from "@/components/ui/BudgetGoals";
 
 export default function HomePage() {
 	return (
@@ -80,104 +81,21 @@ export default function HomePage() {
 							</div>
 						</div>
 
-						{/* Right Image/Visual - Budget Progress Bars */}
+						{/* Right Image/Visual - Budget Goals Component */}
 						<div className="relative lg:h-[600px] hidden lg:block">
+							{/* Floating glow effects */}
+							<div className="absolute top-10 right-10 w-32 h-32 bg-blue-400 rounded-full blur-3xl opacity-40 animate-pulse"></div>
+							<div
+								className="absolute bottom-20 left-10 w-24 h-24 bg-purple-400 rounded-full blur-2xl opacity-30 animate-pulse"
+								style={{ animationDelay: "1s" }}
+							></div>
+
+							{/* Tilted background card */}
 							<div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-indigo-600 rounded-3xl transform rotate-3 opacity-10"></div>
+
 							<div className="absolute inset-0 flex items-center justify-center p-4">
-								<div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md transform -rotate-2 hover:rotate-0 transition-transform duration-300">
-									<h3 className="text-2xl font-bold text-gray-900 mb-6">
-										January Budget
-									</h3>
-
-									<div className="space-y-5">
-										{/* Housing */}
-										<div>
-											<div className="flex items-center justify-between mb-2">
-												<div className="flex items-center gap-2">
-													<span className="text-xl">🏠</span>
-													<span className="text-sm font-semibold text-gray-900">
-														Housing
-													</span>
-												</div>
-												<span className="text-sm font-bold text-gray-900">
-													$1,200 / $1,200
-												</span>
-											</div>
-											<div className="w-full bg-gray-200 rounded-full h-3">
-												<div
-													className="bg-blue-600 h-3 rounded-full"
-													style={{ width: "100%" }}
-												></div>
-											</div>
-											<p className="text-xs text-gray-500 mt-1">100% used</p>
-										</div>
-
-										{/* Food */}
-										<div>
-											<div className="flex items-center justify-between mb-2">
-												<div className="flex items-center gap-2">
-													<span className="text-xl">🍕</span>
-													<span className="text-sm font-semibold text-gray-900">
-														Food
-													</span>
-												</div>
-												<span className="text-sm font-bold text-gray-900">
-													$450 / $600
-												</span>
-											</div>
-											<div className="w-full bg-gray-200 rounded-full h-3">
-												<div
-													className="bg-green-500 h-3 rounded-full"
-													style={{ width: "75%" }}
-												></div>
-											</div>
-											<p className="text-xs text-gray-500 mt-1">75% used</p>
-										</div>
-
-										{/* Transport */}
-										<div>
-											<div className="flex items-center justify-between mb-2">
-												<div className="flex items-center gap-2">
-													<span className="text-xl">🚗</span>
-													<span className="text-sm font-semibold text-gray-900">
-														Transport
-													</span>
-												</div>
-												<span className="text-sm font-bold text-gray-900">
-													$300 / $400
-												</span>
-											</div>
-											<div className="w-full bg-gray-200 rounded-full h-3">
-												<div
-													className="bg-yellow-500 h-3 rounded-full"
-													style={{ width: "75%" }}
-												></div>
-											</div>
-											<p className="text-xs text-gray-500 mt-1">75% used</p>
-										</div>
-
-										{/* Entertainment */}
-										<div>
-											<div className="flex items-center justify-between mb-2">
-												<div className="flex items-center gap-2">
-													<span className="text-xl">🎬</span>
-													<span className="text-sm font-semibold text-gray-900">
-														Fun
-													</span>
-												</div>
-												<span className="text-sm font-bold text-gray-900">
-													$200 / $300
-												</span>
-											</div>
-											<div className="w-full bg-gray-200 rounded-full h-3">
-												<div
-													className="bg-purple-500 h-3 rounded-full"
-													style={{ width: "67%" }}
-												></div>
-											</div>
-											<p className="text-xs text-gray-500 mt-1">67% used</p>
-										</div>
-									</div>
+								<div className="w-full max-w-md transform -rotate-2 hover:rotate-0 transition-all duration-500 hover:scale-105">
+									<BudgetGoals />
 								</div>
 							</div>
 						</div>
