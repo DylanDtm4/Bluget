@@ -18,9 +18,12 @@
 				"name": "next"
 			}
 		],
-		"baseUrl": "src",
 		"paths": {
-			"@/*": ["*"]
+			"@/components/*": ["./src/components/*"],
+			"@/context/*": ["./src/context/*"],
+			"@/hooks/*": ["./src/hooks/*"],
+			"@/lib/*": ["./src/lib/*"],
+			"@/api/*": ["./src/api/*"]
 		}
 	},
 	"include": [

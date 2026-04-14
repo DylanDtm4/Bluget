@@ -1,10 +1,12 @@
 "use client";
-
+import axios from "axios";
 import AuthForm from "@/components/forms/AuthForm";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 
 export default function LoginPage() {
 	const router = useRouter();
+	const { login } = useAuth();
 
 	const loginFields = [
 		{
@@ -23,11 +25,17 @@ export default function LoginPage() {
 		},
 	];
 
-	const handleLogin = (data: Record<string, string>) => {
-		console.log("Login:", data);
-		// Add your login logic here
-		// Then redirect to dashboard
-		router.push("/dashboard");
+	const handleLogin = async (data: Record<string, string>) => {
+		try {
+			await login(data.email, data.password);
+			router.push("/dashboard");
+		} catch (err: unknown) {
+			if (axios.isAxiosError(err)) {
+				alert(err.response?.data?.error || "Login failed");
+			} else {
+				alert("Login failed");
+			}
+		}
 	};
 
 	return (

@@ -82,7 +82,7 @@ export default function BudgetGoals({
 										}}
 									>
 										<IconComponent
-											className="w-5 h-5 flex-shrink-0"
+											className="w-5 h-5 shrink-0"
 											style={{ color: goal.color }}
 										/>
 									</div>
@@ -110,7 +110,7 @@ export default function BudgetGoals({
 										background: `linear-gradient(90deg, ${goal.color}, ${goal.color})`,
 									}}
 								>
-									<div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-30 animate-shimmer"></div>
+									<div className="absolute inset-0 bg-linear-to-r from-transparent via-white to-transparent opacity-30 animate-shimmer"></div>
 								</div>
 							</div>
 						</div>

@@ -1,10 +1,13 @@
 "use client";
-
+import axios from "axios";
 import AuthForm from "@/components/forms/AuthForm";
 import { useRouter } from "next/navigation";
+import { api } from "@/lib/api";
+import { useAuth } from "@/context/AuthContext";
 
 export default function SignupPage() {
 	const router = useRouter();
+	const { login } = useAuth();
 
 	const signupFields = [
 		{
@@ -37,11 +40,32 @@ export default function SignupPage() {
 		},
 	];
 
-	const handleSignup = (data: Record<string, string>) => {
-		console.log("Signup:", data);
-		// Add your signup logic here
-		// Then redirect to dashboard
-		router.push("/dashboard");
+	const handleSignup = async (data: Record<string, string>) => {
+		try {
+			// ✅ Optional: validate passwords match
+			if (data.password !== data.confirmPassword) {
+				alert("Passwords do not match");
+				return;
+			}
+
+			// ✅ Register
+			await api.post("/auth/register", {
+				name: data.name,
+				email: data.email,
+				password: data.password,
+			});
+
+			// ✅ Auto login using context
+			await login(data.email, data.password);
+
+			router.push("/dashboard");
+		} catch (err: unknown) {
+			if (axios.isAxiosError(err)) {
+				alert(err.response?.data?.error || "Login failed");
+			} else {
+				alert("Login failed");
+			}
+		}
 	};
 
 	return (
