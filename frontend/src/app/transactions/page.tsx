@@ -1,6 +1,5 @@
 "use client";
 
-import Card from "@/components/ui/Card";
 import CardList from "@/components/ui/CardList";
 import PageHeader from "@/components/ui/PageHeader";
 import SectionHeader from "@/components/ui/SectionHeader";
@@ -8,138 +7,64 @@ import SearchAndSortBar from "@/components/ui/SearchAndSortBar";
 import EmptyState from "@/components/ui/EmptyState";
 import Pagination from "@/components/ui/Pagination";
 import { useTableState } from "@/hooks/useTableState";
+import { useTransactions } from "@/hooks/useTransactions";
+import { useRecurring } from "@/hooks/useRecurring";
 import { useRouter } from "next/navigation";
+import type { Transaction, RecurringTransaction } from "@/lib/types";
 
-type TransactionSortField =
-	| "date"
-	| "amount"
-	| "mainCategory"
-	| "secondaryCategory";
-type RecurringSortField =
-	| "nextRun"
-	| "amount"
-	| "frequency"
-	| "mainCategory"
-	| "secondaryCategory"
-	| "startDate"
-	| "endDate";
-
-// Mock category data
-const mockCategories = {
-	Subscriptions: { icon: "subscriptions", color: "#8B5CF6" },
-	Groceries: { icon: "shopping", color: "#10B981" },
-	Rent: { icon: "home", color: "#3B82F6" },
-	"Tennis Lessons": { icon: "fitness", color: "#14B8A6" },
-	Utilities: { icon: "utilities", color: "#F59E0B" },
-	Entertainment: { icon: "other", color: "#EC4899" },
-	Gas: { icon: "transport", color: "#F97316" },
-	Insurance: { icon: "other", color: "#6366F1" },
-	"Gym Membership": { icon: "fitness", color: "#14B8A6" },
-	"Phone Bill": { icon: "subscriptions", color: "#A855F7" },
-	"Paycheck 1": { icon: "income", color: "#84CC16" },
-	Paycheck: { icon: "income", color: "#84CC16" },
-	"Emergency Fund": { icon: "savings", color: "#10B981" },
-	VOO: { icon: "investments", color: "#F59E0B" },
+type TxRow = {
+	id: string;
+	mainCategory: string;
+	secondaryCategory: string;
+	date: Date;
+	amount: number;
+	color: string;
+	icon: string;
 };
 
-// Helper function
-const getCategoryDetails = (categoryName: string) => {
-	return (
-		mockCategories[categoryName as keyof typeof mockCategories] || {
-			icon: "other",
-			color: "#9CA3AF",
-		}
-	);
+type RecRow = {
+	id: string;
+	mainCategory: string;
+	secondaryCategory: string;
+	frequency: string;
+	nextRun: Date;
+	startDate: Date;
+	endDate: Date;
+	amount: number;
+	color: string;
+	icon: string;
 };
 
-const sampleTransactions = [
-	{
-		id: "1",
-		mainCategory: "Income",
-		secondaryCategory: "Paycheck 1",
-		date: new Date("2025-12-20"),
-		amount: 200,
-	},
-	{
-		id: "2",
-		mainCategory: "Expense",
-		secondaryCategory: "Groceries",
-		date: new Date("2025-12-21"),
-		amount: 50,
-	},
-	{
-		id: "3",
-		mainCategory: "Expense",
-		secondaryCategory: "Utilities",
-		date: new Date("2025-12-22"),
-		amount: 30.5,
-	},
-];
+function toTxRow(tx: Transaction): TxRow {
+	return {
+		id: tx._id,
+		mainCategory: tx.transactionType.charAt(0).toUpperCase() + tx.transactionType.slice(1),
+		secondaryCategory: tx.category ?? "Uncategorized",
+		date: new Date(tx.date),
+		amount: tx.amount,
+		color: tx.categoryColor ?? "#9CA3AF",
+		icon: tx.categoryIcon ?? "other",
+	};
+}
 
-const sampleRecurring = [
-	{
-		id: "1",
-		mainCategory: "Income",
-		secondaryCategory: "Paycheck",
-		frequency: "Weekly",
-		startDate: "2025-01-05",
-		nextRun: "2025-01-12",
-		endDate: "2026-01-04",
-		amount: 200,
-	},
-	{
-		id: "2",
-		mainCategory: "Expense",
-		secondaryCategory: "Rent",
-		frequency: "Monthly",
-		startDate: "2025-01-01",
-		nextRun: "2025-02-01",
-		endDate: "2025-12-31",
-		amount: 1200,
-	},
-	{
-		id: "3",
-		mainCategory: "Expense",
-		secondaryCategory: "Groceries",
-		frequency: "Weekly",
-		startDate: "2025-06-01",
-		nextRun: "2025-06-08",
-		endDate: "2026-05-31",
-		amount: 75,
-	},
-	{
-		id: "4",
-		mainCategory: "Expense",
-		secondaryCategory: "Utilities",
-		frequency: "Monthly",
-		startDate: "2025-02-01",
-		nextRun: "2025-03-01",
-		endDate: "2026-01-31",
-		amount: 130.5,
-	},
-	{
-		id: "5",
-		mainCategory: "Savings",
-		secondaryCategory: "Emergency Fund",
-		frequency: "Weekly",
-		startDate: "2025-03-01",
-		nextRun: "2025-03-08",
-		endDate: "2026-03-01",
-		amount: 100,
-	},
-	{
-		id: "6",
-		mainCategory: "Investment",
-		secondaryCategory: "VOO",
-		frequency: "Monthly",
-		startDate: "2026-01-15",
-		nextRun: "2026-02-15",
-		endDate: "2026-12-15",
-		amount: 250,
-	},
-];
+function toRecRow(r: RecurringTransaction): RecRow {
+	return {
+		id: r._id,
+		mainCategory: r.transactionType.charAt(0).toUpperCase() + r.transactionType.slice(1),
+		secondaryCategory: r.category ?? "Uncategorized",
+		frequency: r.frequency.charAt(0).toUpperCase() + r.frequency.slice(1),
+		nextRun: new Date(r.nextRun),
+		startDate: new Date(r.startDate),
+		endDate: new Date(r.endDate),
+		amount: r.amount,
+		color: r.categoryColor ?? "#9CA3AF",
+		icon: r.categoryIcon ?? "other",
+	};
+}
 
-// Sort options for transactions
+type TxSortField = "date" | "amount" | "mainCategory" | "secondaryCategory";
+type RecSortField = "nextRun" | "amount" | "frequency" | "mainCategory" | "secondaryCategory";
+
 const transactionSortOptions = [
 	{ value: "date" as const, label: "Date" },
 	{ value: "amount" as const, label: "Amount" },
@@ -147,7 +72,6 @@ const transactionSortOptions = [
 	{ value: "secondaryCategory" as const, label: "Category" },
 ];
 
-// Sort options for recurring transactions
 const recurringSortOptions = [
 	{ value: "nextRun" as const, label: "Next Run" },
 	{ value: "amount" as const, label: "Amount" },
@@ -158,233 +82,176 @@ const recurringSortOptions = [
 
 export default function TransactionsPage() {
 	const router = useRouter();
+	const { transactions, loading: txLoading, deleteTransaction } = useTransactions();
+	const { recurring, loading: recLoading, deleteRecurring } = useRecurring();
 
-	// Transaction table state
-	const transactions = useTableState<
-		(typeof sampleTransactions)[0],
-		TransactionSortField
-	>({
-		data: sampleTransactions,
+	const txRows = transactions.map(toTxRow);
+	const recRows = recurring.map(toRecRow);
+
+	const txTable = useTableState<TxRow, TxSortField>({
+		data: txRows,
 		defaultSortField: "date",
 		defaultSortDirection: "desc",
 		searchFields: ["mainCategory", "secondaryCategory"],
 	});
 
-	// Recurring table state
-	const recurring = useTableState<
-		(typeof sampleRecurring)[0],
-		RecurringSortField
-	>({
-		data: sampleRecurring,
+	const recTable = useTableState<RecRow, RecSortField>({
+		data: recRows,
 		defaultSortField: "nextRun",
 		defaultSortDirection: "asc",
 		searchFields: ["mainCategory", "secondaryCategory", "frequency"],
 	});
 
-	const handleEditTransaction = (id: string) => {
-		router.push(`/transactions/${id}/edit`);
-	};
-
-	const handleEditRecurring = (id: string) => {
-		router.push(`/recurring/${id}/edit`);
-	};
-
-	const handleDeleteTransaction = (id: string) => {
+	const handleDeleteTransaction = async (id: string) => {
 		if (confirm("Are you sure you want to delete this transaction?")) {
-			console.log("Delete transaction", id);
+			await deleteTransaction(id);
 		}
 	};
 
-	const handleDeleteRecurring = (id: string) => {
-		if (
-			confirm("Are you sure you want to delete this recurring transaction?")
-		) {
-			console.log("Delete recurring", id);
+	const handleDeleteRecurring = async (id: string) => {
+		if (confirm("Are you sure you want to delete this recurring transaction?")) {
+			await deleteRecurring(id);
 		}
 	};
 
 	return (
 		<div className="bg-linear-to-br from-blue-50 to-blue-100 p-3 sm:p-6 rounded-xl min-h-screen">
-			{/* Page Header */}
 			<PageHeader
 				title="Transactions"
 				description="Manage your income and expenses"
-				actionButton={{
-					label: "+ Add Transaction",
-					href: "/transactions/new",
-				}}
+				actionButton={{ label: "+ Add Transaction", href: "/transactions/new" }}
 			/>
 
-			{/* Recent Transactions Section */}
+			{/* One-time Transactions */}
 			<section className="bg-white rounded-lg shadow-md p-4 sm:p-6 mb-6">
 				<div className="space-y-4 mb-6">
 					<SectionHeader
 						title="Recent Transactions"
 						description="One-time income and expenses"
-						badge={{
-							label: "total",
-							count: transactions.totalItems,
-						}}
+						badge={{ label: "total", count: txTable.totalItems }}
 					/>
-
 					<SearchAndSortBar
-						searchValue={transactions.searchValue}
-						setSearchValue={transactions.setSearchValue}
-						sortField={transactions.sortField}
-						setSortField={transactions.setSortField}
-						sortDirection={transactions.sortDirection}
-						setSortDirection={transactions.setSortDirection}
-						setPage={transactions.setCurrentPage}
+						searchValue={txTable.searchValue}
+						setSearchValue={txTable.setSearchValue}
+						sortField={txTable.sortField}
+						setSortField={txTable.setSortField}
+						sortDirection={txTable.sortDirection}
+						setSortDirection={txTable.setSortDirection}
+						setPage={txTable.setCurrentPage}
 						sortOptions={transactionSortOptions}
 					/>
 				</div>
 
-				{/* Empty State */}
-				{transactions.isEmpty && (
+				{txLoading && <p className="text-sm text-gray-500 py-4 text-center">Loading...</p>}
+
+				{!txLoading && txTable.isEmpty && (
 					<EmptyState
-						variant={transactions.searchValue ? "no-results" : "no-data"}
+						variant={txTable.searchValue ? "no-results" : "no-data"}
 						icon="document"
-						message={
-							transactions.searchValue
-								? "No transactions match your search"
-								: "No transactions found"
-						}
+						message={txTable.searchValue ? "No transactions match your search" : "No transactions found"}
 						action={
-							transactions.searchValue
-								? {
-										label: "Clear Search",
-										onClick: transactions.clearSearch,
-									}
-								: {
-										label: "Create Your First Transaction",
-										href: "/transactions/new",
-									}
+							txTable.searchValue
+								? { label: "Clear Search", onClick: txTable.clearSearch }
+								: { label: "Create Your First Transaction", href: "/transactions/new" }
 						}
 					/>
 				)}
 
-				{/* Transactions List */}
-				{transactions.hasData && (
+				{!txLoading && txTable.hasData && (
 					<>
 						<CardList
-							items={transactions.paginatedData}
-							getCardProps={(tx) => {
-								const categoryDetails = getCategoryDetails(
-									tx.secondaryCategory,
-								);
-								return {
-									id: tx.id,
-									title: tx.mainCategory,
-									data: {
-										amount: tx.amount,
-										date: tx.date,
-										mainCategory: tx.mainCategory,
-										secondaryCategory: tx.secondaryCategory,
-										color: categoryDetails.color,
-										icon: categoryDetails.icon,
-									},
-									type: "transaction",
-								};
-							}}
-							onEdit={handleEditTransaction}
+							items={txTable.paginatedData}
+							getCardProps={(tx) => ({
+								id: tx.id,
+								title: tx.mainCategory,
+								data: {
+									amount: tx.amount,
+									date: tx.date,
+									mainCategory: tx.mainCategory,
+									secondaryCategory: tx.secondaryCategory,
+									color: tx.color,
+									icon: tx.icon,
+								},
+								type: "transaction",
+							})}
+							onEdit={(id) => router.push(`/transactions/${id}/edit`)}
 							onDelete={handleDeleteTransaction}
 						/>
-
 						<Pagination
-							currentPage={transactions.currentPage}
-							totalPages={transactions.totalPages}
-							totalItems={transactions.totalItems}
-							itemsPerPage={transactions.itemsPerPage}
-							onPageChange={transactions.setCurrentPage}
+							currentPage={txTable.currentPage}
+							totalPages={txTable.totalPages}
+							totalItems={txTable.totalItems}
+							itemsPerPage={txTable.itemsPerPage}
+							onPageChange={txTable.setCurrentPage}
 						/>
 					</>
 				)}
 			</section>
 
-			{/* Recurring Transactions Section */}
+			{/* Recurring Transactions */}
 			<section className="bg-white rounded-lg shadow-md p-4 sm:p-6">
 				<div className="space-y-4 mb-6">
 					<SectionHeader
 						title="Active Recurring"
 						description="Automated transactions on a schedule"
-						badge={{
-							label: "active",
-							count: recurring.totalItems,
-						}}
+						badge={{ label: "active", count: recTable.totalItems }}
 					/>
-
 					<SearchAndSortBar
-						searchValue={recurring.searchValue}
-						setSearchValue={recurring.setSearchValue}
-						sortField={recurring.sortField}
-						setSortField={recurring.setSortField}
-						sortDirection={recurring.sortDirection}
-						setSortDirection={recurring.setSortDirection}
-						setPage={recurring.setCurrentPage}
+						searchValue={recTable.searchValue}
+						setSearchValue={recTable.setSearchValue}
+						sortField={recTable.sortField}
+						setSortField={recTable.setSortField}
+						sortDirection={recTable.sortDirection}
+						setSortDirection={recTable.setSortDirection}
+						setPage={recTable.setCurrentPage}
 						sortOptions={recurringSortOptions}
 					/>
 				</div>
 
-				{/* Empty State */}
-				{recurring.isEmpty && (
+				{recLoading && <p className="text-sm text-gray-500 py-4 text-center">Loading...</p>}
+
+				{!recLoading && recTable.isEmpty && (
 					<EmptyState
-						variant={recurring.searchValue ? "no-results" : "no-data"}
+						variant={recTable.searchValue ? "no-results" : "no-data"}
 						icon="recurring"
-						message={
-							recurring.searchValue
-								? "No recurring transactions match your search"
-								: "No recurring transactions found"
-						}
+						message={recTable.searchValue ? "No recurring transactions match your search" : "No recurring transactions found"}
 						action={
-							recurring.searchValue
-								? {
-										label: "Clear Search",
-										onClick: recurring.clearSearch,
-									}
-								: {
-										label: "Create Your First Recurring Transaction",
-										href: "/recurring/new",
-									}
+							recTable.searchValue
+								? { label: "Clear Search", onClick: recTable.clearSearch }
+								: { label: "Create Your First Recurring Transaction", href: "/transactions/new" }
 						}
 					/>
 				)}
 
-				{/* Recurring List */}
-				{recurring.hasData && (
+				{!recLoading && recTable.hasData && (
 					<>
 						<CardList
-							items={recurring.paginatedData}
-							getCardProps={(tx) => {
-								const categoryDetails = getCategoryDetails(
-									tx.secondaryCategory,
-								);
-								return {
-									id: tx.id,
-									title: tx.mainCategory,
-									data: {
-										amount: tx.amount,
-										frequency: tx.frequency,
-										nextRun: new Date(tx.nextRun),
-										mainCategory: tx.mainCategory,
-										secondaryCategory: tx.secondaryCategory,
-										startDate: new Date(tx.startDate),
-										endDate: new Date(tx.endDate),
-										color: categoryDetails.color,
-										icon: categoryDetails.icon,
-									},
-									type: "recurring",
-								};
-							}}
-							onEdit={handleEditRecurring}
+							items={recTable.paginatedData}
+							getCardProps={(r) => ({
+								id: r.id,
+								title: r.mainCategory,
+								data: {
+									amount: r.amount,
+									frequency: r.frequency,
+									nextRun: r.nextRun,
+									mainCategory: r.mainCategory,
+									secondaryCategory: r.secondaryCategory,
+									startDate: r.startDate,
+									endDate: r.endDate,
+									color: r.color,
+									icon: r.icon,
+								},
+								type: "recurring",
+							})}
+							onEdit={(id) => router.push(`/recurring/${id}/edit`)}
 							onDelete={handleDeleteRecurring}
 						/>
-
 						<Pagination
-							currentPage={recurring.currentPage}
-							totalPages={recurring.totalPages}
-							totalItems={recurring.totalItems}
-							itemsPerPage={recurring.itemsPerPage}
-							onPageChange={recurring.setCurrentPage}
+							currentPage={recTable.currentPage}
+							totalPages={recTable.totalPages}
+							totalItems={recTable.totalItems}
+							itemsPerPage={recTable.itemsPerPage}
+							onPageChange={recTable.setCurrentPage}
 						/>
 					</>
 				)}

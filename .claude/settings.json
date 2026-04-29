@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/Dylan/.claude/projects/c--Users-Dylan-dev-bluget-project/**)"
+    ]
+  }
+}

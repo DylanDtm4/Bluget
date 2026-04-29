@@ -2,141 +2,30 @@
 
 import { useRouter } from "next/navigation";
 import { useTableState } from "@/hooks/useTableState";
+import { useBudgets } from "@/hooks/useBudgets";
+import { useCategories } from "@/hooks/useCategories";
 import PageHeader from "@/components/ui/PageHeader";
 import SectionHeader from "@/components/ui/SectionHeader";
 import SearchAndSortBar from "@/components/ui/SearchAndSortBar";
 import EmptyState from "@/components/ui/EmptyState";
 import CardList from "@/components/ui/CardList";
 import Pagination from "@/components/ui/Pagination";
+import type { Budget, Category } from "@/lib/types";
 
-type BudgetSortField = "amount" | "month" | "year" | "category";
-
-type Budget = {
+type BudgetRow = {
 	id: string;
 	category: string;
 	amount: number;
-	month: number;
-	year: number;
+	month: number | null;
+	year: number | null;
+	recurring?: boolean;
 	note?: string;
+	color: string;
+	icon: string;
 };
 
-// Mock category data
-const mockCategories = {
-	Subscriptions: { icon: "subscriptions", color: "#8B5CF6" },
-	Groceries: { icon: "shopping", color: "#10B981" },
-	Rent: { icon: "home", color: "#3B82F6" },
-	"Tennis Lessons": { icon: "fitness", color: "#14B8A6" },
-	Utilities: { icon: "utilities", color: "#F59E0B" },
-	Entertainment: { icon: "other", color: "#EC4899" },
-	Gas: { icon: "transport", color: "#F97316" },
-	Insurance: { icon: "other", color: "#6366F1" },
-	"Gym Membership": { icon: "fitness", color: "#14B8A6" },
-	"Phone Bill": { icon: "subscriptions", color: "#A855F7" },
-};
+type BudgetSortField = "amount" | "month" | "year" | "category";
 
-// Helper function
-const getCategoryDetails = (categoryName: string) => {
-	return (
-		mockCategories[categoryName as keyof typeof mockCategories] || {
-			icon: "other",
-			color: "#9CA3AF",
-		}
-	);
-};
-
-// Hardcoded sample data
-const sampleBudgets: Budget[] = [
-	{
-		id: "1",
-		category: "Subscriptions",
-		amount: 50,
-		month: 12,
-		year: 2025,
-		note: "Netflix, Spotify, etc.",
-	},
-	{
-		id: "2",
-		category: "Groceries",
-		amount: 200,
-		month: 12,
-		year: 2025,
-		note: "Weekly shopping",
-	},
-	{
-		id: "3",
-		category: "Rent",
-		amount: 1200,
-		month: 12,
-		year: 2025,
-	},
-	{
-		id: "4",
-		category: "Tennis Lessons",
-		amount: 100,
-		month: 12,
-		year: 2025,
-	},
-	{
-		id: "5",
-		category: "Utilities",
-		amount: 150,
-		month: 11,
-		year: 2025,
-		note: "Electric, water, gas",
-	},
-	{
-		id: "6",
-		category: "Groceries",
-		amount: 180,
-		month: 11,
-		year: 2025,
-	},
-	{
-		id: "7",
-		category: "Entertainment",
-		amount: 75,
-		month: 10,
-		year: 2025,
-		note: "Movies, concerts",
-	},
-	{
-		id: "8",
-		category: "Gas",
-		amount: 120,
-		month: 10,
-		year: 2025,
-	},
-	{
-		id: "9",
-		category: "Insurance",
-		amount: 250,
-		month: 9,
-		year: 2025,
-	},
-	{
-		id: "10",
-		category: "Gym Membership",
-		amount: 60,
-		month: 9,
-		year: 2025,
-	},
-	{
-		id: "11",
-		category: "Phone Bill",
-		amount: 85,
-		month: 8,
-		year: 2025,
-	},
-	{
-		id: "12",
-		category: "Subscriptions",
-		amount: 45,
-		month: 1,
-		year: 2024,
-	},
-];
-
-// Sort options for budgets
 const budgetSortOptions = [
 	{ value: "month" as const, label: "Month" },
 	{ value: "year" as const, label: "Year" },
@@ -144,119 +33,110 @@ const budgetSortOptions = [
 	{ value: "category" as const, label: "Category" },
 ];
 
+function toBudgetRow(b: Budget, cats: Category[]): BudgetRow {
+	const cat = cats.find((c) => c.name === b.category);
+	return {
+		id: b._id,
+		category: b.category,
+		amount: b.amount,
+		month: b.month,
+		year: b.year,
+		recurring: b.recurring,
+		note: b.note,
+		color: cat?.color ?? "#9CA3AF",
+		icon: cat?.icon ?? "other",
+	};
+}
+
 export default function BudgetsPage() {
 	const router = useRouter();
+	const { budgets, loading, deleteBudget } = useBudgets();
+	const { categories } = useCategories();
 
-	// Budget table state
-	const budgets = useTableState<(typeof sampleBudgets)[0], BudgetSortField>({
-		data: sampleBudgets,
+	const rows = budgets.map((b) => toBudgetRow(b, categories));
+
+	const table = useTableState<BudgetRow, BudgetSortField>({
+		data: rows,
 		defaultSortField: "month",
 		defaultSortDirection: "desc",
-		searchFields: ["category", "note"],
+		searchFields: ["category"],
 	});
 
-	const handleEdit = (id: string) => {
-		router.push(`/budgets/${id}/edit`);
-	};
-
-	const handleDelete = (id: string) => {
+	const handleDelete = async (id: string) => {
 		if (confirm("Are you sure you want to delete this budget?")) {
-			console.log("Delete", id);
-			// TODO: Add real delete functionality
+			await deleteBudget(id);
 		}
 	};
 
 	return (
 		<div className="bg-linear-to-br from-blue-50 to-blue-100 p-3 sm:p-6 rounded-xl min-h-screen">
-			{/* Page Header */}
 			<PageHeader
 				title="Budgets"
-				description="Track your monthly Spending"
-				actionButton={{
-					label: "+ Add Budget",
-					href: "/budgets/new",
-				}}
+				description="Track your monthly spending"
+				actionButton={{ label: "+ Add Budget", href: "/budgets/new" }}
 			/>
 
-			{/* Budgets Section */}
 			<section className="bg-white rounded-lg shadow-md p-4 sm:p-6">
-				{/* Header with Search, Sort, and Count */}
 				<div className="space-y-4 mb-6">
 					<SectionHeader
 						title="All Budgets"
-						description="Custom budgets for tracking expenses and income"
-						badge={{
-							label: "total",
-							count: budgets.totalItems,
-						}}
+						description="Monthly spending limits by category"
+						badge={{ label: "total", count: table.totalItems }}
 					/>
-
 					<SearchAndSortBar
-						searchValue={budgets.searchValue}
-						setSearchValue={budgets.setSearchValue}
-						sortField={budgets.sortField}
-						setSortField={budgets.setSortField}
-						sortDirection={budgets.sortDirection}
-						setSortDirection={budgets.setSortDirection}
-						setPage={budgets.setCurrentPage}
+						searchValue={table.searchValue}
+						setSearchValue={table.setSearchValue}
+						sortField={table.sortField}
+						setSortField={table.setSortField}
+						sortDirection={table.sortDirection}
+						setSortDirection={table.setSortDirection}
+						setPage={table.setCurrentPage}
 						sortOptions={budgetSortOptions}
 					/>
 				</div>
 
-				{/* Empty State */}
-				{budgets.isEmpty && (
+				{loading && <p className="text-sm text-gray-500 py-4 text-center">Loading...</p>}
+
+				{!loading && table.isEmpty && (
 					<EmptyState
-						variant={budgets.searchValue ? "no-results" : "no-data"}
+						variant={table.searchValue ? "no-results" : "no-data"}
 						icon="document"
-						message={
-							budgets.searchValue
-								? "No budgets match your search"
-								: "No budgets found"
-						}
+						message={table.searchValue ? "No budgets match your search" : "No budgets found"}
 						action={
-							budgets.searchValue
-								? {
-										label: "Clear Search",
-										onClick: () => budgets.clearSearch,
-									}
-								: {
-										label: "Create Your First Budget",
-										href: "/budgets/new",
-									}
+							table.searchValue
+								? { label: "Clear Search", onClick: table.clearSearch }
+								: { label: "Create Your First Budget", href: "/budgets/new" }
 						}
 					/>
 				)}
 
-				{/* Budgets List */}
-				{budgets.hasData && (
+				{!loading && table.hasData && (
 					<>
 						<CardList
-							items={budgets.paginatedData}
-							getCardProps={(budget) => {
-								const categoryDetails = getCategoryDetails(budget.category);
-								return {
-									id: budget.id,
-									title: budget.category,
-									data: {
-										amount: budget.amount,
-										month: budget.month,
-										year: budget.year,
-										note: budget.note,
-										color: categoryDetails.color,
-										icon: categoryDetails.icon,
-									},
-									type: "budget",
-								};
-							}}
-							onEdit={handleEdit}
+							items={table.paginatedData}
+							getCardProps={(b) => ({
+								id: b.id,
+								title: b.category,
+								data: {
+									amount: b.amount,
+									month: b.month,
+									year: b.year,
+									recurring: b.recurring,
+									note: b.note,
+									color: b.color,
+									icon: b.icon,
+								},
+								type: "budget",
+							})}
+							onEdit={(id) => router.push(`/budgets/${id}/edit`)}
 							onDelete={handleDelete}
 						/>
 						<Pagination
-							currentPage={budgets.currentPage}
-							totalPages={budgets.totalPages}
-							totalItems={budgets.totalItems}
-							itemsPerPage={budgets.itemsPerPage}
-							onPageChange={budgets.setCurrentPage}
+							currentPage={table.currentPage}
+							totalPages={table.totalPages}
+							totalItems={table.totalItems}
+							itemsPerPage={table.itemsPerPage}
+							onPageChange={table.setCurrentPage}
 						/>
 					</>
 				)}

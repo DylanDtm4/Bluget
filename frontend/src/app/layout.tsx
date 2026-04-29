@@ -1,6 +1,8 @@
 import "./styles/globals.css";
 import { AuthProvider } from "@/context/AuthContext";
 import Header from "@/components/Header";
+import AuthGuard from "@/components/AuthGuard";
+
 export const metadata = {
 	title: "Bluget",
 	description: "Budgeting app",
@@ -15,8 +17,10 @@ export default function RootLayout({
 		<html lang="en">
 			<body>
 				<AuthProvider>
-					<Header />
-					<main>{children}</main>
+					<AuthGuard>
+						<Header />
+						<main>{children}</main>
+					</AuthGuard>
 				</AuthProvider>
 			</body>
 		</html>

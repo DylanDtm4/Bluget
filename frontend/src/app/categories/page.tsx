@@ -8,215 +8,108 @@ import EmptyState from "@/components/ui/EmptyState";
 import CardList from "@/components/ui/CardList";
 import Pagination from "@/components/ui/Pagination";
 import { useTableState } from "@/hooks/useTableState";
+import { useCategories } from "@/hooks/useCategories";
+import type { Category } from "@/lib/types";
 
-type CategorySortField = "color" | "category" | "icon";
-
-type Category = {
+type CategoryRow = {
 	id: string;
-	category: string;
+	name: string;
 	color: string;
 	icon: string;
 };
 
-const sampleCategories: Category[] = [
-	{
-		id: "1",
-		category: "Groceries",
-		color: "#10B981", // Green
-		icon: "shopping",
-	},
-	{
-		id: "2",
-		category: "Rent",
-		color: "#3B82F6", // Blue
-		icon: "home",
-	},
-	{
-		id: "3",
-		category: "Utilities",
-		color: "#8B5CF6", // Purple
-		icon: "utilities",
-	},
-	{
-		id: "4",
-		category: "Transportation",
-		color: "#F59E0B", // Amber
-		icon: "transport",
-	},
-	{
-		id: "5",
-		category: "Entertainment",
-		color: "#EC4899", // Pink
-		icon: "other",
-	},
-	{
-		id: "6",
-		category: "Dining Out",
-		color: "#EF4444", // Red
-		icon: "food",
-	},
-	{
-		id: "7",
-		category: "Healthcare",
-		color: "#06B6D4", // Cyan
-		icon: "other",
-	},
-	{
-		id: "8",
-		category: "Shopping",
-		color: "#F97316", // Orange
-		icon: "shopping",
-	},
-	{
-		id: "9",
-		category: "Subscriptions",
-		color: "#6366F1", // Indigo
-		icon: "subscriptions",
-	},
-	{
-		id: "10",
-		category: "Fitness",
-		color: "#14B8A6", // Teal
-		icon: "fitness",
-	},
-	{
-		id: "11",
-		category: "Education",
-		color: "#A855F7", // Violet
-		icon: "other",
-	},
-	{
-		id: "12",
-		category: "Savings",
-		color: "#84CC16", // Lime
-		icon: "savings",
-	},
-	{
-		id: "13",
-		category: "Income",
-		color: "#84CC16", // Lime
-		icon: "income",
-	},
-];
+type CategorySortField = "name" | "color" | "icon";
 
-// Sort options for categories
 const categorySortOptions = [
-	{ value: "category" as const, label: "Category" },
+	{ value: "name" as const, label: "Name" },
 	{ value: "color" as const, label: "Color" },
 	{ value: "icon" as const, label: "Icon" },
 ];
 
+function toCategoryRow(c: Category): CategoryRow {
+	return { id: c._id, name: c.name, color: c.color, icon: c.icon };
+}
+
 export default function CategoriesPage() {
 	const router = useRouter();
+	const { categories, loading, deleteCategory } = useCategories();
 
-	// Category table state
-	const categories = useTableState<
-		(typeof sampleCategories)[0],
-		CategorySortField
-	>({
-		data: sampleCategories,
-		defaultSortField: "category",
+	const rows = categories.map(toCategoryRow);
+
+	const table = useTableState<CategoryRow, CategorySortField>({
+		data: rows,
+		defaultSortField: "name",
 		defaultSortDirection: "asc",
-		searchFields: ["category"],
+		searchFields: ["name"],
 	});
 
-	const handleEdit = (id: string) => {
-		router.push(`/categories/${id}/edit`);
-		console.log("Edit", id);
-	};
-
-	const handleDelete = (id: string) => {
+	const handleDelete = async (id: string) => {
 		if (confirm("Are you sure you want to delete this category?")) {
-			console.log("Delete", id);
-			// TODO: Add real delete functionality
+			await deleteCategory(id);
 		}
 	};
 
 	return (
 		<div className="bg-linear-to-br from-blue-50 to-blue-100 p-3 sm:p-6 rounded-xl min-h-screen">
-			{/* Page Header */}
 			<PageHeader
 				title="Categories"
 				description="Organize your transactions by category"
-				actionButton={{
-					label: "+ Add Category",
-					href: "/categories/new",
-				}}
+				actionButton={{ label: "+ Add Category", href: "/categories/new" }}
 			/>
 
-			{/* Categories Section */}
 			<section className="bg-white rounded-lg shadow-md p-4 sm:p-6">
-				{/* Header with Search, Sort, and Count */}
 				<div className="space-y-4 mb-6">
 					<SectionHeader
 						title="All Categories"
 						description="Custom categories for tracking expenses and income"
-						badge={{
-							label: "total",
-							count: categories.totalItems,
-						}}
+						badge={{ label: "total", count: table.totalItems }}
 					/>
 					<SearchAndSortBar
-						searchValue={categories.searchValue}
-						setSearchValue={categories.setSearchValue}
-						sortField={categories.sortField}
-						setSortField={categories.setSortField}
-						sortDirection={categories.sortDirection}
-						setSortDirection={categories.setSortDirection}
-						setPage={categories.setCurrentPage}
+						searchValue={table.searchValue}
+						setSearchValue={table.setSearchValue}
+						sortField={table.sortField}
+						setSortField={table.setSortField}
+						sortDirection={table.sortDirection}
+						setSortDirection={table.setSortDirection}
+						setPage={table.setCurrentPage}
 						sortOptions={categorySortOptions}
 					/>
 				</div>
 
-				{/* Empty State */}
-				{categories.isEmpty && (
+				{loading && <p className="text-sm text-gray-500 py-4 text-center">Loading...</p>}
+
+				{!loading && table.isEmpty && (
 					<EmptyState
-						variant={categories.searchValue ? "no-results" : "no-data"}
+						variant={table.searchValue ? "no-results" : "no-data"}
 						icon="document"
-						message={
-							categories.searchValue
-								? "No budgets match your search"
-								: "No budgets found"
-						}
+						message={table.searchValue ? "No categories match your search" : "No categories found"}
 						action={
-							categories.searchValue
-								? {
-										label: "Clear Search",
-										onClick: () => categories.clearSearch,
-									}
-								: {
-										label: "Create Your First Budget",
-										href: "/budgets/new",
-									}
+							table.searchValue
+								? { label: "Clear Search", onClick: table.clearSearch }
+								: { label: "Create Your First Category", href: "/categories/new" }
 						}
 					/>
 				)}
 
-				{/* Categories List */}
-				{categories.hasData && (
+				{!loading && table.hasData && (
 					<>
 						<CardList
-							items={categories.paginatedData}
-							getCardProps={(category) => {
-								return {
-									id: category.id,
-									title: category.category,
-									data: {
-										color: category.color,
-										icon: category.icon,
-									},
-									type: "category",
-								};
-							}}
-							onEdit={handleEdit}
+							items={table.paginatedData}
+							getCardProps={(c) => ({
+								id: c.id,
+								title: c.name,
+								data: { color: c.color, icon: c.icon },
+								type: "category",
+							})}
+							onEdit={(id) => router.push(`/categories/${id}/edit`)}
 							onDelete={handleDelete}
 						/>
 						<Pagination
-							currentPage={categories.currentPage}
-							totalPages={categories.totalPages}
-							totalItems={categories.totalItems}
-							itemsPerPage={categories.itemsPerPage}
-							onPageChange={categories.setCurrentPage}
+							currentPage={table.currentPage}
+							totalPages={table.totalPages}
+							totalItems={table.totalItems}
+							itemsPerPage={table.itemsPerPage}
+							onPageChange={table.setCurrentPage}
 						/>
 					</>
 				)}

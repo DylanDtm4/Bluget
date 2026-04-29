@@ -1,14 +1,32 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Form from "@/components/forms/Form";
 import { useRouter } from "next/navigation";
+import { useCategories } from "@/hooks/useCategories";
+import { api } from "@/lib/api";
 
-export default function EditTransactionPage({
-	params,
-}: {
-	params: { id: string };
-}) {
+export default function EditTransactionPage({ params }: { params: { id: string } }) {
 	const router = useRouter();
+	const { categories } = useCategories();
+	const [initialData, setInitialData] = useState<Record<string, string | number> | null>(null);
+	const [error, setError] = useState<string | undefined>();
+	const [isLoading, setIsLoading] = useState(false);
+
+	useEffect(() => {
+		api.get(`/transactions/${params.id}`).then((res) => {
+			const tx = res.data;
+			setInitialData({
+				mainCategory: tx.transactionType,
+				secondaryCategory: tx.category ?? "",
+				amount: tx.amount,
+				date: tx.date ? tx.date.slice(0, 10) : "",
+				note: tx.note ?? "",
+			});
+		});
+	}, [params.id]);
+
+	const categoryOptions = categories.map((c) => ({ label: c.name, value: c.name }));
 
 	const transactionFields = [
 		{
@@ -17,18 +35,18 @@ export default function EditTransactionPage({
 			type: "select" as const,
 			required: true,
 			options: [
-				{ label: "Income", value: "Income" },
-				{ label: "Expense", value: "Expense" },
-				{ label: "Investment", value: "Investment" },
-				{ label: "Savings", value: "Savings" },
+				{ label: "Income", value: "income" },
+				{ label: "Expense", value: "expense" },
+				{ label: "Investment", value: "investment" },
+				{ label: "Savings", value: "savings" },
 			],
 		},
 		{
 			name: "secondaryCategory",
 			label: "Category",
-			type: "text" as const,
+			type: "select" as const,
 			required: true,
-			placeholder: "e.g., Groceries, Paycheck",
+			options: categoryOptions,
 		},
 		{
 			name: "amount",
@@ -51,21 +69,35 @@ export default function EditTransactionPage({
 		},
 	];
 
-	// Fetch existing data (for now using dummy data)
-	// In real app: useEffect to fetch from API
-	const existingTransaction = {
-		mainCategory: "Expense",
-		secondaryCategory: "Groceries",
-		amount: 50,
-		date: "2025-12-21",
-		note: "Weekly shopping",
+	const handleSubmit = async (data: Record<string, string | number>) => {
+		setError(undefined);
+		setIsLoading(true);
+		try {
+			await api.put(`/transactions/${params.id}`, {
+				transactionType: data.mainCategory,
+				category: data.secondaryCategory,
+				amount: data.amount,
+				date: data.date,
+				note: data.note,
+			});
+			router.push("/transactions");
+		} catch (err: unknown) {
+			const msg =
+				(err as { response?: { data?: { error?: string } } })?.response?.data
+					?.error ?? "Failed to update. Please try again.";
+			setError(msg);
+		} finally {
+			setIsLoading(false);
+		}
 	};
 
-	const handleSubmit = (data: Record<string, string | number>) => {
-		console.log("Updating transaction:", params.id, data);
-		// PUT request to API: /api/transactions/${params.id}
-		router.push("/transactions");
-	};
+	if (!initialData) {
+		return (
+			<div className="bg-linear-to-br from-blue-50 to-blue-100 p-3 sm:p-6 rounded-xl min-h-screen flex items-center justify-center">
+				<p className="text-gray-500 text-sm">Loading...</p>
+			</div>
+		);
+	}
 
 	return (
 		<div className="bg-linear-to-br from-blue-50 to-blue-100 p-3 sm:p-6 rounded-xl min-h-screen">
@@ -75,10 +107,11 @@ export default function EditTransactionPage({
 					fields={transactionFields}
 					onSubmit={handleSubmit}
 					onCancel={() => router.push("/transactions")}
-					initialData={existingTransaction}
-					enableRecurring={false}
+					initialData={initialData}
+					error={error}
+					isLoading={isLoading}
 				/>
-			</div>{" "}
+			</div>
 		</div>
 	);
 }

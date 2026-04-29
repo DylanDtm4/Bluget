@@ -178,6 +178,25 @@ const getRecurringTransactions = async (req, res) => {
 	}
 };
 
+const getRecurringTransaction = async (req, res) => {
+	try {
+		const tx = await RecurringTransaction.findOne({
+			_id: req.params.id,
+			userId: req.user.id,
+		}).populate("category");
+		if (!tx) return res.status(404).json({ error: "Recurring transaction not found" });
+		const formatted = {
+			...tx.toObject(),
+			category: tx.category?.name,
+			categoryColor: tx.category?.color,
+			categoryIcon: tx.category?.icon,
+		};
+		res.json(formatted);
+	} catch (error) {
+		res.status(500).json({ error: "Server error" });
+	}
+};
+
 const updateRecurringTransaction = async (req, res) => {
 	try {
 		const { category, ...rest } = req.body;
@@ -245,6 +264,7 @@ module.exports = {
 	createRecurringTransaction,
 	createRecurringTransactions,
 	getRecurringTransactions,
+	getRecurringTransaction,
 	updateRecurringTransaction,
 	deleteRecurringTransaction,
 	clearRecurringTransactions,

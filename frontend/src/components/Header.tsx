@@ -2,11 +2,13 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 
 export default function Header() {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 	const router = useRouter();
+	const { user, logout } = useAuth();
 
 	const createOptions = [
 		{ label: "Transaction", href: "/transactions/new", icon: "💰" },
@@ -17,6 +19,12 @@ export default function Header() {
 	const handleOptionClick = (href: string) => {
 		setIsModalOpen(false);
 		router.push(href);
+	};
+
+	const handleLogout = () => {
+		logout();
+		setIsMobileMenuOpen(false);
+		router.push("/login");
 	};
 
 	return (
@@ -32,71 +40,106 @@ export default function Header() {
 							</Link>
 
 							{/* Desktop Navigation */}
-							<nav className="hidden md:flex items-center gap-4">
-								<Link
-									href="/dashboard"
-									className="text-sm font-semibold hover:text-gray-300 transition-colors"
-								>
-									Dashboard
-								</Link>
-								<Link
-									href="/budgets"
-									className="text-sm font-semibold hover:text-gray-300 transition-colors"
-								>
-									Budgets
-								</Link>
-								<Link
-									href="/categories"
-									className="text-sm font-semibold hover:text-gray-300 transition-colors"
-								>
-									Categories
-								</Link>
-								<Link
-									href="/transactions"
-									className="text-sm font-semibold hover:text-gray-300 transition-colors"
-								>
-									Transactions
-								</Link>
-							</nav>
+							{user && (
+								<nav className="hidden md:flex items-center gap-4">
+									<Link
+										href="/dashboard"
+										className="text-sm font-semibold hover:text-gray-300 transition-colors"
+									>
+										Dashboard
+									</Link>
+									<Link
+										href="/budgets"
+										className="text-sm font-semibold hover:text-gray-300 transition-colors"
+									>
+										Budgets
+									</Link>
+									<Link
+										href="/categories"
+										className="text-sm font-semibold hover:text-gray-300 transition-colors"
+									>
+										Categories
+									</Link>
+									<Link
+										href="/transactions"
+										className="text-sm font-semibold hover:text-gray-300 transition-colors"
+									>
+										Transactions
+									</Link>
+									<Link
+										href="/analytics"
+										className="text-sm font-semibold hover:text-gray-300 transition-colors"
+									>
+										Analytics
+									</Link>
+								</nav>
+							)}
 						</div>
 
 						{/* Right side - Actions */}
 						<div className="flex items-center gap-3">
-							{/* Create Button */}
-							<button
-								onClick={() => setIsModalOpen(true)}
-								className="hidden md:flex items-center gap-2 px-4 py-1.5 text-sm font-semibold bg-[#354abd] hover:bg-[#1f1885] rounded-md transition-colors"
-							>
-								<span className="text-lg leading-none">+</span>
-								Create
-							</button>
+							{user ? (
+								<>
+									{/* Create Button */}
+									<button
+										onClick={() => setIsModalOpen(true)}
+										className="hidden md:flex items-center gap-2 px-4 py-1.5 text-sm font-semibold bg-[#354abd] hover:bg-[#1f1885] rounded-md transition-colors"
+									>
+										<span className="text-lg leading-none">+</span>
+										Create
+									</button>
 
-							{/* Settings */}
-							<Link
-								href="/settings"
-								className="hidden md:block p-2 hover:bg-[#30363d] rounded-md transition-colors"
-								title="Settings"
-							>
-								<svg
-									className="w-5 h-5"
-									fill="none"
-									stroke="currentColor"
-									viewBox="0 0 24 24"
-								>
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth={2}
-										d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-									/>
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth={2}
-										d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-									/>
-								</svg>
-							</Link>
+									{/* Settings */}
+									<Link
+										href="/settings"
+										className="hidden md:block p-2 hover:bg-[#30363d] rounded-md transition-colors"
+										title="Settings"
+									>
+										<svg
+											className="w-5 h-5"
+											fill="none"
+											stroke="currentColor"
+											viewBox="0 0 24 24"
+										>
+											<path
+												strokeLinecap="round"
+												strokeLinejoin="round"
+												strokeWidth={2}
+												d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+											/>
+											<path
+												strokeLinecap="round"
+												strokeLinejoin="round"
+												strokeWidth={2}
+												d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+											/>
+										</svg>
+									</Link>
+
+									{/* Logout */}
+									<button
+										onClick={handleLogout}
+										className="hidden md:block px-3 py-1.5 text-sm font-semibold hover:bg-[#30363d] rounded-md transition-colors text-gray-300 hover:text-white"
+									>
+										Sign out
+									</button>
+								</>
+							) : (
+								<div className="hidden md:flex items-center gap-2">
+									<Link
+										href="/login"
+										className="px-3 py-1.5 text-sm font-semibold hover:bg-[#30363d] rounded-md transition-colors text-gray-300 hover:text-white"
+									>
+										Sign in
+									</Link>
+									<Link
+										href="/signup"
+										className="px-3 py-1.5 text-sm font-semibold bg-[#354abd] hover:bg-[#1f1885] rounded-md transition-colors"
+									>
+										Sign up
+									</Link>
+								</div>
+							)}
 
 							{/* Mobile Menu Button */}
 							<button
@@ -133,50 +176,84 @@ export default function Header() {
 					{isMobileMenuOpen && (
 						<div className="md:hidden py-4 border-t border-[#30363d]">
 							<nav className="flex flex-col gap-1">
-								<Link
-									href="/dashboard"
-									className="px-3 py-2 text-sm font-semibold hover:bg-[#30363d] rounded-md transition-colors"
-									onClick={() => setIsMobileMenuOpen(false)}
-								>
-									Dashboard
-								</Link>
-								<Link
-									href="/budgets"
-									className="px-3 py-2 text-sm font-semibold hover:bg-[#30363d] rounded-md transition-colors"
-									onClick={() => setIsMobileMenuOpen(false)}
-								>
-									Budgets
-								</Link>
-								<Link
-									href="/categories"
-									className="px-3 py-2 text-sm font-semibold hover:bg-[#30363d] rounded-md transition-colors"
-									onClick={() => setIsMobileMenuOpen(false)}
-								>
-									Categories
-								</Link>
-								<Link
-									href="/transactions"
-									className="px-3 py-2 text-sm font-semibold hover:bg-[#30363d] rounded-md transition-colors"
-									onClick={() => setIsMobileMenuOpen(false)}
-								>
-									Transactions
-								</Link>
-								<button
-									onClick={() => {
-										setIsMobileMenuOpen(false);
-										setIsModalOpen(true);
-									}}
-									className="px-3 py-2 text-sm font-semibold hover:bg-[#30363d] rounded-md transition-colors text-left"
-								>
-									Create
-								</button>
-								<Link
-									href="/settings"
-									className="px-3 py-2 text-sm font-semibold hover:bg-[#30363d] rounded-md transition-colors"
-									onClick={() => setIsMobileMenuOpen(false)}
-								>
-									Settings
-								</Link>
+								{user ? (
+									<>
+										<Link
+											href="/dashboard"
+											className="px-3 py-2 text-sm font-semibold hover:bg-[#30363d] rounded-md transition-colors"
+											onClick={() => setIsMobileMenuOpen(false)}
+										>
+											Dashboard
+										</Link>
+										<Link
+											href="/budgets"
+											className="px-3 py-2 text-sm font-semibold hover:bg-[#30363d] rounded-md transition-colors"
+											onClick={() => setIsMobileMenuOpen(false)}
+										>
+											Budgets
+										</Link>
+										<Link
+											href="/categories"
+											className="px-3 py-2 text-sm font-semibold hover:bg-[#30363d] rounded-md transition-colors"
+											onClick={() => setIsMobileMenuOpen(false)}
+										>
+											Categories
+										</Link>
+										<Link
+											href="/transactions"
+											className="px-3 py-2 text-sm font-semibold hover:bg-[#30363d] rounded-md transition-colors"
+											onClick={() => setIsMobileMenuOpen(false)}
+										>
+											Transactions
+										</Link>
+										<Link
+											href="/analytics"
+											className="px-3 py-2 text-sm font-semibold hover:bg-[#30363d] rounded-md transition-colors"
+											onClick={() => setIsMobileMenuOpen(false)}
+										>
+											Analytics
+										</Link>
+										<button
+											onClick={() => {
+												setIsMobileMenuOpen(false);
+												setIsModalOpen(true);
+											}}
+											className="px-3 py-2 text-sm font-semibold hover:bg-[#30363d] rounded-md transition-colors text-left"
+										>
+											Create
+										</button>
+										<Link
+											href="/settings"
+											className="px-3 py-2 text-sm font-semibold hover:bg-[#30363d] rounded-md transition-colors"
+											onClick={() => setIsMobileMenuOpen(false)}
+										>
+											Settings
+										</Link>
+										<button
+											onClick={handleLogout}
+											className="px-3 py-2 text-sm font-semibold hover:bg-[#30363d] rounded-md transition-colors text-left text-gray-300"
+										>
+											Sign out
+										</button>
+									</>
+								) : (
+									<>
+										<Link
+											href="/login"
+											className="px-3 py-2 text-sm font-semibold hover:bg-[#30363d] rounded-md transition-colors"
+											onClick={() => setIsMobileMenuOpen(false)}
+										>
+											Sign in
+										</Link>
+										<Link
+											href="/signup"
+											className="px-3 py-2 text-sm font-semibold hover:bg-[#30363d] rounded-md transition-colors"
+											onClick={() => setIsMobileMenuOpen(false)}
+										>
+											Sign up
+										</Link>
+									</>
+								)}
 							</nav>
 						</div>
 					)}

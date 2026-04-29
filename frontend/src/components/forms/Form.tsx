@@ -26,7 +26,7 @@ type FormField = {
 	hideWhenRecurring?: boolean; // Hide this field when recurring is checked
 };
 
-type FormData = Record<string, string | number>;
+type FormData = Record<string, string | number | boolean>;
 
 type FormProps = {
 	title: string;
@@ -34,8 +34,11 @@ type FormProps = {
 	onSubmit: (data: FormData) => void;
 	onCancel?: () => void;
 	initialData?: FormData;
-	enableRecurring?: boolean; // Enable the recurring checkbox feature
-	recurringLocked?: boolean; // Lock recurring checkbox in checked state (for editing)
+	enableRecurring?: boolean;
+	initialRecurring?: boolean;
+	recurringLocked?: boolean;
+	error?: string;
+	isLoading?: boolean;
 };
 
 export default function Form({
@@ -45,9 +48,12 @@ export default function Form({
 	onCancel,
 	initialData = {},
 	enableRecurring = false,
+	initialRecurring,
 	recurringLocked = false,
+	error,
+	isLoading = false,
 }: FormProps) {
-	const [isRecurring, setIsRecurring] = useState(recurringLocked);
+	const [isRecurring, setIsRecurring] = useState(initialRecurring ?? recurringLocked);
 	const generateRandomColor = () =>
 		`#${Math.floor(Math.random() * 0xffffff)
 			.toString(16)
@@ -67,7 +73,8 @@ export default function Form({
 
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
-		onSubmit(formData);
+		const data = enableRecurring ? { ...formData, recurring: isRecurring } : formData;
+		onSubmit(data);
 	};
 	// Shared input classes - responsive
 	const inputClasses =
@@ -244,9 +251,15 @@ export default function Form({
 							</div>
 						))}
 
+					{error && (
+						<p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-4 py-2">
+							{error}
+						</p>
+					)}
+
 					<div className="flex flex-col sm:flex-row gap-3 pt-4">
-						<Button type="submit" variant="primary" size="medium">
-							Submit
+						<Button type="submit" variant="primary" size="medium" disabled={isLoading}>
+							{isLoading ? "Saving..." : "Submit"}
 						</Button>
 						{onCancel && (
 							<Button

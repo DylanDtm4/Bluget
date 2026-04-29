@@ -8,7 +8,9 @@ type AuthContextType = {
   user: User | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
+  register: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
+  refreshUser: () => Promise<void>;
 };
 
 export const AuthContext = createContext<AuthContextType | null>(null);
@@ -27,7 +29,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     api
       .get("/auth/me")
-      .then((res) => setUser(res.data))
+      .then((res) => setUser(res.data.user ?? res.data))
       .catch(() => {
         localStorage.removeItem("token");
         setUser(null);
@@ -42,13 +44,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(res.data.user);
   };
 
+  const register = async (name: string, email: string, password: string) => {
+    await api.post("/auth/register", { name, email, password });
+    await login(email, password);
+  };
+
+  const refreshUser = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+    const res = await api.get("/auth/me");
+    setUser(res.data.user ?? res.data);
+  };
+
   const logout = () => {
     localStorage.removeItem("token");
     setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout, refreshUser }}>
       {children}
     </AuthContext.Provider>
   );

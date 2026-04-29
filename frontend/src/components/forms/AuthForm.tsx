@@ -26,6 +26,8 @@ type AuthFormProps = {
 	footerLinkText?: string;
 	footerLinkHref?: string;
 	showBlugetBranding?: boolean;
+	error?: string;
+	isLoading?: boolean;
 };
 
 export default function AuthForm({
@@ -38,6 +40,8 @@ export default function AuthForm({
 	footerLinkText,
 	footerLinkHref,
 	showBlugetBranding = true,
+	error,
+	isLoading = false,
 }: AuthFormProps) {
 	const [formData, setFormData] = useState<AuthFormData>({});
 
@@ -89,14 +93,21 @@ export default function AuthForm({
 									onChange={(e) => handleChange(field.name, e.target.value)}
 									placeholder={field.placeholder}
 									required={field.required}
+									disabled={isLoading}
 									className={inputClasses}
 								/>
 							</div>
 						))}
 
-						<div className="pt-2 flex items-center justify-center ">
-							<Button type="submit" variant="primary" size="large">
-								{submitButtonText}
+						{error && (
+							<p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-4 py-2 text-center">
+								{error}
+							</p>
+						)}
+
+						<div className="pt-2 flex items-center justify-center">
+							<Button type="submit" variant="primary" size="large" disabled={isLoading}>
+								{isLoading ? "Please wait..." : submitButtonText}
 							</Button>
 						</div>
 					</form>

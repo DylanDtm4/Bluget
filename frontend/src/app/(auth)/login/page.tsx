@@ -1,10 +1,15 @@
 "use client";
 
+import { useState } from "react";
 import AuthForm from "@/components/forms/AuthForm";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 
 export default function LoginPage() {
 	const router = useRouter();
+	const { login } = useAuth();
+	const [error, setError] = useState<string | undefined>();
+	const [isLoading, setIsLoading] = useState(false);
 
 	const loginFields = [
 		{
@@ -23,11 +28,20 @@ export default function LoginPage() {
 		},
 	];
 
-	const handleLogin = (data: Record<string, string>) => {
-		console.log("Login:", data);
-		// Add your login logic here
-		// Then redirect to dashboard
-		router.push("/dashboard");
+	const handleLogin = async (data: Record<string, string>) => {
+		setError(undefined);
+		setIsLoading(true);
+		try {
+			await login(data.email, data.password);
+			router.push("/dashboard");
+		} catch (err: unknown) {
+			const msg =
+				(err as { response?: { data?: { error?: string } } })?.response?.data
+					?.error ?? "Login failed. Please try again.";
+			setError(msg);
+		} finally {
+			setIsLoading(false);
+		}
 	};
 
 	return (
@@ -40,6 +54,8 @@ export default function LoginPage() {
 			footerText="Don't have an account?"
 			footerLinkText="Sign up"
 			footerLinkHref="/signup"
+			error={error}
+			isLoading={isLoading}
 		/>
 	);
 }

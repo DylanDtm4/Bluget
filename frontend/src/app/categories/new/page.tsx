@@ -1,16 +1,19 @@
 "use client";
 
+import { useState } from "react";
 import Form from "@/components/forms/Form";
 import { useRouter } from "next/navigation";
+import { api } from "@/lib/api";
 
 export default function NewCategoryPage() {
 	const router = useRouter();
+	const [error, setError] = useState<string | undefined>();
+	const [isLoading, setIsLoading] = useState(false);
 
-	// Define the fields for your category form
 	const categoryFields = [
 		{
-			name: "category",
-			label: "Category",
+			name: "name",
+			label: "Name",
 			type: "text" as const,
 			required: true,
 			placeholder: "e.g., Groceries, Paycheck",
@@ -18,7 +21,7 @@ export default function NewCategoryPage() {
 		{
 			name: "color",
 			label: "Color",
-			type: "color" as const, // Changed from "text" to "color"
+			type: "color" as const,
 			required: true,
 		},
 		{
@@ -26,25 +29,27 @@ export default function NewCategoryPage() {
 			label: "Icon",
 			type: "icon" as const,
 			required: true,
-			placeholder: "Select an icon",
 		},
 	];
 
-	const handleSubmit = (data: Record<string, string | number>) => {
-		console.log("Form submitted:", data);
-
-		// Here you would send data to your API
-		// fetch('/categories', {
-		//   method: 'POST',
-		//   body: JSON.stringify(data)
-		// })
-
-		// Then redirect back to categories page
-		router.push("/categories");
-	};
-
-	const handleCancel = () => {
-		router.push("/categories");
+	const handleSubmit = async (data: Record<string, string | number>) => {
+		setError(undefined);
+		setIsLoading(true);
+		try {
+			await api.post("/categories", {
+				name: data.name,
+				color: data.color,
+				icon: data.icon,
+			});
+			router.push("/categories");
+		} catch (err: unknown) {
+			const msg =
+				(err as { response?: { data?: { error?: string } } })?.response?.data
+					?.error ?? "Failed to create category. Please try again.";
+			setError(msg);
+		} finally {
+			setIsLoading(false);
+		}
 	};
 
 	return (
@@ -54,7 +59,9 @@ export default function NewCategoryPage() {
 					title="Add New Category"
 					fields={categoryFields}
 					onSubmit={handleSubmit}
-					onCancel={handleCancel}
+					onCancel={() => router.push("/categories")}
+					error={error}
+					isLoading={isLoading}
 				/>
 			</div>
 		</div>

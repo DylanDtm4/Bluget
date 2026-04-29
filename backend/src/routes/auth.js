@@ -2,6 +2,7 @@ const {
   registerUser,
   loginUser,
   getCurrentUser,
+  updateSettings,
 } = require("../controllers/authController");
 const express = require("express");
 const router = express.Router();
@@ -13,5 +14,7 @@ router.post("/register", registerUser);
 router.post("/login", loginUser);
 // GET /auth/me
 router.get("/me", auth, getCurrentUser);
+// PUT /auth/settings
+router.put("/settings", auth, updateSettings);
 
 module.exports = router;

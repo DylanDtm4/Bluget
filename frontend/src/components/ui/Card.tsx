@@ -5,8 +5,9 @@ import { CATEGORY_ICONS } from "@/lib/categoryIcons";
 
 type BudgetData = {
 	amount: number;
-	month: number;
-	year: number;
+	month: number | null;
+	year: number | null;
+	recurring?: boolean;
 	note?: string;
 	color: string;
 	icon: string;
@@ -79,9 +80,9 @@ export default function Card({
 				const IconComponent = getIconComponent(budgetData.icon);
 
 				return {
-					subtitle: `${budgetData.year}-${budgetData.month
-						.toString()
-						.padStart(2, "0")}`,
+					subtitle: budgetData.recurring || budgetData.month == null
+						? "Recurring"
+						: `${budgetData.year}-${budgetData.month.toString().padStart(2, "0")}`,
 					amount: budgetData.amount,
 					amountColor: "#1F2937",
 					iconColor: budgetData.color,

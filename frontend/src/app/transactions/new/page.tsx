@@ -1,12 +1,19 @@
 "use client";
 
+import { useState } from "react";
 import Form from "@/components/forms/Form";
 import { useRouter } from "next/navigation";
+import { useCategories } from "@/hooks/useCategories";
+import { api } from "@/lib/api";
 
 export default function NewTransactionPage() {
 	const router = useRouter();
+	const { categories } = useCategories();
+	const [error, setError] = useState<string | undefined>();
+	const [isLoading, setIsLoading] = useState(false);
 
-	// Define the fields for your transaction form
+	const categoryOptions = categories.map((c) => ({ label: c.name, value: c.name }));
+
 	const transactionFields = [
 		{
 			name: "mainCategory",
@@ -14,18 +21,18 @@ export default function NewTransactionPage() {
 			type: "select" as const,
 			required: true,
 			options: [
-				{ label: "Income", value: "Income" },
-				{ label: "Expense", value: "Expense" },
-				{ label: "Investment", value: "Investment" },
-				{ label: "Savings", value: "Savings" },
+				{ label: "Income", value: "income" },
+				{ label: "Expense", value: "expense" },
+				{ label: "Investment", value: "investment" },
+				{ label: "Savings", value: "savings" },
 			],
 		},
 		{
 			name: "secondaryCategory",
 			label: "Category",
-			type: "text" as const,
+			type: "select" as const,
 			required: true,
-			placeholder: "e.g., Groceries, Paycheck",
+			options: categoryOptions,
 		},
 		{
 			name: "amount",
@@ -51,7 +58,6 @@ export default function NewTransactionPage() {
 				{ label: "Daily", value: "daily" },
 				{ label: "Weekly", value: "weekly" },
 				{ label: "Monthly", value: "monthly" },
-				{ label: "Yearly", value: "yearly" },
 			],
 		},
 		{
@@ -76,21 +82,40 @@ export default function NewTransactionPage() {
 		},
 	];
 
-	const handleSubmit = (data: Record<string, string | number>) => {
-		console.log("Form submitted:", data);
-
-		// Here you would send data to your API
-		// fetch('/transactions', {
-		//   method: 'POST',
-		//   body: JSON.stringify(data)
-		// })
-
-		// Then redirect back to transactions page
-		router.push("/transactions");
-	};
-
-	const handleCancel = () => {
-		router.push("/transactions");
+	const handleSubmit = async (data: Record<string, string | number>) => {
+		setError(undefined);
+		setIsLoading(true);
+		const isRecurring = !data.date;
+		try {
+			if (isRecurring) {
+				await api.post("/recurring", {
+					transactionType: data.mainCategory,
+					category: data.secondaryCategory,
+					amount: data.amount,
+					frequency: data.frequency,
+					startDate: data.startDate,
+					endDate: data.endDate,
+					nextRun: data.startDate,
+					note: data.note,
+				});
+			} else {
+				await api.post("/transactions", {
+					transactionType: data.mainCategory,
+					category: data.secondaryCategory,
+					amount: data.amount,
+					date: data.date,
+					note: data.note,
+				});
+			}
+			router.push("/transactions");
+		} catch (err: unknown) {
+			const msg =
+				(err as { response?: { data?: { error?: string } } })?.response?.data
+					?.error ?? "Failed to save. Please try again.";
+			setError(msg);
+		} finally {
+			setIsLoading(false);
+		}
 	};
 
 	return (
@@ -100,8 +125,10 @@ export default function NewTransactionPage() {
 					title="Add New Transaction"
 					fields={transactionFields}
 					onSubmit={handleSubmit}
-					onCancel={handleCancel}
+					onCancel={() => router.push("/transactions")}
 					enableRecurring={true}
+					error={error}
+					isLoading={isLoading}
 				/>
 			</div>
 		</div>

@@ -80,4 +80,20 @@ const getCurrentUser = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginUser, getCurrentUser };
+const updateSettings = async (req, res) => {
+  try {
+    const { name, currency, timezone, theme } = req.body;
+    const updated = await User.findByIdAndUpdate(
+      req.user.id,
+      { name, currency, timezone, theme },
+      { new: true }
+    ).select("-password");
+    if (!updated) return res.status(404).json({ error: "User not found" });
+    return res.status(200).json({ user: updated });
+  } catch (err) {
+    console.error("UPDATE SETTINGS ERROR:", err);
+    return res.status(500).json({ error: "Failed to update settings" });
+  }
+};
+
+module.exports = { registerUser, loginUser, getCurrentUser, updateSettings };

@@ -31,7 +31,7 @@ const getMonthlySummary = async (req, res) => {
 					totals: [
 						{
 							$group: {
-								_id: "$type",
+								_id: "$transactionType",
 								total: { $sum: "$amount" },
 							},
 						},
@@ -45,12 +45,12 @@ const getMonthlySummary = async (req, res) => {
 						},
 					],
 					biggestExpense: [
-						{ $match: { type: "expense" } },
+						{ $match: { transactionType: "expense" } },
 						{ $sort: { amount: -1 } },
 						{ $limit: 1 },
 					],
 					topFiveExpenses: [
-						{ $match: { type: "expense" } },
+						{ $match: { transactionType: "expense" } },
 						{ $sort: { amount: -1 } },
 						{ $limit: 5 },
 					],
@@ -70,7 +70,7 @@ const getMonthlySummary = async (req, res) => {
 			if (t._id === "income") totalIncome = t.total;
 			else if (t._id === "expense") totalExpenses = t.total;
 			else if (t._id === "investment") totalInvestments = t.total;
-			else if (t._id === "saving") totalSavings = t.total;
+			else if (t._id === "savings") totalSavings = t.total;
 		});
 
 		res.json({

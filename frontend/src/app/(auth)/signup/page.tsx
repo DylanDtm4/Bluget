@@ -1,10 +1,15 @@
 "use client";
 
+import { useState } from "react";
 import AuthForm from "@/components/forms/AuthForm";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 
 export default function SignupPage() {
 	const router = useRouter();
+	const { register } = useAuth();
+	const [error, setError] = useState<string | undefined>();
+	const [isLoading, setIsLoading] = useState(false);
 
 	const signupFields = [
 		{
@@ -37,11 +42,26 @@ export default function SignupPage() {
 		},
 	];
 
-	const handleSignup = (data: Record<string, string>) => {
-		console.log("Signup:", data);
-		// Add your signup logic here
-		// Then redirect to dashboard
-		router.push("/dashboard");
+	const handleSignup = async (data: Record<string, string>) => {
+		setError(undefined);
+
+		if (data.password !== data.confirmPassword) {
+			setError("Passwords do not match.");
+			return;
+		}
+
+		setIsLoading(true);
+		try {
+			await register(data.name, data.email, data.password);
+			router.push("/dashboard");
+		} catch (err: unknown) {
+			const msg =
+				(err as { response?: { data?: { error?: string } } })?.response?.data
+					?.error ?? "Registration failed. Please try again.";
+			setError(msg);
+		} finally {
+			setIsLoading(false);
+		}
 	};
 
 	return (
@@ -54,6 +74,8 @@ export default function SignupPage() {
 			footerText="Already have an account?"
 			footerLinkText="Sign in"
 			footerLinkHref="/login"
+			error={error}
+			isLoading={isLoading}
 		/>
 	);
 }

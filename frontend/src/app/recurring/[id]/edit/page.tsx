@@ -1,14 +1,34 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Form from "@/components/forms/Form";
 import { useRouter } from "next/navigation";
+import { useCategories } from "@/hooks/useCategories";
+import { api } from "@/lib/api";
 
-export default function EditRecurringPage({
-	params,
-}: {
-	params: { id: string };
-}) {
+export default function EditRecurringPage({ params }: { params: { id: string } }) {
 	const router = useRouter();
+	const { categories } = useCategories();
+	const [initialData, setInitialData] = useState<Record<string, string | number> | null>(null);
+	const [error, setError] = useState<string | undefined>();
+	const [isLoading, setIsLoading] = useState(false);
+
+	useEffect(() => {
+		api.get(`/recurring/${params.id}`).then((res) => {
+			const r = res.data;
+			setInitialData({
+				mainCategory: r.transactionType,
+				secondaryCategory: r.category ?? "",
+				amount: r.amount,
+				frequency: r.frequency,
+				startDate: r.startDate ? r.startDate.slice(0, 10) : "",
+				endDate: r.endDate ? r.endDate.slice(0, 10) : "",
+				note: r.note ?? "",
+			});
+		});
+	}, [params.id]);
+
+	const categoryOptions = categories.map((c) => ({ label: c.name, value: c.name }));
 
 	const recurringFields = [
 		{
@@ -17,18 +37,18 @@ export default function EditRecurringPage({
 			type: "select" as const,
 			required: true,
 			options: [
-				{ label: "Income", value: "Income" },
-				{ label: "Expense", value: "Expense" },
-				{ label: "Investment", value: "Investment" },
-				{ label: "Savings", value: "Savings" },
+				{ label: "Income", value: "income" },
+				{ label: "Expense", value: "expense" },
+				{ label: "Investment", value: "investment" },
+				{ label: "Savings", value: "savings" },
 			],
 		},
 		{
 			name: "secondaryCategory",
 			label: "Category",
-			type: "text" as const,
+			type: "select" as const,
 			required: true,
-			placeholder: "e.g., Groceries, Paycheck",
+			options: categoryOptions,
 		},
 		{
 			name: "amount",
@@ -43,12 +63,9 @@ export default function EditRecurringPage({
 			type: "select" as const,
 			required: true,
 			options: [
-				{ label: "Daily", value: "Daily" },
-				{ label: "Weekly", value: "Weekly" },
-				{ label: "Biweekly", value: "Biweekly" },
-				{ label: "Monthly", value: "Monthly" },
-				{ label: "Quarterly", value: "Quarterly" },
-				{ label: "Yearly", value: "Yearly" },
+				{ label: "Daily", value: "daily" },
+				{ label: "Weekly", value: "weekly" },
+				{ label: "Monthly", value: "monthly" },
 			],
 		},
 		{
@@ -71,23 +88,37 @@ export default function EditRecurringPage({
 		},
 	];
 
-	// Fetch existing data (for now using dummy data)
-	// In real app: useEffect to fetch from API
-	const existingRecurring = {
-		mainCategory: "Expense",
-		secondaryCategory: "Groceries",
-		amount: 50,
-		frequency: "Weekly",
-		startDate: "2025-05-31",
-		endDate: "2026-05-30",
-		note: "Weekly shopping",
+	const handleSubmit = async (data: Record<string, string | number>) => {
+		setError(undefined);
+		setIsLoading(true);
+		try {
+			await api.put(`/recurring/${params.id}`, {
+				transactionType: data.mainCategory,
+				category: data.secondaryCategory,
+				amount: data.amount,
+				frequency: data.frequency,
+				startDate: data.startDate,
+				endDate: data.endDate,
+				note: data.note,
+			});
+			router.push("/transactions");
+		} catch (err: unknown) {
+			const msg =
+				(err as { response?: { data?: { error?: string } } })?.response?.data
+					?.error ?? "Failed to update. Please try again.";
+			setError(msg);
+		} finally {
+			setIsLoading(false);
+		}
 	};
 
-	const handleSubmit = (data: Record<string, string | number>) => {
-		console.log("Updating recurring transaction:", params.id, data);
-		// PUT request to API: /api/recurring/${params.id}
-		router.push("/transactions");
-	};
+	if (!initialData) {
+		return (
+			<div className="bg-linear-to-br from-blue-50 to-blue-100 p-3 sm:p-6 rounded-xl min-h-screen flex items-center justify-center">
+				<p className="text-gray-500 text-sm">Loading...</p>
+			</div>
+		);
+	}
 
 	return (
 		<div className="bg-linear-to-br from-blue-50 to-blue-100 p-3 sm:p-6 rounded-xl min-h-screen">
@@ -97,9 +128,9 @@ export default function EditRecurringPage({
 					fields={recurringFields}
 					onSubmit={handleSubmit}
 					onCancel={() => router.push("/transactions")}
-					initialData={existingRecurring}
-					enableRecurring={true}
-					recurringLocked={true}
+					initialData={initialData}
+					error={error}
+					isLoading={isLoading}
 				/>
 			</div>
 		</div>

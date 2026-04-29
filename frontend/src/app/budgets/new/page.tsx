@@ -1,19 +1,26 @@
 "use client";
 
+import { useState } from "react";
 import Form from "@/components/forms/Form";
 import { useRouter } from "next/navigation";
+import { useCategories } from "@/hooks/useCategories";
+import { api } from "@/lib/api";
 
 export default function NewBudgetPage() {
 	const router = useRouter();
+	const { categories } = useCategories();
+	const [error, setError] = useState<string | undefined>();
+	const [isLoading, setIsLoading] = useState(false);
 
-	// Define the fields for your budget form
+	const categoryOptions = categories.map((c) => ({ label: c.name, value: c.name }));
+
 	const budgetFields = [
 		{
 			name: "category",
 			label: "Category",
-			type: "text" as const,
+			type: "select" as const,
 			required: true,
-			placeholder: "e.g., Groceries, Paycheck",
+			options: categoryOptions,
 		},
 		{
 			name: "amount",
@@ -27,6 +34,7 @@ export default function NewBudgetPage() {
 			label: "Month",
 			type: "select" as const,
 			required: true,
+			hideWhenRecurring: true,
 			options: [
 				{ label: "January", value: "1" },
 				{ label: "February", value: "2" },
@@ -47,6 +55,7 @@ export default function NewBudgetPage() {
 			label: "Year",
 			type: "year" as const,
 			required: true,
+			hideWhenRecurring: true,
 		},
 		{
 			name: "note",
@@ -56,21 +65,28 @@ export default function NewBudgetPage() {
 		},
 	];
 
-	const handleSubmit = (data: Record<string, string | number>) => {
-		console.log("Form submitted:", data);
-
-		// Here you would send data to your API
-		// fetch('/budgets', {
-		//   method: 'POST',
-		//   body: JSON.stringify(data)
-		// })
-
-		// Then redirect back to budgets page
-		router.push("/budgets");
-	};
-
-	const handleCancel = () => {
-		router.push("/budgets");
+	const handleSubmit = async (data: Record<string, string | number | boolean>) => {
+		setError(undefined);
+		setIsLoading(true);
+		try {
+			const recurring = !!data.recurring;
+			await api.post("/budgets", {
+				category: data.category,
+				amount: Number(data.amount),
+				month: recurring ? undefined : Number(data.month),
+				year: recurring ? undefined : Number(data.year),
+				note: data.note,
+				recurring,
+			});
+			router.push("/budgets");
+		} catch (err: unknown) {
+			const msg =
+				(err as { response?: { data?: { error?: string } } })?.response?.data
+					?.error ?? "Failed to create budget. Please try again.";
+			setError(msg);
+		} finally {
+			setIsLoading(false);
+		}
 	};
 
 	return (
@@ -80,7 +96,10 @@ export default function NewBudgetPage() {
 					title="Add New Budget"
 					fields={budgetFields}
 					onSubmit={handleSubmit}
-					onCancel={handleCancel}
+					onCancel={() => router.push("/budgets")}
+					enableRecurring={true}
+					error={error}
+					isLoading={isLoading}
 				/>
 			</div>
 		</div>

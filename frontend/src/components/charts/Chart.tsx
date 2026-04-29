@@ -32,7 +32,6 @@ interface LineChartProps {
 
 type ChartProps = PieChartProps | LineChartProps;
 
-// Custom tooltip for pie chart
 interface TooltipPayload {
 	name: string;
 	value: number;
@@ -54,13 +53,10 @@ const CustomPieTooltip = ({ active, payload }: CustomTooltipProps) => {
 		const data = payload[0];
 		const total = payload[0].payload.total;
 		const percentage = ((data.value / total) * 100).toFixed(1);
-
 		return (
 			<div className="bg-white p-3 rounded-lg shadow-lg border border-gray-200">
 				<p className="font-semibold text-gray-800">{data.name}</p>
-				<p className="text-blue-600 font-bold">
-					${data.value.toLocaleString()}
-				</p>
+				<p className="text-blue-600 font-bold">${data.value.toLocaleString()}</p>
 				<p className="text-sm text-gray-600">{percentage}% of total</p>
 			</div>
 		);
@@ -72,60 +68,60 @@ export default function Chart(props: ChartProps) {
 	const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
 	if (props.type === "pie") {
-		// Calculate total for percentage
 		const total = props.data.reduce((sum, item) => sum + item.value, 0);
 		const dataWithTotal = props.data.map((item) => ({ ...item, total }));
 
 		return (
-			<div className="bg-white p-4 sm:p-6 rounded-lg shadow-md">
+			<div className="bg-white p-4 sm:p-6 rounded-lg shadow-md flex flex-col">
 				<h3 className="text-base sm:text-lg font-semibold text-blue-900 mb-3 sm:mb-4">
 					{props.title}
 				</h3>
-				<ResponsiveContainer width="100%" height={180}>
-					<PieChart>
-						<Pie
-							data={dataWithTotal}
-							dataKey="value"
-							cx="50%"
-							cy="50%"
-							outerRadius={70}
-							onMouseEnter={(_, index) => setActiveIndex(index)}
-							onMouseLeave={() => setActiveIndex(null)}
-						>
-							{dataWithTotal.map((entry, index) => (
-								<Cell
-									key={index}
-									fill={entry.color}
-									opacity={
-										activeIndex === null || activeIndex === index ? 1 : 0.6
-									}
-									style={{ cursor: "pointer" }}
-								/>
-							))}
-						</Pie>
-						<Tooltip content={<CustomPieTooltip />} />
-					</PieChart>
-				</ResponsiveContainer>
-				<div className="mt-3 sm:mt-4 flex flex-wrap justify-center gap-3">
-					{props.data.map((item, i) => {
-						const percentage = ((item.value / total) * 100).toFixed(1);
-						return (
-							<div
-								key={i}
-								className="flex items-center gap-2 cursor-pointer hover:opacity-75 transition-opacity"
-								onMouseEnter={() => setActiveIndex(i)}
-								onMouseLeave={() => setActiveIndex(null)}
-							>
+				<div className="flex gap-4 items-center flex-1">
+					<div className="flex-1 min-w-0">
+						<ResponsiveContainer width="100%" height={220}>
+							<PieChart>
+								<Pie
+									data={dataWithTotal}
+									dataKey="value"
+									cx="50%"
+									cy="50%"
+									outerRadius={90}
+									onMouseEnter={(_, index) => setActiveIndex(index)}
+									onMouseLeave={() => setActiveIndex(null)}
+								>
+									{dataWithTotal.map((entry, index) => (
+										<Cell
+											key={index}
+											fill={entry.color}
+											opacity={activeIndex === null || activeIndex === index ? 1 : 0.5}
+											style={{ cursor: "pointer" }}
+										/>
+									))}
+								</Pie>
+								<Tooltip content={<CustomPieTooltip />} />
+							</PieChart>
+						</ResponsiveContainer>
+					</div>
+					<div className="w-36 shrink-0 flex flex-col gap-2 max-h-[220px] overflow-y-auto pr-1">
+						{props.data.map((item, i) => {
+							const percentage = ((item.value / total) * 100).toFixed(1);
+							return (
 								<div
-									className="w-3 h-3 rounded-full"
-									style={{ backgroundColor: item.color }}
-								></div>
-								<span className="text-xs sm:text-sm text-gray-600">
-									{item.name} ({percentage}%)
-								</span>
-							</div>
-						);
-					})}
+									key={i}
+									className="flex items-center gap-1.5 cursor-pointer hover:opacity-75 transition-opacity"
+									onMouseEnter={() => setActiveIndex(i)}
+									onMouseLeave={() => setActiveIndex(null)}
+								>
+									<div
+										className="w-2.5 h-2.5 rounded-full shrink-0"
+										style={{ backgroundColor: item.color }}
+									/>
+									<span className="text-xs text-gray-600 truncate flex-1">{item.name}</span>
+									<span className="text-xs font-semibold text-gray-700 shrink-0">{percentage}%</span>
+								</div>
+							);
+						})}
+					</div>
 				</div>
 			</div>
 		);
@@ -139,11 +135,7 @@ export default function Chart(props: ChartProps) {
 				</h3>
 				<ResponsiveContainer width="100%" height={180}>
 					<LineChart data={props.data}>
-						<XAxis
-							dataKey={props.xAxisKey}
-							stroke="#94a3b8"
-							style={{ fontSize: "12px" }}
-						/>
+						<XAxis dataKey={props.xAxisKey} stroke="#94a3b8" style={{ fontSize: "12px" }} />
 						<YAxis stroke="#94a3b8" style={{ fontSize: "12px" }} />
 						<Tooltip
 							contentStyle={{
@@ -152,10 +144,7 @@ export default function Chart(props: ChartProps) {
 								borderRadius: "0.5rem",
 								padding: "8px 12px",
 							}}
-							formatter={(value: number | string | undefined) => [
-								value ?? "—",
-								"Amount",
-							]}
+							formatter={(value: number | string | undefined) => [value ?? "—", "Amount"]}
 						/>
 						<Line
 							type="monotone"
